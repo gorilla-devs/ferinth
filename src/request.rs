@@ -1,13 +1,13 @@
-use crate::{ModrinthAPI, Result};
-use reqwest::{header::USER_AGENT, Response};
+use crate::{Ferinth, Result};
+use reqwest::{header::USER_AGENT, IntoUrl, Response};
 
-pub(crate) const API_URL_BASE: &str = "https://api.modrinth.com/api/v1";
+const API_URL_BASE: &str = "https://api.modrinth.com/api/v1";
 
-pub(crate) async fn request_rel(client: &ModrinthAPI, route: String) -> Result<Response> {
+pub(crate) async fn request_rel(client: &Ferinth, route: String) -> Result<Response> {
     Ok(request(client, format!("{}{}", API_URL_BASE, route)).await?)
 }
 
-pub(crate) async fn request(client: &ModrinthAPI, url: String) -> Result<Response> {
+pub(crate) async fn request(client: &Ferinth, url: impl IntoUrl) -> Result<Response> {
     let request = client
         .client
         .get(url)

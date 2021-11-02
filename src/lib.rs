@@ -1,18 +1,15 @@
 mod api_calls;
-mod error;
 mod request;
-mod structures;
+pub mod structures;
 
-pub use api_calls::{mod_calls::*, tag_calls::*, user_calls::*, user_calls::*, version_calls::*};
-pub use error::*;
-pub use structures::{mod_structs::*, user_structs::*, version_structs::*, Datetime, ID};
+pub(crate) type Result<T> = std::result::Result<T, reqwest::Error>;
 
-pub struct ModrinthAPI {
+pub struct Ferinth {
     client: reqwest::Client,
     user_agent: String,
 }
 
-impl ModrinthAPI {
+impl Ferinth {
     /// Create a new API instance. `user_agent` should be the name of the program
     pub fn new(user_agent: &str) -> Self {
         Self {

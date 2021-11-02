@@ -1,6 +1,6 @@
-use crate::{request::request_rel, ModrinthAPI, Result};
+use crate::{request::request_rel, Ferinth, Result};
 
-impl ModrinthAPI {
+impl Ferinth {
     /// List the categories of mods
     pub async fn list_categories(&self) -> Result<Vec<String>> {
         Ok(request_rel(self, "/tag/category".into())

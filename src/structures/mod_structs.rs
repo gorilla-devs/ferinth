@@ -1,5 +1,6 @@
 use super::*;
 use serde::{Deserialize, Serialize};
+use std::fmt::{Display, Formatter};
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Mod {
@@ -73,18 +74,43 @@ pub struct DonationLink {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub enum ModStatus {
+    #[serde(rename = "approved")]
     Approved,
+    #[serde(rename = "rejected")]
     Rejected,
+    #[serde(rename = "draft")]
     Draft,
+    #[serde(rename = "unlisted")]
     Unlisted,
+    #[serde(rename = "processing")]
     Processing,
+    #[serde(rename = "unknown")]
     Unknown,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
 pub enum ModSupportRange {
+    #[serde(rename = "required")]
     Required,
+    #[serde(rename = "optional")]
     Optional,
+    #[serde(rename = "unsupported")]
     Unsupported,
+    #[serde(rename = "unknown")]
     Unknown,
+}
+
+impl Display for ModSupportRange {
+    fn fmt(&self, fmt: &mut Formatter) -> std::result::Result<(), std::fmt::Error> {
+        write!(
+            fmt,
+            "{}",
+            match self {
+                Self::Required => "required",
+                Self::Optional => "optional",
+                Self::Unsupported => "unsupported",
+                Self::Unknown => "unknown",
+            }
+        )
+    }
 }

@@ -1,11 +1,11 @@
 [package]
-name = "modrinth-api"
+name = "ferinth"
 # The major version specifies which version of the Modrinth API this supports
-version = "1.0.0"
+version = "1.1.0"
 edition = "2021"
 authors = ["theRookieCoder <ileshkt@gmail.com>"]
 description = "A simple library to use the Modrinth API in Rust projects"
-repository = "https://github.com/theRookieCoder/modrinth-api"
+repository = "https://github.com/theRookieCoder/ferinth"
 license = "MIT"
 keywords = ["modrinth", "minecraft", "modding"]
 categories = ["api-bindings", "asynchronous"]
@@ -13,5 +13,4 @@ categories = ["api-bindings", "asynchronous"]
 [dependencies]
 reqwest = { version = "0", features = ["json"] }
 serde = { version = "1", features = ["derive"] }
-thiserror = "1"
 bytes = "1"

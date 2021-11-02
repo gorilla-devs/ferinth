@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use super::*;
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -39,18 +38,27 @@ pub struct Version {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub enum VersionType {
+    #[serde(rename = "alpha")]
 	Alpha,
+    #[serde(rename = "beta")]
 	Beta,
+    #[serde(rename = "release")]
 	Release
 }
 
 #[derive(Deserialize, Serialize, Debug)]
 /// A single mod file, with a URL for the file and the file's hashes
 pub struct VersionFile {
-    /// The key is the hashing algorithm and the value is the hash
-    pub hashes: HashMap<String, String>,
+    /// The hashes of this file
+    pub hashes: Hashes,
     /// A direct link to the file
     pub url: String,
     /// The name of the file
     pub filename: String,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Hashes {
+    pub sha512: Option<String>,
+    pub sha1: Option<String>,
 }
