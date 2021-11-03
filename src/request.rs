@@ -3,11 +3,12 @@ use reqwest::{header::USER_AGENT, IntoUrl, Response};
 
 const API_URL_BASE: &str = "https://api.modrinth.com/api/v1";
 
-pub(crate) async fn request_rel(client: &Ferinth, route: String) -> Result<Response> {
+/// Perform a GET request on base url + `route` using `client`
+pub async fn request_rel(client: &Ferinth, route: String) -> Result<Response> {
     Ok(request(client, format!("{}{}", API_URL_BASE, route)).await?)
 }
 
-pub(crate) async fn request(client: &Ferinth, url: impl IntoUrl) -> Result<Response> {
+pub async fn request(client: &Ferinth, url: impl IntoUrl) -> Result<Response> {
     let request = client
         .client
         .get(url)

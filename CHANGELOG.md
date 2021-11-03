@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0] - 03.11.2021
+
+- Made date/time fields use Chrono's `DateTime<Utc>`
+- Made documentation better and more consistent
+- Added an example project
+- Prepared the project for crates.io release
+
 ## [1.1.0] - 02.11.2021
 
 - Renamed the library to Ferinth (`ferinth`)

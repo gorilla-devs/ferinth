@@ -5,15 +5,15 @@ use super::*;
 pub struct User {
     /// The user's ID
     pub id: ID,
-    /// The user's Github ID. Only visible to the user themselves
+    /// The user's Github ID. Only visible to this user
     pub github_id: Option<usize>,
     /// The user's username
     pub username: String,
-    /// The user's display name. Only visible to the user themselves
+    /// The user's display name. Only visible to this user
     pub name: Option<String>,
-    /// The user's email. Only visible to the user themselves
+    /// The user's email. Only visible to this user
     pub email: Option<String>,
-    /// A URL to the user's avatar's. Uses Github's icon
+    /// A link to the user's avatar
     pub avatar_url: Option<String>,
     /// A description of the user
     pub bio: Option<String>,
@@ -27,7 +27,7 @@ pub struct User {
 pub struct TeamMember {
     /// The ID of the member's team
     pub team_id: String,
-    /// The user ID of this team member
+    /// The team member's user ID
     pub user_id: String,
     /// This team member's role
     /// 
@@ -42,7 +42,7 @@ pub struct TeamMember {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub enum TeamRole {
-    #[serde(alias = "OWNER")] // Bug in Labrinth. I WANT CASE INSENSITIVE DESERIALISATION
+    #[serde(alias = "OWNER")] // Bug in Labrinth. @serde I WANT CASE INSENSITIVE DESERIALISATION
     Owner,
     Member,
     Maintainer,

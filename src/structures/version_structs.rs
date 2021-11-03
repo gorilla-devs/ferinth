@@ -3,32 +3,32 @@ use super::*;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Version {
-    /// The ID of the version, encoded as a base62 string
+    /// The version's ID
     pub id: ID,
     /// The ID of the mod this version is for
     pub mod_id: ID,
     /// The ID of the author who published this version
     pub author_id: ID,
-    /// Whether the version is featured or not
+    /// Whether the version is 'featured' (?) or not
     pub featured: bool,
     /// The name of this version
     pub name: String,
-    /// The version number. Ideally, this will follow semantic versioning
+    /// The version's number. Ideally, this will follow semantic versioning
     pub version_number: String,
-    /// The changelog for this version of the mod.
+    /// The version's changelog
     pub changelog: Option<String>,
     #[deprecated(note = "Read from `Version.changelog` instead")]
-    /// A link to the changelog for this version of the mod
+    /// A link to the version's changelog
     pub changelog_url: Option<String>,
-    /// The date that this version was published
+    /// When this version was published
     pub date_published: Datetime,
     /// The number of downloads this version has
     pub downloads: usize,
-    /// The type of the release
+    /// The version's type
     pub version_type: VersionType,
     /// A list of files available for download
     pub files: Vec<VersionFile>,
-    /// This version's dependencies, as a list of IDs of dependency's versions
+    /// This version's dependencies, as a list of dependencies' versions' IDs
     pub dependencies: Vec<ID>,
     /// A list of Minecraft versions that this version supports
     pub game_versions: Vec<String>,
@@ -47,18 +47,19 @@ pub enum VersionType {
 }
 
 #[derive(Deserialize, Serialize, Debug)]
-/// A single mod file, with a URL for the file and the file's hashes
 pub struct VersionFile {
-    /// The hashes of this file
+    /// The file's hashes
     pub hashes: Hashes,
     /// A direct link to the file
     pub url: String,
-    /// The name of the file
+    /// The file's name
     pub filename: String,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Hashes {
+    /// The SHA512 hash of the version file
     pub sha512: Option<String>,
+    /// The SHA1 hash of the version file
     pub sha1: Option<String>,
 }

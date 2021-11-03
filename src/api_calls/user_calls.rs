@@ -1,5 +1,4 @@
-use super::super::structures::user_structs::*;
-use crate::{request::request_rel, Ferinth, Result};
+use crate::{structures::user_structs::*, request::request_rel, Ferinth, Result};
 
 impl Ferinth {
     /// Get user with ID `user_id`

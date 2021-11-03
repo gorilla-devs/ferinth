@@ -1,5 +1,5 @@
-use super::super::structures::version_structs::*;
 use crate::{
+    structures::version_structs::*,
     request::{request, request_rel},
     Ferinth, Result,
 };
