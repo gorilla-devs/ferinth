@@ -4,8 +4,6 @@
 //! 
 //! # Example
 //! You can find an example [here](https://github.com/theRookieCoder/ferinth/tree/master/example/)
-//! 
-//! 
 
 mod api_calls;
 mod request;
