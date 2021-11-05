@@ -1,11 +1,11 @@
-use crate::{structures::mod_structs::*, request::request_rel, Ferinth, Result};
+use crate::{request::request_rel, structures::mod_structs::*, Ferinth, Result};
 
 impl Ferinth {
     /// Get mod with ID `mod_id`
     pub async fn get_mod(&self, mod_id: &str) -> Result<Mod> {
-        Ok(request_rel(self, format!("/mod/{}", mod_id))
+        request_rel(self, format!("/mod/{}", mod_id))
             .await?
             .json()
-            .await?)
+            .await
     }
 }

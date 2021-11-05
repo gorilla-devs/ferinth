@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.1] - 05.11.2021
+
+- This crate now makes `reqwest` use `rustls` because **OpenSSL = bad**
+- Made API calls' return syntaz more concise
+
 ## [1.2.0] - 03.11.2021
 
 - Made date/time fields use Chrono's `DateTime<Utc>`
