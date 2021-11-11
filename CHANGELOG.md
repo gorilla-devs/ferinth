@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.3.0] - 11.11.2021
+
+- Added doctests for every method and struct, which means more documentation and tests!
+- Update readme and docs front page
+- Added more extensive error handling
+- Made many return statements more concise
+- Methods accepting IDs now verify that they are base62 compliant using a RegEx
+- Added `Clone` to all structs and enums
+- Added `PartialEq` to all enums
+- 
+
 ## [1.2.1] - 05.11.2021
 
 - This crate now makes `reqwest` use `rustls` because **OpenSSL = bad**

@@ -1,12 +1,11 @@
 [package]
 name = "ferinth"
 # The major version specifies which version of the Modrinth API this supports
-version = "1.2.1"
+version = "1.3.0"
 edition = "2021"
 authors = ["theRookieCoder <ileshkt@gmail.com>"]
 description = "A simple library to use the Modrinth API in Rust projects"
 repository = "https://github.com/theRookieCoder/ferinth"
-homepage = "https://docs.rs/ferinth"
 license = "MIT"
 publish = ["crates-io"]
 keywords = ["modrinth", "minecraft", "modding"]
@@ -19,4 +18,10 @@ exclude = [
 reqwest = { version = "0", default-features = false, features = ["json", "rustls-tls"] }
 serde = { version = "1", features = ["derive"] }
 chrono = { version = "0", features = ["serde"] }
+thiserror = "1"
 bytes = "1"
+regex = "1"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+tokio-test = "0"

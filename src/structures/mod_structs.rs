@@ -1,8 +1,12 @@
-use super::{ID, Datetime};
+use super::{Datetime, ID};
 use serde::{Deserialize, Serialize};
-use std::fmt::{Display, Formatter};
+use std::{
+    clone::Clone,
+    fmt::{Display, Formatter},
+    cmp::PartialEq,
+};
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Mod {
     /// The mod's ID
     pub id: ID,
@@ -51,7 +55,7 @@ pub struct Mod {
     pub donation_urls: Option<Vec<DonationLink>>,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct License {
     /// The license's ID
     pub id: String,
@@ -61,7 +65,7 @@ pub struct License {
     pub url: Option<String>,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct DonationLink {
     /// The donation link's platform ID
     pub id: String,
@@ -71,7 +75,7 @@ pub struct DonationLink {
     pub url: String,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
 pub enum ModStatus {
     #[serde(rename = "approved")]
     Approved,
@@ -87,7 +91,7 @@ pub enum ModStatus {
     Unknown,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
 pub enum ModSupportRange {
     #[serde(rename = "required")]
     Required,

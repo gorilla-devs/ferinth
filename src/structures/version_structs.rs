@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
+use std::clone::Clone;
+use std::cmp::PartialEq;
 use super::*;
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Version {
     /// The version's ID
     pub id: ID,
@@ -36,7 +38,7 @@ pub struct Version {
     pub loaders: Vec<String>,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
 pub enum VersionType {
     #[serde(rename = "alpha")]
 	Alpha,
@@ -46,7 +48,7 @@ pub enum VersionType {
 	Release
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct VersionFile {
     /// The file's hashes
     pub hashes: Hashes,
@@ -56,7 +58,7 @@ pub struct VersionFile {
     pub filename: String,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Hashes {
     /// The SHA512 hash of the version file
     pub sha512: Option<String>,

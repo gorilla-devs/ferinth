@@ -1,7 +1,8 @@
-use serde::{Deserialize, Serialize};
 use super::*;
+use serde::{Deserialize, Serialize};
+use std::{clone::Clone, cmp::PartialEq};
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct User {
     /// The user's ID
     pub id: ID,
@@ -23,16 +24,13 @@ pub struct User {
     pub role: UserRole,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct TeamMember {
     /// The ID of the member's team
     pub team_id: String,
     /// The team member's user ID
     pub user_id: String,
     /// This team member's role
-    /// 
-    /// This field _should_ be an enum, but because it can be anything (for some reason) its a string
-    // pub role: TeamRole,
     pub role: String,
     /// ? Unknown use
     pub permissions: Option<isize>,
@@ -40,16 +38,7 @@ pub struct TeamMember {
     pub accepted: bool,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
-pub enum TeamRole {
-    #[serde(alias = "OWNER")] // Bug in Labrinth. @serde I WANT CASE INSENSITIVE DESERIALISATION
-    Owner,
-    Member,
-    Maintainer,
-    Contributor,
-}
-
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
 pub enum UserRole {
     #[serde(rename = "developer")]
     Developer,
