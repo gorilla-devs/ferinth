@@ -1,5 +1,5 @@
 use crate::{
-    api_calls::check_id_slug,
+    api_calls::{check_id_slug, check_sha1_hash},
     request::{request, request_rel},
     structures::version_structs::*,
     Ferinth, Result,
@@ -46,6 +46,28 @@ impl Ferinth {
     pub async fn get_version(&self, version_id: &str) -> Result<Version> {
         check_id_slug(version_id)?;
         Ok(request_rel(self, format!("/version/{}", version_id))
+            .await?
+            .json()
+            .await?)
+    }
+
+    /// Get version with hash `sha1`
+    ///
+    /// Example:
+    /// ```rust
+    /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
+    /// # tokio_test::block_on( async {
+    /// let sodium_version = modrinth .get_version_by_hash("795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf") .await?;
+    /// assert_eq!(
+    ///     sodium_version.mod_id,
+    ///     "AANobbMI",
+    /// );
+    /// # Ok::<(), ferinth::Error>(())
+    /// # } );
+    /// ```
+    pub async fn get_version_by_hash(&self, hash: &str) -> Result<Version> {
+        check_sha1_hash(hash)?;
+        Ok(request_rel(self, format!("/version_file/{}", hash))
             .await?
             .json()
             .await?)

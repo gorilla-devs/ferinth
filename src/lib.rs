@@ -97,6 +97,8 @@ pub mod structures;
 pub enum Error {
     #[error("A given string was not base62")]
     NotBase62,
+    #[error("A given string was not a hash")]
+    NotValidHash,
     #[error("{}", .0)]
     ReqwestError(#[from] reqwest::Error),
 }

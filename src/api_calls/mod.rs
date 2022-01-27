@@ -15,3 +15,14 @@ pub(crate) fn check_id_slug(input: &str) -> Result<()> {
         false => Ok(()),
     }
 }
+
+/// Verify that a given string `input` is a SHA1 hash
+pub(crate) fn check_sha1_hash(input: &str) -> Result<()> {
+    match regex::Regex::new("^[a-f0-9]{40}$")
+        .unwrap()
+        .is_match(input)
+    {
+        true => Ok(()),
+        false => Err(Error::NotValidHash),
+    }
+}
