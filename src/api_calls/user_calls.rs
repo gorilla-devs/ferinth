@@ -38,9 +38,9 @@ impl Ferinth {
     /// assert_eq!(
     ///     jellysquid_mods,
     ///     vec![
-    ///         "gvQqBUqZ",
-    ///         "AANobbMI",
     ///         "hEOCdOgW",
+    ///         "AANobbMI",
+    ///         "gvQqBUqZ",
     ///         "AZomiSrC"
     ///     ],
     /// );
