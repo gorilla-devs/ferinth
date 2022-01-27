@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.0] - 27.01.2022
+
+- New error `NotSHA1` to show that an argument provided an invalid SHA1 hash
+- Added a new function to verify that a string is SHA1 compliant
+- Added new api call, `get_version_from_file_hash()` which gets the version of a version file from the version file's hash ([PR #1](https://github.com/theRookieCoder/ferinth/pull/1) by [@4JX](https://github.com/4JX))
+
 ## [1.3.0] - 11.11.2021
 
 - Added doctests for every method and struct, which means more documentation and tests!
@@ -9,7 +15,6 @@
 - Methods accepting IDs now verify that they are base62 compliant using a RegEx
 - Added `Clone` to all structs and enums
 - Added `PartialEq` to all enums
-- 
 
 ## [1.2.1] - 05.11.2021
 

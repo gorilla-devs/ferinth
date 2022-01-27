@@ -16,6 +16,7 @@
 //!   - Get user by user ID
 //!   - List team members by team ID
 //!   - Get version by version ID
+//!   - Get version by file hash
 //!   - List versions by mod ID
 //!   - Download version file
 //! 
@@ -95,10 +96,10 @@ pub mod structures;
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
-    #[error("A given string was not base62")]
+    #[error("A given string was not base62 compliant")]
     NotBase62,
-    #[error("A given string was not a hash")]
-    NotValidHash,
+    #[error("A given string was not SHA1 compliant")]
+    NotSHA1,
     #[error("{}", .0)]
     ReqwestError(#[from] reqwest::Error),
 }

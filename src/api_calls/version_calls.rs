@@ -51,13 +51,14 @@ impl Ferinth {
             .await?)
     }
 
-    /// Get version with hash `sha1`
+    /// Get the version of a version file with hash `file_hash`
     ///
     /// Example:
     /// ```rust
     /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
     /// # tokio_test::block_on( async {
-    /// let sodium_version = modrinth .get_version_by_hash("795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf") .await?;
+    /// // A version file has the hash `795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf`, so we can the version it belongs to
+    /// let sodium_version = modrinth.get_version_from_file_hash("795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf").await?;
     /// assert_eq!(
     ///     sodium_version.mod_id,
     ///     "AANobbMI",
@@ -65,9 +66,9 @@ impl Ferinth {
     /// # Ok::<(), ferinth::Error>(())
     /// # } );
     /// ```
-    pub async fn get_version_by_hash(&self, hash: &str) -> Result<Version> {
-        check_sha1_hash(hash)?;
-        Ok(request_rel(self, format!("/version_file/{}", hash))
+    pub async fn get_version_from_file_hash(&self, file_hash: &str) -> Result<Version> {
+        check_sha1_hash(file_hash)?;
+        Ok(request_rel(self, format!("/version_file/{}", file_hash))
             .await?
             .json()
             .await?)
