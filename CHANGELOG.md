@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1] - 28.01.2022
+
+- Edit doctest for `user_calls::list_mods()` so that the order of the mod_ids returned doesn't matter
+- The following were implemented as per a suggestion by [4JX](https://github.com/4JX) [here](https://github.com/theRookieCoder/ferinth/pull/1)
+- Removed `regex` and used `lazy-regex` which is faster as the regexes are parsed at compile time
+- Update base62 and SHA1 checkers to use `lazy_regex::regex_is_match` for much faster and more readable code
+
 ## [1.4.0] - 27.01.2022
 
 - New error `NotSHA1` to show that an argument provided an invalid SHA1 hash

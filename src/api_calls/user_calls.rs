@@ -35,14 +35,17 @@ impl Ferinth {
     /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
     /// # tokio_test::block_on( async {
     /// let jellysquid_mods = modrinth.list_mods("TEZXhE2U").await?;
-    /// assert_eq!(
-    ///     jellysquid_mods,
-    ///     vec![
-    ///         "hEOCdOgW",
-    ///         "AANobbMI",
-    ///         "gvQqBUqZ",
-    ///         "AZomiSrC"
-    ///     ],
+    /// assert!(vec![
+    ///         "hEOCdOgW".to_string(),
+    ///         "AANobbMI".to_string(),
+    ///         "gvQqBUqZ".to_string(),
+    ///         "AZomiSrC".to_string()
+    ///     ]
+    ///     .iter()
+    ///     // So that the order of the mods isn't checked
+    ///     .all(
+    ///         |mod_id| jellysquid_mods.contains(mod_id)
+    ///     )
     /// );
     /// # Ok::<(), ferinth::Error>(())
     /// # } );
