@@ -15,7 +15,7 @@ impl Ferinth {
     /// # tokio_test::block_on( async {
     /// let sodium_versions = modrinth.list_versions("AANobbMI").await?;
     /// assert_eq!(
-    ///     sodium_versions[0].mod_id,
+    ///     sodium_versions[0].project_id,
     ///     "AANobbMI",
     /// );
     /// # Ok::<(), ferinth::Error>(())
@@ -37,7 +37,7 @@ impl Ferinth {
     /// # tokio_test::block_on( async {
     /// let sodium_version = modrinth.get_version("xuWxRZPd").await?;
     /// assert_eq!(
-    ///     sodium_version.mod_id,
+    ///     sodium_version.project_id,
     ///     "AANobbMI",
     /// );
     /// # Ok::<(), ferinth::Error>(())
@@ -60,7 +60,7 @@ impl Ferinth {
     /// // A version file has the hash `795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf`, so we can the version it belongs to
     /// let sodium_version = modrinth.get_version_from_file_hash("795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf").await?;
     /// assert_eq!(
-    ///     sodium_version.mod_id,
+    ///     sodium_version.project_id,
     ///     "AANobbMI",
     /// );
     /// # Ok::<(), ferinth::Error>(())
