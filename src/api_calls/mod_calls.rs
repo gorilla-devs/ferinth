@@ -1,5 +1,5 @@
 use crate::{
-    api_calls::check_id_slug, request::request_rel, structures::mod_structs::*, Ferinth, Result,
+    api_calls::check_id_slug, request::request_rel, structures::project_structs::*, Ferinth, Result,
 };
 
 impl Ferinth {
@@ -14,7 +14,7 @@ impl Ferinth {
     ///     sodium_mod.title,
     ///     "Sodium",
     /// );
-    /// 
+    ///
     /// // You can also use the mod slug
     /// let ok_zoomer_mod = modrinth.get_mod("ok-zoomer").await?;
     /// assert_eq!(
@@ -26,7 +26,7 @@ impl Ferinth {
     /// ```
     pub async fn get_mod(&self, mod_id: &str) -> Result<Mod> {
         check_id_slug(mod_id)?;
-        Ok(request_rel(self, format!("/mod/{}", mod_id))
+        Ok(request_rel(self, format!("/project/{}", mod_id))
             .await?
             .json()
             .await?)

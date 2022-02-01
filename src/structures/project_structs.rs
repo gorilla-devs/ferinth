@@ -2,8 +2,8 @@ use super::{Datetime, ID};
 use serde::{Deserialize, Serialize};
 use std::{
     clone::Clone,
-    fmt::{Display, Formatter},
     cmp::PartialEq,
+    fmt::{Display, Formatter},
 };
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -12,6 +12,8 @@ pub struct Mod {
     pub id: ID,
     /// The mod's slug. This can change at any time
     pub slug: String,
+    /// The project type of the project
+    pub project_type: String,
     /// The ID of the team that has ownership of this mod
     pub team: ID,
     /// The mod's title or name
@@ -27,16 +29,25 @@ pub struct Mod {
     pub published: Datetime,
     /// WHen the mod was last updated
     pub updated: Datetime,
+
     /// The mod's status
     pub status: ModStatus,
+    /// The rejection data of the project
+    pub moderator_message: Option<ModeratorMessage>,
+
     /// The mod's license of the mod
     pub license: License,
+
     /// The mod's client side support range
     pub client_side: ModSupportRange,
     /// The mod's server side support range
     pub server_side: ModSupportRange,
+
     /// The total number of downloads the mod has
     pub downloads: usize,
+    /// The total number of followers this project has accumulated
+    pub followers: u32,
+
     /// A list of categories the mod is in
     pub categories: Vec<String>,
     /// The mod's version listed as their IDs
@@ -53,6 +64,9 @@ pub struct Mod {
     pub discord_url: Option<String>,
     /// A list of donation links the mod has
     pub donation_urls: Option<Vec<DonationLink>>,
+
+    /// A string of URLs to visual content featuring the project
+    pub gallery: Vec<GalleryItem>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -79,6 +93,8 @@ pub struct DonationLink {
 pub enum ModStatus {
     #[serde(rename = "approved")]
     Approved,
+    #[serde(rename = "archived")]
+    Archived,
     #[serde(rename = "rejected")]
     Rejected,
     #[serde(rename = "draft")]
@@ -116,4 +132,19 @@ impl Display for ModSupportRange {
             }
         )
     }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct ModeratorMessage {
+    pub message: String,
+    pub body: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct GalleryItem {
+    pub url: String,
+    pub featured: bool,
+    pub title: Option<String>,
+    pub description: Option<String>,
+    pub created: Datetime,
 }

@@ -1,7 +1,7 @@
 use crate::{Ferinth, Result};
 use reqwest::{header::USER_AGENT, IntoUrl, Response};
 
-const API_URL_BASE: &str = "https://api.modrinth.com/api/v1";
+const API_URL_BASE: &str = "https://api.modrinth.com/v2";
 
 /// Perform a GET request on base url + `route` using `client`
 pub(crate) async fn request_rel(client: &Ferinth, route: String) -> Result<Response> {

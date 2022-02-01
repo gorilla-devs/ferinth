@@ -52,7 +52,7 @@ impl Ferinth {
     /// ```
     pub async fn list_mods(&self, user_id: &str) -> Result<Vec<ID>> {
         check_id_slug(user_id)?;
-        Ok(request_rel(self, format!("/user/{}/mods", user_id))
+        Ok(request_rel(self, format!("/user/{}/projects", user_id))
             .await?
             .json()
             .await?)

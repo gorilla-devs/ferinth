@@ -28,8 +28,8 @@ pub struct User {
 pub struct TeamMember {
     /// The ID of the member's team
     pub team_id: String,
-    /// The team member's user ID
-    pub user_id: String,
+    /// The user associated with the member
+    pub user: User,
     /// This team member's role
     pub role: String,
     /// ? Unknown use

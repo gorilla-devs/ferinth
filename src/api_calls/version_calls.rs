@@ -23,7 +23,7 @@ impl Ferinth {
     /// ```
     pub async fn list_versions(&self, mod_id: &str) -> Result<Vec<Version>> {
         check_id_slug(mod_id)?;
-        Ok(request_rel(self, format!("/mod/{}/version", mod_id))
+        Ok(request_rel(self, format!("/project/{}/version", mod_id))
             .await?
             .json()
             .await?)

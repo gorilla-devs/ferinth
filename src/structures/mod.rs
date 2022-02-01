@@ -1,4 +1,4 @@
-pub mod mod_structs;
+pub mod project_structs;
 pub mod user_structs;
 pub mod version_structs;
 
