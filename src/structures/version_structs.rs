@@ -1,7 +1,7 @@
+use super::*;
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
 use std::cmp::PartialEq;
-use super::*;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Version {
@@ -41,11 +41,11 @@ pub struct Version {
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
 pub enum VersionType {
     #[serde(rename = "alpha")]
-	Alpha,
+    Alpha,
     #[serde(rename = "beta")]
-	Beta,
+    Beta,
     #[serde(rename = "release")]
-	Release
+    Release,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

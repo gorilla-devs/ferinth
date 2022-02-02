@@ -2,8 +2,8 @@ use super::{Datetime, ID};
 use serde::{Deserialize, Serialize};
 use std::{
     clone::Clone,
-    fmt::{Display, Formatter},
     cmp::PartialEq,
+    fmt::{Display, Formatter},
 };
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

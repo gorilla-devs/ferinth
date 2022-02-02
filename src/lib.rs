@@ -4,7 +4,7 @@
 //! It uses [Reqwest](https://docs.rs/reqwest/) as its HTTPS client and deserialises responses to strongly typed structs using [SerDe](https://serde.rs/).
 //!
 //! ## Features
-//! 
+//!
 //! This crate includes the following:
 //!
 //! - All structure definitions based on <https://github.com/modrinth/labrinth/wiki/API-Documentation#structure-definitions>
@@ -19,7 +19,7 @@
 //!   - Get version by file hash
 //!   - List versions by mod ID
 //!   - Download version file
-//! 
+//!
 //! URL traversal is blocked because all IDs are verified.
 //! ```
 //! # let modrinth = ferinth::Ferinth::new("ferinth-example");
@@ -27,9 +27,9 @@
 //! assert!(modrinth.get_mod("sodium/version").await.is_err());
 //! # } );
 //! ```
-//! 
+//!
 //! This crate uses [Rustls](https://docs.rs/rustls/) rather than OpenSSL, because OpenSSL is outdated and slower.
-//! 
+//!
 //! The following features have not yet been implemented
 //! - Search mods
 //! - User authentication
@@ -115,6 +115,7 @@ pub(crate) type Result<T> = std::result::Result<T, Error>;
 /// // Use the instance to call the API
 /// let sodium_mod = modrinth.get_mod("sodium");
 /// ```
+#[derive(Debug, Clone)]
 pub struct Ferinth {
     client: reqwest::Client,
     user_agent: String,
