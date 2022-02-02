@@ -4,6 +4,7 @@ use std::clone::Clone;
 use std::cmp::PartialEq;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct Version {
     /// The version's ID
     pub id: ID,
@@ -41,6 +42,7 @@ pub struct Version {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub enum VersionType {
     #[serde(rename = "alpha")]
     Alpha,

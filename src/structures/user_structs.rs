@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::{clone::Clone, cmp::PartialEq};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct User {
     /// The user's ID
     pub id: ID,
@@ -25,6 +26,7 @@ pub struct User {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct TeamMember {
     /// The ID of the member's team
     pub team_id: String,

@@ -7,6 +7,7 @@ use std::{
 };
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct Project {
     /// The project's ID
     pub id: ID,
