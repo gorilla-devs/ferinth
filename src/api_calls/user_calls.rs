@@ -28,13 +28,13 @@ impl Ferinth {
             .await?)
     }
 
-    /// Get a list of mod IDs of mods that the user owns
+    /// Get a list of project IDs of projects that the user owns
     ///
     /// Example:
     /// ```rust
     /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
     /// # tokio_test::block_on( async {
-    /// let jellysquid_mods = modrinth.list_mods("TEZXhE2U").await?;
+    /// let jellysquid_projects = modrinth.list_projects("TEZXhE2U").await?;
     /// assert!(vec![
     ///         "hEOCdOgW".to_string(),
     ///         "AANobbMI".to_string(),
@@ -42,15 +42,15 @@ impl Ferinth {
     ///         "AZomiSrC".to_string()
     ///     ]
     ///     .iter()
-    ///     // So that the order of the mods isn't checked
+    ///     // So that the order of the projects isn't checked
     ///     .all(
-    ///         |mod_id| jellysquid_mods.contains(mod_id)
+    ///         |project_id| jellysquid_projects.contains(project_id)
     ///     )
     /// );
     /// # Ok::<(), ferinth::Error>(())
     /// # } );
     /// ```
-    pub async fn list_mods(&self, user_id: &str) -> Result<Vec<ID>> {
+    pub async fn list_projects(&self, user_id: &str) -> Result<Vec<ID>> {
         check_id_slug(user_id)?;
         Ok(request_rel(self, format!("/user/{}/projects", user_id))
             .await?

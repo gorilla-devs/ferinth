@@ -20,9 +20,9 @@ async fn main() -> Result<(), Error> {
     // You can use the mod ID, or the mod slug
     // The mod ID will never change but the mod slug can change at anytime
     // Using the mod slug
-    let sodium = api.get_mod("sodium").await?;
+    let sodium = api.get_project("sodium").await?;
     // Using the mod ID
-    let sodium = api.get_mod("AANobbMI").await?;
+    let sodium = api.get_project("AANobbMI").await?;
 
     // Now lets get the versions that the Sodium mod has
     let sodium_versions = api.list_versions("AANobbMI").await?;

@@ -1,6 +1,6 @@
 use crate::{Error, Result};
 
-pub mod mod_calls;
+pub mod project_calls;
 pub mod tag_calls;
 pub mod user_calls;
 pub mod version_calls;

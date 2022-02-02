@@ -7,62 +7,62 @@ use std::{
 };
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct Mod {
-    /// The mod's ID
+pub struct Project {
+    /// The project's ID
     pub id: ID,
-    /// The mod's slug. This can change at any time
+    /// The project's slug. This can change at any time
     pub slug: String,
     /// The project type of the project
-    pub project_type: String,
-    /// The ID of the team that has ownership of this mod
+    pub project_type: ProjectType,
+    /// The ID of the team that has ownership of this project
     pub team: ID,
-    /// The mod's title or name
+    /// The project's title or name
     pub title: String,
-    /// A short description of the mod
+    /// A short description of the project
     pub description: String,
     /// A long form of the description
     pub body: String,
-    #[deprecated(note = "Read from `Mod.body` instead")]
-    /// A link to the long description of the mod
+    #[deprecated(note = "Read from `Project.body` instead")]
+    /// A link to the long description of the project
     pub body_url: Option<String>,
-    /// When the mod was first published
+    /// When the project was first published
     pub published: Datetime,
-    /// WHen the mod was last updated
+    /// WHen the project was last updated
     pub updated: Datetime,
 
-    /// The mod's status
-    pub status: ModStatus,
+    /// The project's status
+    pub status: ProjectStatus,
     /// The rejection data of the project
     pub moderator_message: Option<ModeratorMessage>,
 
-    /// The mod's license of the mod
+    /// The project's license
     pub license: License,
 
-    /// The mod's client side support range
-    pub client_side: ModSupportRange,
-    /// The mod's server side support range
-    pub server_side: ModSupportRange,
+    /// The project's client side support range
+    pub client_side: ProjectSupportRange,
+    /// The project's server side support range
+    pub server_side: ProjectSupportRange,
 
-    /// The total number of downloads the mod has
+    /// The total number of downloads the project has
     pub downloads: usize,
     /// The total number of followers this project has accumulated
     pub followers: u32,
 
-    /// A list of categories the mod is in
+    /// A list of categories the project is in
     pub categories: Vec<String>,
-    /// The mod's version listed as their IDs
+    /// The project's versions listed as their IDs
     pub versions: Vec<ID>,
-    /// The link to the mod's icon
+    /// The link to the project's icon
     pub icon_url: Option<String>,
-    /// A link to submit bugs or issues about the mod
+    /// A link to submit bugs or issues about the project
     pub issues_url: Option<String>,
-    /// A link to the mod's source code
+    /// A link to the project's source code
     pub source_url: Option<String>,
-    /// A link to the mod's wiki page or other relevant information
+    /// A link to the project's wiki page or other relevant information
     pub wiki_url: Option<String>,
-    /// A link to the mod's discord
+    /// A link to the project's discord
     pub discord_url: Option<String>,
-    /// A list of donation links the mod has
+    /// A list of donation links the project has
     pub donation_urls: Option<Vec<DonationLink>>,
 
     /// A string of URLs to visual content featuring the project
@@ -90,7 +90,7 @@ pub struct DonationLink {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
-pub enum ModStatus {
+pub enum ProjectStatus {
     #[serde(rename = "approved")]
     Approved,
     #[serde(rename = "archived")]
@@ -108,7 +108,7 @@ pub enum ModStatus {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
-pub enum ModSupportRange {
+pub enum ProjectSupportRange {
     #[serde(rename = "required")]
     Required,
     #[serde(rename = "optional")]
@@ -119,7 +119,7 @@ pub enum ModSupportRange {
     Unknown,
 }
 
-impl Display for ModSupportRange {
+impl Display for ProjectSupportRange {
     fn fmt(&self, fmt: &mut Formatter) -> std::result::Result<(), std::fmt::Error> {
         write!(
             fmt,
@@ -134,17 +134,25 @@ impl Display for ModSupportRange {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ModeratorMessage {
     pub message: String,
     pub body: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct GalleryItem {
     pub url: String,
     pub featured: bool,
     pub title: Option<String>,
     pub description: Option<String>,
     pub created: Datetime,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum ProjectType {
+    #[serde(rename = "mod")]
+    Mod,
+    #[serde(rename = "modpack")]
+    Modpack,
 }

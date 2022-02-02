@@ -7,7 +7,7 @@ use std::cmp::PartialEq;
 pub struct Version {
     /// The version's ID
     pub id: ID,
-    /// The ID of the mod this version is for
+    /// The ID of the project this version is for
     pub project_id: ID,
     /// The ID of the author who published this version
     pub author_id: ID,

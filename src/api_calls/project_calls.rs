@@ -3,20 +3,20 @@ use crate::{
 };
 
 impl Ferinth {
-    /// Get mod with ID `mod_id`
+    /// Get a project with ID `project_id`
     ///
     /// Example:
     /// ```rust
     /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
     /// # tokio_test::block_on( async {
-    /// let sodium_mod = modrinth.get_mod("AANobbMI").await?;
+    /// let sodium_mod = modrinth.get_project("AANobbMI").await?;
     /// assert_eq!(
     ///     sodium_mod.title,
     ///     "Sodium",
     /// );
     ///
-    /// // You can also use the mod slug
-    /// let ok_zoomer_mod = modrinth.get_mod("ok-zoomer").await?;
+    /// // You can also use the project slug
+    /// let ok_zoomer_mod = modrinth.get_project("ok-zoomer").await?;
     /// assert_eq!(
     ///     ok_zoomer_mod.title,
     ///     "Ok Zoomer",
@@ -24,7 +24,7 @@ impl Ferinth {
     /// # Ok::<(), ferinth::Error>(())
     /// # } );
     /// ```
-    pub async fn get_mod(&self, mod_id: &str) -> Result<Mod> {
+    pub async fn get_project(&self, mod_id: &str) -> Result<Project> {
         check_id_slug(mod_id)?;
         Ok(request_rel(self, format!("/project/{}", mod_id))
             .await?

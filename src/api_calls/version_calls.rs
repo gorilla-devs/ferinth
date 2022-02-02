@@ -7,7 +7,7 @@ use crate::{
 use bytes::Bytes;
 
 impl Ferinth {
-    /// Get the versions of mod with `mod_id`
+    /// Get the versions of project with `project_id`
     ///
     /// Example:
     /// ```rust
@@ -21,12 +21,14 @@ impl Ferinth {
     /// # Ok::<(), ferinth::Error>(())
     /// # } );
     /// ```
-    pub async fn list_versions(&self, mod_id: &str) -> Result<Vec<Version>> {
-        check_id_slug(mod_id)?;
-        Ok(request_rel(self, format!("/project/{}/version", mod_id))
-            .await?
-            .json()
-            .await?)
+    pub async fn list_versions(&self, project_id: &str) -> Result<Vec<Version>> {
+        check_id_slug(project_id)?;
+        Ok(
+            request_rel(self, format!("/project/{}/version", project_id))
+                .await?
+                .json()
+                .await?,
+        )
     }
 
     /// Get version with ID `version_id`

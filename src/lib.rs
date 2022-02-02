@@ -9,29 +9,29 @@
 //!
 //! - All structure definitions based on <https://github.com/modrinth/labrinth/wiki/API-Documentation#structure-definitions>
 //! - Includes the following API calls:
-//!   - Get mod by mod ID
-//!   - List mod categories
+//!   - Get project by project ID
+//!   - List project categories
 //!   - List mod loaders
 //!   - List game versions
 //!   - Get user by user ID
 //!   - List team members by team ID
 //!   - Get version by version ID
 //!   - Get version by file hash
-//!   - List versions by mod ID
+//!   - List versions by project ID
 //!   - Download version file
 //!
 //! URL traversal is blocked because all IDs are verified.
 //! ```
 //! # let modrinth = ferinth::Ferinth::new("ferinth-example");
 //! # tokio_test::block_on( async {
-//! assert!(modrinth.get_mod("sodium/version").await.is_err());
+//! assert!(modrinth.get_project("sodium/version").await.is_err());
 //! # } );
 //! ```
 //!
 //! This crate uses [Rustls](https://docs.rs/rustls/) rather than OpenSSL, because OpenSSL is outdated and slower.
 //!
 //! The following features have not yet been implemented
-//! - Search mods
+//! - Search projects
 //! - User authentication
 //! - Get current user (constrained by the lack of user authentication)
 //!
@@ -63,12 +63,12 @@
 //! let api = Ferinth::new("example");
 //!
 //! // Now, lets get the Sodium mod
-//! // You can use the mod ID, or the mod slug
-//! // The mod ID will never change but the mod slug can change at anytime
-//! // Using the mod slug
-//! let sodium = api.get_mod("sodium").await?;
-//! // Using the mod ID
-//! let sodium = api.get_mod("AANobbMI").await?;
+//! // You can use the project ID, or the project slug
+//! // The project ID will never change but the project slug can change at anytime
+//! // Using the project slug
+//! let sodium = api.get_project("sodium").await?;
+//! // Using the project ID
+//! let sodium = api.get_project("AANobbMI").await?;
 //!
 //! // Now lets get the versions that the Sodium mod has
 //! let sodium_versions = api.list_versions("AANobbMI").await?;
@@ -113,7 +113,7 @@ pub(crate) type Result<T> = std::result::Result<T, Error>;
 /// # use ferinth::Ferinth;
 /// let modrinth = Ferinth::new("ferinth-example");
 /// // Use the instance to call the API
-/// let sodium_mod = modrinth.get_mod("sodium");
+/// let sodium_mod = modrinth.get_project("sodium");
 /// ```
 pub struct Ferinth {
     client: reqwest::Client,
