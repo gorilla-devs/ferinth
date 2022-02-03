@@ -1,18 +1,18 @@
 use super::*;
 use serde::{Deserialize, Serialize};
-use std::{clone::Clone, cmp::PartialEq};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct User {
     /// The user's ID
     pub id: ID,
-    /// The user's Github ID. Only visible to this user
+    /// The user's GitHub username. Only visible to the user
     pub github_id: Option<usize>,
     /// The user's username
     pub username: String,
-    /// The user's display name. Only visible to this user
+    /// The user's display name. Only visible to the user
     pub name: Option<String>,
-    /// The user's email. Only visible to this user
+    /// The user's email. Only visible to the user
     pub email: Option<String>,
     /// A link to the user's avatar
     pub avatar_url: Option<String>,
@@ -25,25 +25,24 @@ pub struct User {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct TeamMember {
     /// The ID of the member's team
     pub team_id: String,
-    /// The team member's user ID
-    pub user_id: String,
+    /// The user associated with the member
+    pub user: User,
     /// This team member's role
     pub role: String,
-    /// ? Unknown use
+    /// ? The user's permissions in bitflag format
     pub permissions: Option<isize>,
     /// Whether the user has accepted membership
     pub accepted: bool,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
+#[serde(rename_all = "lowercase")]
 pub enum UserRole {
-    #[serde(rename = "developer")]
     Developer,
-    #[serde(rename = "moderator")]
     Moderator,
-    #[serde(rename = "admin")]
     Admin,
 }

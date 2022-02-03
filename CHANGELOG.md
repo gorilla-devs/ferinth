@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0] - 03.02.2022
+
+Update to the [Modrinth API v2](https://docs.modrinth.com). The most breaking changes are the following:
+
+- `get_mod()` is now `get_project()`
+- Most of the structure definition have had fields added/changed
+
+A lot of the changed are under the hood
+
+Check out [PR #4](https://github.com/theRookieCoder/ferinth/pull/4) to see all the changes made
+
 ## [1.4.2] - 02.02.2022
 
 - Implement `Clone` and `Debug` for `Ferinth`
