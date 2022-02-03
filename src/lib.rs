@@ -115,6 +115,7 @@ pub(crate) type Result<T> = std::result::Result<T, Error>;
 /// // Use the instance to call the API
 /// let sodium_mod = modrinth.get_project("sodium");
 /// ```
+#[derive(Debug, Clone)]
 pub struct Ferinth {
     client: reqwest::Client,
     user_agent: String,

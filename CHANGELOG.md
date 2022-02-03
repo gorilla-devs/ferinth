@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.4.2] - 02.02.2022
+
+- Implement `Clone` and `Debug` for `Ferinth`
+
 ## [1.4.1] - 28.01.2022
 
 - Edit doctest for `user_calls::list_mods()` so that the order of the mod_ids returned doesn't matter
