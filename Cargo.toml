@@ -1,7 +1,7 @@
 [package]
 name = "ferinth"
 # The major version specifies which version of the Modrinth API this supports
-version = "2.0.0"
+version = "2.1.0"
 edition = "2021"
 authors = ["theRookieCoder <ileshkt@gmail.com>", "4JX (https://github.com/4JX)"]
 description = "A simple library to use the Modrinth API in Rust projects"
