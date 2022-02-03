@@ -10,8 +10,8 @@ impl Ferinth {
     ///
     /// Example:
     /// ```rust
-    /// # #[tokio::main]
     /// # use ferinth::structures::user_structs::UserRole;
+    /// # #[tokio::main]
     /// # async fn main() -> Result<(), ferinth::Error> {
     /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
     /// let jellysquid = modrinth.get_user("TEZXhE2U").await?;
