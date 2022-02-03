@@ -6,13 +6,13 @@
 
 Ferinth is a simple library to use the Modrinth API in Rust projects
 
-It provides API bindings for the [Modrinth API](https://github.com/modrinth/labrinth/wiki/API-Documentation), is intuitive to use, and provides typed structs for all the data used.
+It provides API bindings for the [Modrinth API](https://docs.modrinth.com), is intuitive to use, and provides typed structs for all the structures used.
 
 ## Use
 
-**The major version of this crate's version directly corresponds to the API version it uses**. So if you want to use the Modrinth API version 1, which is the only one available now, then specify this crate version as `"1"`, and so on for other versions.  
+**The major version of this crate's version directly corresponds to the Modrinth API version it uses**. So for example if you want to use the Modrinth API version 2, which is the latest one available now, then specify this crate version as `2`.  
 After you have decided the API version to use, you can add this crate to your `Cargo.toml` like so
 ```toml
 [dependencies]
-ferinth = "1"
+ferinth = "2" # For API version 2
 ```

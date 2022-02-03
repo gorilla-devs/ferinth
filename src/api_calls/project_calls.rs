@@ -1,5 +1,8 @@
 use crate::{
-    api_calls::check_id_slug, request::request_rel, structures::project_structs::*, Ferinth, Result,
+    api_calls::check_id_slug,
+    request::{request, API_URL_BASE},
+    structures::project_structs::*,
+    Ferinth, Result,
 };
 
 impl Ferinth {
@@ -7,8 +10,9 @@ impl Ferinth {
     ///
     /// Example:
     /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
     /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
-    /// # tokio_test::block_on( async {
     /// let sodium_mod = modrinth.get_project("AANobbMI").await?;
     /// assert_eq!(
     ///     sodium_mod.title,
@@ -21,12 +25,11 @@ impl Ferinth {
     ///     ok_zoomer_mod.title,
     ///     "Ok Zoomer",
     /// );
-    /// # Ok::<(), ferinth::Error>(())
-    /// # } );
+    /// # Ok(()) }
     /// ```
-    pub async fn get_project(&self, mod_id: &str) -> Result<Project> {
-        check_id_slug(mod_id)?;
-        Ok(request_rel(self, format!("/project/{}", mod_id))
+    pub async fn get_project(&self, project_id: &str) -> Result<Project> {
+        check_id_slug(project_id)?;
+        Ok(request(self, API_URL_BASE.join("project/")?.join(project_id)?)
             .await?
             .json()
             .await?)

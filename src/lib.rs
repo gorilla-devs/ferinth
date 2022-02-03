@@ -7,7 +7,7 @@
 //!
 //! This crate includes the following:
 //!
-//! - All structure definitions based on <https://github.com/modrinth/labrinth/wiki/API-Documentation#structure-definitions>
+//! - All structure definitions based on <https://docs.modrinth.com/api-spec/>
 //! - Includes the following API calls:
 //!   - Get project by project ID
 //!   - List project categories
@@ -16,27 +16,24 @@
 //!   - Get user by user ID
 //!   - List team members by team ID
 //!   - Get version by version ID
-//!   - Get version by file hash
+//!   - Get version by a version file's hash
 //!   - List versions by project ID
 //!   - Download version file
 //!
 //! URL traversal is blocked because all IDs are verified.
 //! ```
+//! # #[tokio::main]
+//! # async fn main() {
 //! # let modrinth = ferinth::Ferinth::new("ferinth-example");
-//! # tokio_test::block_on( async {
 //! assert!(modrinth.get_project("sodium/version").await.is_err());
-//! # } );
+//! # }
 //! ```
 //!
-//! This crate uses [Rustls](https://docs.rs/rustls/) rather than OpenSSL, because OpenSSL is outdated and slower.
+//! This crate uses [RusTLS](https://docs.rs/rustls/) rather than OpenSSL, because OpenSSL is outdated and slower.
 //!
-//! The following features have not yet been implemented
+//! The following features still need to be implemented
 //! - Search projects
 //! - User authentication
-//! - Get current user (constrained by the lack of user authentication)
-//!
-//! Unfortunately, I am not planning to implement any of these features in this first version due to poor documentation.
-//! I will add these features in the next version, version 2, once the [Modrinth API v2](https://docs.modrinth.com/api-spec/) rolls out.
 //!
 //! ## Example (and Tutorial)
 //!
@@ -65,6 +62,7 @@
 //! // Now, lets get the Sodium mod
 //! // You can use the project ID, or the project slug
 //! // The project ID will never change but the project slug can change at anytime
+//!
 //! // Using the project slug
 //! let sodium = api.get_project("sodium").await?;
 //! // Using the project ID
@@ -75,17 +73,17 @@
 //!
 //! // The versions are sorted chronologically so the first element should be the latest one
 //! let latest_version = &sodium_versions[0];
-//! // And now we can get this version's mod file, which is called a version file
+//! // And now we can get this version's mod JAR file, which is called a version file
 //! let version_file = &latest_version.files[0];
 //!
 //! // Then we can download this version file
 //! let contents = api.download_version_file(version_file).await?;
-//! // And next, lets open the file we want to write this to
+//! // And next, let's open the file we want to write this to
 //! let mut mod_file = File::create("Sodium.jar")?;
 //! // And finally, we can write the contents to mod_file
 //! mod_file.write_all(&contents)?;
 //!
-//! // Now you can use load the JAR file using a mod loader. To play Sodium. you should use Fabric
+//! // Now you can load the JAR file using a mod loader. To play Sodium, you need the Fabric Loader
 //! # Ok(())
 //! # }
 //! ```
@@ -102,6 +100,8 @@ pub enum Error {
     NotSHA1,
     #[error("{}", .0)]
     ReqwestError(#[from] reqwest::Error),
+    #[error("{}", .0)]
+    URLParseError(#[from] url::ParseError),
 }
 
 pub(crate) type Result<T> = std::result::Result<T, Error>;

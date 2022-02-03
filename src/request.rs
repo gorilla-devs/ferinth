@@ -1,14 +1,11 @@
 use crate::{Ferinth, Result};
-use reqwest::{header::USER_AGENT, IntoUrl, Response};
+use reqwest::{header::USER_AGENT, IntoUrl, Response, Url};
 
-const API_URL_BASE: &str = "https://api.modrinth.com/v2";
-
-/// Perform a GET request on base url + `route` using `client`
-pub(crate) async fn request_rel(client: &Ferinth, route: String) -> Result<Response> {
-    request(client, format!("{}{}", API_URL_BASE, route)).await
+lazy_static::lazy_static! {
+    pub(crate) static ref API_URL_BASE: Url = Url::parse("https://api.modrinth.com/v2/").unwrap();
 }
 
-/// Perform a GET request on `url` using HTTP(S) client and user agent, `client`
+/// Perform a GET request on `url` using the HTTPS client and user agent from `client`
 pub(crate) async fn request(client: &Ferinth, url: impl IntoUrl) -> Result<Response> {
     let request = client
         .client

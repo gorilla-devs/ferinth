@@ -1,22 +1,23 @@
-use crate::{request::request_rel, Ferinth, Result};
+use crate::{
+    request::{request, API_URL_BASE},
+    structures::tag_structs::*,
+    Ferinth, Result,
+};
 
 impl Ferinth {
     /// List the categories a project can take
     ///
     /// Example:
     /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
     /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
-    /// # tokio_test::block_on( async {
     /// let categories = modrinth.list_categories().await?;
-    /// assert_eq!(
-    ///     categories.len(),
-    ///     12,
-    /// );
-    /// # Ok::<(), ferinth::Error>(())
-    /// # } );
+    /// assert!(categories.len() == 12);
+    /// # Ok(()) }
     /// ```
-    pub async fn list_categories(&self) -> Result<Vec<String>> {
-        Ok(request_rel(self, "/tag/category".into())
+    pub async fn list_categories(&self) -> Result<Vec<Category>> {
+        Ok(request(self, API_URL_BASE.join("tag/")?.join("category")?)
             .await?
             .json()
             .await?)
@@ -26,18 +27,15 @@ impl Ferinth {
     ///
     /// Example:
     /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
     /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
-    /// # tokio_test::block_on( async {
     /// let mod_loaders = modrinth.list_loaders().await?;
-    /// assert_eq!(
-    ///     mod_loaders,
-    ///     vec!["forge", "fabric"],
-    /// );
-    /// # Ok::<(), ferinth::Error>(())
-    /// # } );
+    /// assert!(mod_loaders.len() == 2);
+    /// # Ok(()) }
     /// ```
-    pub async fn list_loaders(&self) -> Result<Vec<String>> {
-        Ok(request_rel(self, "/tag/loader".into())
+    pub async fn list_loaders(&self) -> Result<Vec<Loader>> {
+        Ok(request(self, API_URL_BASE.join("tag/")?.join("loader")?)
             .await?
             .json()
             .await?)
@@ -45,14 +43,16 @@ impl Ferinth {
 
     /// List the Minecraft versions
     ///
-    /// Example: NO
+    /// Example: no
     ///
     /// I don't know why this exists.
-    /// Just use [Mojang's version manifest](https://launchermeta.mojang.com/mc/game/version_manifest_v2.json) which is more informative
+    /// Just use [Mojang's version manifest](https://launchermeta.mojang.com/mc/game/version_manifest_v2.json) which is much more informative
     pub async fn list_game_versions(&self) -> Result<Vec<String>> {
-        Ok(request_rel(self, "/tag/game_version".into())
-            .await?
-            .json()
-            .await?)
+        Ok(
+            request(self, API_URL_BASE.join("tag/")?.join("game_version")?)
+                .await?
+                .json()
+                .await?,
+        )
     }
 }

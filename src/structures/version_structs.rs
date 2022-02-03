@@ -1,7 +1,5 @@
 use super::*;
 use serde::{Deserialize, Serialize};
-use std::clone::Clone;
-use std::cmp::PartialEq;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(deny_unknown_fields)]
@@ -12,9 +10,8 @@ pub struct Version {
     pub project_id: ID,
     /// The ID of the author who published this version
     pub author_id: ID,
-    /// Whether the version is 'featured' (?) or not
+    /// Whether the version is 'featured' or not
     pub featured: bool,
-
     /// The name of this version
     pub name: String,
     /// The version's number. Ideally, this will follow semantic versioning
@@ -30,10 +27,9 @@ pub struct Version {
     pub downloads: usize,
     /// The version's type
     pub version_type: VersionType,
-
     /// A list of files available for download
     pub files: Vec<VersionFile>,
-    /// This version's dependencies, as a list of dependencies' versions' IDs
+    /// This version's dependencies
     pub dependencies: Vec<Dependency>,
     /// A list of Minecraft versions that this version supports
     pub game_versions: Vec<String>,
@@ -42,17 +38,15 @@ pub struct Version {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
-#[serde(deny_unknown_fields)]
+#[serde(rename_all = "lowercase")]
 pub enum VersionType {
-    #[serde(rename = "alpha")]
     Alpha,
-    #[serde(rename = "beta")]
     Beta,
-    #[serde(rename = "release")]
     Release,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct VersionFile {
     /// The file's hashes
     pub hashes: Hashes,
@@ -60,11 +54,12 @@ pub struct VersionFile {
     pub url: String,
     /// The file's name
     pub filename: String,
-    /// Whether the file is the primary file of a version
+    /// Whether the file is the primary file of its version
     pub primary: bool,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct Hashes {
     /// The SHA512 hash of the version file
     pub sha512: Option<String>,
@@ -72,24 +67,22 @@ pub struct Hashes {
     pub sha1: Option<String>,
 }
 
-/// A dependency which describes what versions are required, break support, or are optional to the
-/// version's functionality
+/// A dependency which describes what versions are required, break support, or are optional to the version's functionality
 #[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Dependency {
-    /// The specific version id that the dependency uses
+    /// The version ID of the dependency
     pub version_id: Option<ID>,
-    /// The project ID that the dependency is synced with and auto-updated
+    /// The project ID of the dependency
     pub project_id: Option<ID>,
-    /// The type of the dependency
+    /// The relationship this dependancy has with the version
     pub dependency_type: DependencyType,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum DependencyType {
-    #[serde(rename = "required")]
     Required,
-    #[serde(rename = "optional")]
     Optional,
-    #[serde(rename = "incompatible")]
     Incompatible,
 }
