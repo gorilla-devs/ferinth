@@ -81,7 +81,7 @@ pub struct DonationLink {
     pub url: String,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum ProjectStatus {
     Approved,
@@ -92,7 +92,7 @@ pub enum ProjectStatus {
     Unknown,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum ProjectSupportRange {
     Required,
@@ -103,9 +103,14 @@ pub enum ProjectSupportRange {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct GalleryItem {
+    /// The URL of the gallery image
     pub url: String,
+    /// Whether the image is featured in the gallery
     pub featured: bool,
+    /// The title of the gallery image
     pub title: Option<String>,
+    /// The description of the gallery image
     pub description: Option<String>,
+    /// The date and time the gallery image was created
     pub created: Datetime,
 }

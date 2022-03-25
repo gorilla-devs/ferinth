@@ -26,13 +26,17 @@ pub struct Loader {
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct GameVersion {
+    /// The name/number of the game version
     version: String,
+    /// The type of the game version
     version_type: GameVersionType,
+    /// The date of the game version release
     date: Datetime,
+    /// Whether or not this is a major version
     major: bool,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum GameVersionType {
     Snapshot,

@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.0.1] - 25.03.2022
+
+- All enums now consistently have `PartialEq` and `Eq` implemented
+- All structs now have proper doc comments
+
 ## [2.0.0] - 03.02.2022
 
 Update to the [Modrinth API v2](https://docs.modrinth.com). The most breaking changes are the following:
