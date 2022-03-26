@@ -33,8 +33,18 @@ pub struct TeamMember {
     pub user: User,
     /// This team member's role
     pub role: String,
-    /// ? The user's permissions in bitflag format
-    pub permissions: Option<isize>,
+    /// The user's permissions in bitflag format (requires authorization to view)
+    /// 
+    /// In order from first to eighth bit, the bits are:
+    /// - UPLOAD_VERSION
+    /// - DELETE_VERSION
+    /// - EDIT_DETAILS
+    /// - EDIT_BODY
+    /// - MANAGE_INVITES
+    /// - REMOVE_MEMBER
+    /// - EDIT_MEMBER
+    /// - DELETE_PROJECT
+    pub permissions: Option<u8>,
     /// Whether the user has accepted membership
     pub accepted: bool,
 }

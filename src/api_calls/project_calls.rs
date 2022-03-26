@@ -12,7 +12,7 @@ impl Ferinth {
     /// ```rust
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
+    /// # let modrinth = ferinth::Ferinth::new();
     /// let sodium_mod = modrinth.get_project("AANobbMI").await?;
     /// assert_eq!(
     ///     sodium_mod.title,
@@ -29,9 +29,37 @@ impl Ferinth {
     /// ```
     pub async fn get_project(&self, project_id: &str) -> Result<Project> {
         check_id_slug(project_id)?;
-        Ok(request(self, API_URL_BASE.join("project/")?.join(project_id)?)
-            .await?
-            .json()
-            .await?)
+        Ok(
+            request(self, API_URL_BASE.join("project/")?.join(project_id)?)
+                .await?
+                .json()
+                .await?,
+        )
+    }
+
+    /// Get the dependencies of the project with ID `project_id`
+    ///
+    /// Example:
+    /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # let modrinth = ferinth::Ferinth::new();
+    /// let fabric_api = modrinth.get_project_dependencies("fabric-api").await?;
+    /// // The Fabric API should not have any dependencies
+    /// assert!(fabric_api.projects.is_empty());
+    /// # Ok(()) }
+    /// ```
+    pub async fn get_project_dependencies(&self, project_id: &str) -> Result<ProjectDependencies> {
+        check_id_slug(project_id)?;
+        Ok(request(
+            self,
+            API_URL_BASE
+                .join("project/")?
+                .join(&format!("{}/", project_id))?
+                .join("dependencies")?,
+        )
+        .await?
+        .json()
+        .await?)
     }
 }

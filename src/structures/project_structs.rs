@@ -81,6 +81,28 @@ pub struct DonationLink {
     pub url: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct GalleryItem {
+    /// The URL of the gallery image
+    pub url: String,
+    /// Whether the image is featured in the gallery
+    pub featured: bool,
+    /// The title of the gallery image
+    pub title: Option<String>,
+    /// The description of the gallery image
+    pub description: Option<String>,
+    /// The date and time the gallery image was created
+    pub created: Datetime,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct ProjectDependencies {
+    pub projects: Vec<Project>,
+    pub versions: Vec<version_structs::Version>,
+}
+
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum ProjectStatus {
@@ -100,17 +122,9 @@ pub enum ProjectSupportRange {
     Unsupported,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
-pub struct GalleryItem {
-    /// The URL of the gallery image
-    pub url: String,
-    /// Whether the image is featured in the gallery
-    pub featured: bool,
-    /// The title of the gallery image
-    pub title: Option<String>,
-    /// The description of the gallery image
-    pub description: Option<String>,
-    /// The date and time the gallery image was created
-    pub created: Datetime,
+#[derive(serde::Deserialize, serde::Serialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum ProjectType {
+    Mod,
+    Modpack,
 }

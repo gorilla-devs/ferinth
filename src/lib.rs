@@ -8,23 +8,13 @@
 //! This crate includes the following:
 //!
 //! - All structure definitions based on <https://docs.modrinth.com/api-spec/>
-//! - Includes the following API calls:
-//!   - Get project by project ID
-//!   - List project categories
-//!   - List mod loaders
-//!   - List game versions
-//!   - Get user by user ID
-//!   - List team members by team ID
-//!   - Get version by version ID
-//!   - Get version by a version file's hash
-//!   - List versions by project ID
-//!   - Download version file
+//! - All of the GET calls
 //!
 //! URL traversal is blocked because all IDs are verified.
 //! ```
 //! # #[tokio::main]
 //! # async fn main() {
-//! # let modrinth = ferinth::Ferinth::new("ferinth-example");
+//! # let modrinth = ferinth::Ferinth::new();
 //! assert!(modrinth.get_project("sodium/version").await.is_err());
 //! # }
 //! ```
@@ -34,59 +24,8 @@
 //! The following features still need to be implemented
 //! - Search projects
 //! - User authentication
+//! - Other types of requests
 //!
-//! ## Example (and Tutorial)
-//!
-//! The full source code for this can be found as a binary project at [example/](https://github.com/theRookieCoder/ferinth/tree/master/example).
-//!
-//! In this example, we are going to download and install the latest version of [Sodium](https://modrinth.com/mod/sodium).
-//!
-//! ```rust
-//! # use ferinth::Ferinth;
-//! # use std::{fs::File, io::Write};
-//! # use thiserror::Error;
-//! #
-//! # #[derive(Debug, Error)]
-//! # enum Error {
-//! #     #[error("API error occured")]
-//! #     FerinthError(#[from] ferinth::Error),
-//! #     #[error("IO error occured")]
-//! #     IOError(#[from] std::io::Error),
-//! # }
-//! # #[tokio::main]
-//! # async fn main() -> Result<(), Error> {
-//! // First, let's initialise the API
-//! // You should replace 'example' with your application's name
-//! let api = Ferinth::new("example");
-//!
-//! // Now, lets get the Sodium mod
-//! // You can use the project ID, or the project slug
-//! // The project ID will never change but the project slug can change at anytime
-//!
-//! // Using the project slug
-//! let sodium = api.get_project("sodium").await?;
-//! // Using the project ID
-//! let sodium = api.get_project("AANobbMI").await?;
-//!
-//! // Now lets get the versions that the Sodium mod has
-//! let sodium_versions = api.list_versions("AANobbMI").await?;
-//!
-//! // The versions are sorted chronologically so the first element should be the latest one
-//! let latest_version = &sodium_versions[0];
-//! // And now we can get this version's mod JAR file, which is called a version file
-//! let version_file = &latest_version.files[0];
-//!
-//! // Then we can download this version file
-//! let contents = api.download_version_file(version_file).await?;
-//! // And next, let's open the file we want to write this to
-//! let mut mod_file = File::create("Sodium.jar")?;
-//! // And finally, we can write the contents to mod_file
-//! mod_file.write_all(&contents)?;
-//!
-//! // Now you can load the JAR file using a mod loader. To play Sodium, you need the Fabric Loader
-//! # Ok(())
-//! # }
-//! ```
 
 mod api_calls;
 mod request;
@@ -111,14 +50,13 @@ pub(crate) type Result<T> = std::result::Result<T, Error>;
 /// To initialise this container,
 /// ```rust
 /// # use ferinth::Ferinth;
-/// let modrinth = Ferinth::new("ferinth-example");
+/// let modrinth = Ferinth::new();
 /// // Use the instance to call the API
 /// let sodium_mod = modrinth.get_project("sodium");
 /// ```
 #[derive(Debug, Clone)]
 pub struct Ferinth {
     client: reqwest::Client,
-    user_agent: String,
 }
 
 impl Ferinth {
@@ -128,12 +66,11 @@ impl Ferinth {
     ///
     /// ```rust
     /// # use ferinth::Ferinth;
-    /// let modrinth = Ferinth::new("ferinth-example");
+    /// let modrinth = Ferinth::new();
     /// ```
-    pub fn new(user_agent: &str) -> Self {
+    pub fn new() -> Self {
         Self {
             client: reqwest::Client::new(),
-            user_agent: user_agent.into(),
         }
     }
 }

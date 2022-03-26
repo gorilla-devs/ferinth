@@ -4,36 +4,54 @@ use serde::{Deserialize, Serialize};
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct Category {
-    /// An svg icon of the category
-    icon: String,
+    /// The SVG icon of the category
+    pub icon: String,
     /// The name of the category
-    name: String,
-    /// What type of project this categorises
-    project_type: ProjectType,
+    pub name: String,
+    /// The project type this category is applicable to
+    pub project_type: project_structs::ProjectType,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct Loader {
-    /// An svg icon of the loader
-    icon: String,
+    /// The SVG icon of the loader
+    pub icon: String,
     /// The name of the loader
-    name: String,
-    /// What project types this loader supports
-    supported_project_types: Vec<ProjectType>,
+    pub name: String,
+    /// The project types that this loader is applicable to
+    pub supported_project_types: Vec<project_structs::ProjectType>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct GameVersion {
     /// The name/number of the game version
-    version: String,
+    pub version: String,
     /// The type of the game version
-    version_type: GameVersionType,
+    pub version_type: GameVersionType,
     /// The date of the game version release
-    date: Datetime,
+    pub date: Datetime,
     /// Whether or not this is a major version
-    major: bool,
+    pub major: bool,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct License {
+    /// The short identifier of the license
+    pub short: String,
+    /// The full name of the license
+    pub name: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct DonationPlatform {
+    /// The short identifier of the donation platform
+    pub short: String,
+    /// The full name of the donation platform
+    pub name: String,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]

@@ -13,7 +13,7 @@ impl Ferinth {
     /// # use ferinth::structures::user_structs::UserRole;
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
+    /// # let modrinth = ferinth::Ferinth::new();
     /// let jellysquid = modrinth.get_user("TEZXhE2U").await?;
     /// assert!(jellysquid.role == UserRole::Developer);
     /// # Ok(()) }
@@ -32,20 +32,18 @@ impl Ferinth {
     /// ```rust
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
+    /// # let modrinth = ferinth::Ferinth::new();
     /// let jellysquid_projects = modrinth.list_projects("TEZXhE2U").await?;
     /// assert!(jellysquid_projects.len() == 4);
     /// # Ok(()) }
     /// ```
     pub async fn list_projects(&self, user_id: &str) -> Result<Vec<Project>> {
         check_id_slug(user_id)?;
-        let mut user_id = user_id.to_string();
-        user_id.push('/');
         Ok(request(
             self,
             API_URL_BASE
                 .join("user/")?
-                .join(&user_id)?
+                .join(&format!("{}/", user_id))?
                 .join("projects")?,
         )
         .await?
@@ -59,20 +57,18 @@ impl Ferinth {
     /// ```rust
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
+    /// # let modrinth = ferinth::Ferinth::new();
     /// let mod_menu_team = modrinth.list_team_members("VMz4FpgB").await?;
     /// assert!(mod_menu_team.len() == 4);
     /// # Ok(()) }
     /// ```
     pub async fn list_team_members(&self, team_id: &str) -> Result<Vec<TeamMember>> {
         check_id_slug(team_id)?;
-        let mut team_id = team_id.to_string();
-        team_id.push('/');
         Ok(request(
             self,
             API_URL_BASE
                 .join("team/")?
-                .join(&team_id)?
+                .join(&format!("{}/", team_id))?
                 .join("members")?,
         )
         .await?

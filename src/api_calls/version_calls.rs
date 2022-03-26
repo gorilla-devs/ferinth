@@ -13,20 +13,18 @@ impl Ferinth {
     /// ```rust
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
+    /// # let modrinth = ferinth::Ferinth::new();
     /// let sodium_versions = modrinth.list_versions("AANobbMI").await?;
     /// assert!(sodium_versions[0].project_id == "AANobbMI");
     /// # Ok(()) }
     /// ```
     pub async fn list_versions(&self, project_id: &str) -> Result<Vec<Version>> {
         check_id_slug(project_id)?;
-        let mut project_id = project_id.to_string();
-        project_id.push('/');
         Ok(request(
             self,
             API_URL_BASE
                 .join("project/")?
-                .join(&project_id)?
+                .join(&format!("{}/", project_id))?
                 .join("version")?,
         )
         .await?
@@ -40,7 +38,7 @@ impl Ferinth {
     /// ```rust
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
+    /// # let modrinth = ferinth::Ferinth::new();
     /// let sodium_version = modrinth.get_version("xuWxRZPd").await?;
     /// assert!(sodium_version.project_id == "AANobbMI");
     /// # Ok(()) }
@@ -55,16 +53,16 @@ impl Ferinth {
         )
     }
 
-    /// Get the version of a version file with hash `file_hash`
+    /// Get the version of a version file with hash `file_hash`. Only supports SHA1 hashes for now
     ///
     /// Example:
     /// ```rust
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
+    /// # let modrinth = ferinth::Ferinth::new();
     /// // A version file has the hash `795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf`, so we can get the version it belongs to
     /// let sodium_version = modrinth.get_version_from_file_hash("795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf").await?;
-    /// // That version file belongs to the (surprise, surprise) Sodium mod!
+    /// // That version file belongs to (surprise, surprise) the Sodium mod!
     /// assert!(sodium_version.project_id == "AANobbMI");
     /// # Ok(()) }
     /// ```
@@ -84,7 +82,7 @@ impl Ferinth {
     /// ```rust
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::new("ferinth-example");
+    /// # let modrinth = ferinth::Ferinth::new();
     /// let sodium_versions = modrinth.list_versions("AANobbMI").await?;
     /// let version_file = &sodium_versions[0].files[0];
     /// // You can write this to a file and load it using a mod loader (Fabric in this case)

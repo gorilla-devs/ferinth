@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.1.0] - 26.03.2022
+
+- Removed example project and the one in the description
+- Added `get_project_dependencies()`
+- Moved `ProjectType` to _project_structs.rs_
+- Added new tag calls and their respective structs
+- Made tag call struct fields public
+- Improved documentation
+- Removed user agent
+
 ## [2.0.1] - 25.03.2022
 
 - All enums now consistently have `PartialEq` and `Eq` implemented

@@ -37,14 +37,6 @@ pub struct Version {
     pub loaders: Vec<String>,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
-#[serde(rename_all = "lowercase")]
-pub enum VersionType {
-    Alpha,
-    Beta,
-    Release,
-}
-
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct VersionFile {
@@ -77,6 +69,14 @@ pub struct Dependency {
     pub project_id: Option<ID>,
     /// The relationship this dependancy has with the version
     pub dependency_type: DependencyType,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum VersionType {
+    Alpha,
+    Beta,
+    Release,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
