@@ -1,5 +1,11 @@
 # Changelog
 
+## `2.1.1`
+### 01.05.2022
+
+- Update description
+- Fix `Ferinth` doctest
+
 ## [2.1.0] - 26.03.2022
 
 - Removed example project and the one in the description

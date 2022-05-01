@@ -10,22 +10,12 @@
 //! - All structure definitions based on <https://docs.modrinth.com/api-spec/>
 //! - All of the GET calls
 //!
-//! URL traversal is blocked because all IDs are verified.
-//! ```
-//! # #[tokio::main]
-//! # async fn main() {
-//! # let modrinth = ferinth::Ferinth::new();
-//! assert!(modrinth.get_project("sodium/version").await.is_err());
-//! # }
-//! ```
-//!
 //! This crate uses [RusTLS](https://docs.rs/rustls/) rather than OpenSSL, because OpenSSL is outdated and slower.
 //!
 //! The following features still need to be implemented
 //! - Search projects
 //! - User authentication
 //! - Other types of requests
-//!
 
 mod api_calls;
 mod request;
@@ -50,9 +40,12 @@ pub(crate) type Result<T> = std::result::Result<T, Error>;
 /// To initialise this container,
 /// ```rust
 /// # use ferinth::Ferinth;
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), ferinth::Error> {
 /// let modrinth = Ferinth::new();
 /// // Use the instance to call the API
-/// let sodium_mod = modrinth.get_project("sodium");
+/// let sodium_mod = modrinth.get_project("sodium").await?;
+/// # Ok(()) }
 /// ```
 #[derive(Debug, Clone)]
 pub struct Ferinth {
