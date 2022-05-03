@@ -19,7 +19,7 @@ pub struct Project {
     /// A long form of the description
     pub body: String,
     #[deprecated(note = "Read from `Project.body` instead")]
-    /// A link to the long description of the project
+    /// A link to the long description of the project (only present for old projects)
     pub body_url: Option<String>,
     /// When the project was first published
     pub published: Datetime,
@@ -28,7 +28,7 @@ pub struct Project {
     /// The project's status
     pub status: ProjectStatus,
     /// A message that a moderator sent regarding the project
-    pub moderator_message: Option<String>,
+    pub moderator_message: Option<ModeratorMessage>,
     /// The project's license
     pub license: License,
     /// The project's client side support range
@@ -41,7 +41,7 @@ pub struct Project {
     pub followers: usize,
     /// A list of categories the project is in
     pub categories: Vec<String>,
-    /// The project's versions listed as their IDs
+    /// A list of the version IDs of the project
     pub versions: Vec<ID>,
     /// The link to the project's icon
     pub icon_url: Option<String>,
@@ -55,8 +55,17 @@ pub struct Project {
     pub discord_url: Option<String>,
     /// A list of donation links the project has
     pub donation_urls: Option<Vec<DonationLink>>,
-    /// A list of URLs to visual content featuring the project
+    /// A list of images that have been uploaded to the project's gallery
     pub gallery: Vec<GalleryItem>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct ModeratorMessage {
+    /// The message that a moderator has left for the project
+    pub message: String,
+    /// The longer body of the message that a moderator has left for the project
+    pub body: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -66,7 +75,7 @@ pub struct License {
     pub id: String,
     /// The license's long name
     pub name: String,
-    /// A link to this license
+    /// A URL to this license
     pub url: Option<String>,
 }
 
@@ -110,6 +119,7 @@ pub enum ProjectStatus {
     Rejected,
     Draft,
     Unlisted,
+    Archived,
     Processing,
     Unknown,
 }

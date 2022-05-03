@@ -1,5 +1,10 @@
 # Changelog
 
+## `2.2.0`
+### 03.05.2022
+
+Update all structs to the latest <https://docs.modrinth.com/api-spec> specifications (Labrinth `v2.2.4`)
+
 ## `2.1.1`
 ### 01.05.2022
 
