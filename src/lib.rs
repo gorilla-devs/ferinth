@@ -27,6 +27,8 @@ pub enum Error {
     NotBase62,
     #[error("A given string was not SHA1 compliant")]
     NotSHA1,
+    #[error("You have been rate limited. Please wait for {} seconds", .0)]
+    RateLimitExceeded(usize),
     #[error("{}", .0)]
     ReqwestError(#[from] reqwest::Error),
     #[error("{}", .0)]

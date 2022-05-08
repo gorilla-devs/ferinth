@@ -1,5 +1,10 @@
 # Changelog
 
+## `2.2.1`
+### 08.05.2022
+
+Add support for rate limits using a new error
+
 ## `2.2.0`
 ### 03.05.2022
 
