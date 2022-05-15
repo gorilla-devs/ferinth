@@ -2,7 +2,6 @@ use super::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct User {
     /// The user's ID
     pub id: ID,
@@ -25,7 +24,6 @@ pub struct User {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct TeamMember {
     /// The ID of the member's team
     pub team_id: ID,

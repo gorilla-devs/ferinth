@@ -2,7 +2,6 @@ use super::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct Category {
     /// The SVG icon of the category
     pub icon: String,
@@ -13,7 +12,6 @@ pub struct Category {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct Loader {
     /// The SVG icon of the loader
     pub icon: String,
@@ -24,7 +22,6 @@ pub struct Loader {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct GameVersion {
     /// The name/number of the game version
     pub version: String,
@@ -37,7 +34,6 @@ pub struct GameVersion {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct License {
     /// The short identifier of the license
     pub short: String,
@@ -46,7 +42,6 @@ pub struct License {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct DonationPlatform {
     /// The short identifier of the donation platform
     pub short: String,

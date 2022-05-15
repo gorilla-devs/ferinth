@@ -2,7 +2,6 @@ use super::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct Version {
     /// The version's ID
     pub id: ID,
@@ -38,7 +37,6 @@ pub struct Version {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct VersionFile {
     /// The file's hashes
     pub hashes: Hashes,
@@ -48,10 +46,11 @@ pub struct VersionFile {
     pub filename: String,
     /// Whether the file is the primary file of its version
     pub primary: bool,
+    /// The size of the file
+    pub size: i32,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct Hashes {
     /// The SHA512 hash of the version file
     pub sha512: Option<String>,
@@ -61,7 +60,6 @@ pub struct Hashes {
 
 /// A dependency which describes what versions are required, break support, or are optional to the version's functionality
 #[derive(Serialize, Deserialize, Clone, Debug)]
-#[serde(deny_unknown_fields)]
 pub struct Dependency {
     /// The version ID of the dependency
     pub version_id: Option<ID>,

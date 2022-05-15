@@ -2,7 +2,6 @@ use super::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct Project {
     /// The project's ID
     pub id: ID,
@@ -60,7 +59,6 @@ pub struct Project {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct ModeratorMessage {
     /// The message that a moderator has left for the project
     pub message: String,
@@ -69,7 +67,6 @@ pub struct ModeratorMessage {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct License {
     /// The license's ID
     pub id: String,
@@ -80,7 +77,6 @@ pub struct License {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct DonationLink {
     /// The donation link's platform ID
     pub id: String,
@@ -91,7 +87,6 @@ pub struct DonationLink {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct GalleryItem {
     /// The URL of the gallery image
     pub url: String,
@@ -106,7 +101,6 @@ pub struct GalleryItem {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
 pub struct ProjectDependencies {
     pub projects: Vec<Project>,
     pub versions: Vec<version_structs::Version>,
