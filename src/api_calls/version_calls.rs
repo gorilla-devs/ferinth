@@ -54,6 +54,38 @@ impl Ferinth {
             .await?)
     }
 
+    /// Query a list of versions at once
+    /// 
+    /// Examples:
+    /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # let modrinth = ferinth::Ferinth::new();
+    /// let mut version_ids = vec![];
+    /// version_ids.push("74Y5Z8fo".to_string()); // Sodium 0.4.1
+    /// version_ids.push("Yp8wLY1P".to_string()); // Sodium 0.4.2
+    /// let versions = modrinth.get_multiple_versions(version_ids.clone()).await?;
+    /// for version in versions {
+    ///     assert!(version_ids.contains(&version.id));
+    /// }
+    /// # Ok(())}
+    /// ```
+    pub async fn get_multiple_versions(&self, version_ids: Vec<String>) -> Result<Vec<Version>> {
+        for id in &version_ids {
+            check_id_slug(&id)?;
+        }
+        Ok(self
+            .get(
+                API_URL_BASE
+                    .join("versions")?
+                    .join(&format!("?ids={}", serde_json::to_string(&version_ids)?))?,
+            )
+            .await?
+            .json()
+            .await?)
+    }
+
+
     /// Get the version of a version file with hash `file_hash`. Only supports SHA1 hashes for now
     ///
     /// Example:
@@ -76,8 +108,8 @@ impl Ferinth {
             .await?)
     }
 
-    /// Get a list of files from a list of SHA1 hashes `file_hashes`
-    /// 
+    /// Query a list of SHA1 file hashes at once
+    ///
     /// Example:
     /// ```rust
     /// # #[tokio::main]

@@ -34,6 +34,38 @@ impl Ferinth {
             .await?)
     }
 
+    /// Query a list of project ids at once
+    /// 
+    /// Examples:
+    /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # let modrinth = ferinth::Ferinth::new();
+    /// let mut project_ids = vec![];
+    /// project_ids.push("gvQqBUqZ".to_string()); // Lithium
+    /// // can also use slugs
+    /// project_ids.push("sodium".to_string()); 
+    /// let projects = modrinth.get_multiple_projects(project_ids.clone()).await?;
+    /// for project in projects {
+    ///     assert!(project_ids.contains(&project.id) || project_ids.contains(&project.slug));
+    /// }
+    /// # Ok(())}
+    /// ```
+    pub async fn get_multiple_projects(&self, project_ids: Vec<String>) -> Result<Vec<Project>> {
+        for id in &project_ids {
+            check_id_slug(&id)?;
+        }
+        Ok(self
+            .get(
+                API_URL_BASE
+                    .join("projects")?
+                    .join(&format!("?ids={}", serde_json::to_string(&project_ids)?))?,
+            )
+            .await?
+            .json()
+            .await?)
+    }
+
     /// Get the dependencies of the project with ID `project_id`
     ///
     /// Example:
