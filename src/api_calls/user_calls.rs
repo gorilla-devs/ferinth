@@ -1,6 +1,6 @@
 use crate::{
     api_calls::check_id_slug,
-    request::{request, API_URL_BASE},
+    request::API_URL_BASE,
     structures::{project_structs::Project, user_structs::*},
     Ferinth, Result,
 };
@@ -20,7 +20,8 @@ impl Ferinth {
     /// ```
     pub async fn get_user(&self, user_id: &str) -> Result<User> {
         check_id_slug(user_id)?;
-        Ok(request(self, API_URL_BASE.join("user/")?.join(user_id)?)
+        Ok(self
+            .get(API_URL_BASE.join("user/")?.join(user_id)?)
             .await?
             .json()
             .await?)
@@ -39,16 +40,16 @@ impl Ferinth {
     /// ```
     pub async fn list_projects(&self, user_id: &str) -> Result<Vec<Project>> {
         check_id_slug(user_id)?;
-        Ok(request(
-            self,
-            API_URL_BASE
-                .join("user/")?
-                .join(&format!("{}/", user_id))?
-                .join("projects")?,
-        )
-        .await?
-        .json()
-        .await?)
+        Ok(self
+            .get(
+                API_URL_BASE
+                    .join("user/")?
+                    .join(&format!("{}/", user_id))?
+                    .join("projects")?,
+            )
+            .await?
+            .json()
+            .await?)
     }
 
     /// List the members of team with ID `team_id`
@@ -64,15 +65,15 @@ impl Ferinth {
     /// ```
     pub async fn list_team_members(&self, team_id: &str) -> Result<Vec<TeamMember>> {
         check_id_slug(team_id)?;
-        Ok(request(
-            self,
-            API_URL_BASE
-                .join("team/")?
-                .join(&format!("{}/", team_id))?
-                .join("members")?,
-        )
-        .await?
-        .json()
-        .await?)
+        Ok(self
+            .get(
+                API_URL_BASE
+                    .join("team/")?
+                    .join(&format!("{}/", team_id))?
+                    .join("members")?,
+            )
+            .await?
+            .json()
+            .await?)
     }
 }

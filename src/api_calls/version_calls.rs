@@ -1,6 +1,8 @@
+use std::collections::HashMap;
+
 use crate::{
     api_calls::{check_id_slug, check_sha1_hash},
-    request::{request, API_URL_BASE},
+    request::API_URL_BASE,
     structures::version_structs::*,
     Ferinth, Result,
 };
@@ -20,16 +22,16 @@ impl Ferinth {
     /// ```
     pub async fn list_versions(&self, project_id: &str) -> Result<Vec<Version>> {
         check_id_slug(project_id)?;
-        Ok(request(
-            self,
-            API_URL_BASE
-                .join("project/")?
-                .join(&format!("{}/", project_id))?
-                .join("version")?,
-        )
-        .await?
-        .json()
-        .await?)
+        Ok(self
+            .get(
+                API_URL_BASE
+                    .join("project/")?
+                    .join(&format!("{}/", project_id))?
+                    .join("version")?,
+            )
+            .await?
+            .json()
+            .await?)
     }
 
     /// Get version with ID `version_id`
@@ -45,12 +47,11 @@ impl Ferinth {
     /// ```
     pub async fn get_version(&self, version_id: &str) -> Result<Version> {
         check_id_slug(version_id)?;
-        Ok(
-            request(self, API_URL_BASE.join("version/")?.join(version_id)?)
-                .await?
-                .json()
-                .await?,
-        )
+        Ok(self
+            .get(API_URL_BASE.join("version/")?.join(version_id)?)
+            .await?
+            .json()
+            .await?)
     }
 
     /// Get the version of a version file with hash `file_hash`. Only supports SHA1 hashes for now
@@ -68,12 +69,43 @@ impl Ferinth {
     /// ```
     pub async fn get_version_from_file_hash(&self, file_hash: &str) -> Result<Version> {
         check_sha1_hash(file_hash)?;
-        Ok(
-            request(self, API_URL_BASE.join("version_file/")?.join(file_hash)?)
-                .await?
-                .json()
-                .await?,
-        )
+        Ok(self
+            .get(API_URL_BASE.join("version_file/")?.join(file_hash)?)
+            .await?
+            .json()
+            .await?)
+    }
+
+    /// Get a list of files from a list of SHA1 hashes `file_hashes`
+    /// 
+    /// Example:
+    /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # let modrinth = ferinth::Ferinth::new();
+    /// let mut hashes = vec![];
+    /// hashes.push("f839863a6be7014b8d80058ea1f361521148d049".to_string()); // Sodium 0.4.1
+    /// hashes.push("d5c19c3d4edb4228652adcc8abb94f9bd80a634c".to_string()); // Lithium 0.7.10
+    /// let result = modrinth.get_versions_from_hashes(hashes).await?;
+    /// assert!(&result["f839863a6be7014b8d80058ea1f361521148d049"].project_id == "AANobbMI");
+    /// assert!(&result["d5c19c3d4edb4228652adcc8abb94f9bd80a634c"].project_id == "gvQqBUqZ");
+    /// # Ok(()) }
+    /// ```
+    pub async fn get_versions_from_hashes(
+        &self,
+        file_hashes: Vec<String>,
+    ) -> Result<HashMap<String, Version>> {
+        Ok(self
+            .post(
+                API_URL_BASE.join("version_files")?,
+                GetFilesByHashesBody {
+                    hashes: file_hashes,
+                    algorithm: "sha1".to_owned(),
+                },
+            )
+            .await?
+            .json()
+            .await?)
     }
 
     /// Download `version_file`'s contents
@@ -90,6 +122,6 @@ impl Ferinth {
     /// # Ok::<(), ferinth::Error>(()) }
     /// ```
     pub async fn download_version_file(&self, version_file: &VersionFile) -> Result<Bytes> {
-        Ok(request(self, &version_file.url).await?.bytes().await?)
+        Ok(self.get(&version_file.url).await?.bytes().await?)
     }
 }

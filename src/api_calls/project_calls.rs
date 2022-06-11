@@ -1,8 +1,6 @@
 use crate::{
-    api_calls::check_id_slug,
-    request::{request, API_URL_BASE},
-    structures::project_structs::*,
-    Ferinth, Result,
+    api_calls::check_id_slug, request::API_URL_BASE, structures::project_structs::*, Ferinth,
+    Result,
 };
 
 impl Ferinth {
@@ -29,12 +27,11 @@ impl Ferinth {
     /// ```
     pub async fn get_project(&self, project_id: &str) -> Result<Project> {
         check_id_slug(project_id)?;
-        Ok(
-            request(self, API_URL_BASE.join("project/")?.join(project_id)?)
-                .await?
-                .json()
-                .await?,
-        )
+        Ok(self
+            .get(API_URL_BASE.join("project/")?.join(project_id)?)
+            .await?
+            .json()
+            .await?)
     }
 
     /// Get the dependencies of the project with ID `project_id`
@@ -51,15 +48,15 @@ impl Ferinth {
     /// ```
     pub async fn get_project_dependencies(&self, project_id: &str) -> Result<ProjectDependencies> {
         check_id_slug(project_id)?;
-        Ok(request(
-            self,
-            API_URL_BASE
-                .join("project/")?
-                .join(&format!("{}/", project_id))?
-                .join("dependencies")?,
-        )
-        .await?
-        .json()
-        .await?)
+        Ok(self
+            .get(
+                API_URL_BASE
+                    .join("project/")?
+                    .join(&format!("{}/", project_id))?
+                    .join("dependencies")?,
+            )
+            .await?
+            .json()
+            .await?)
     }
 }

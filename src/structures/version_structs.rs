@@ -84,3 +84,9 @@ pub enum DependencyType {
     Optional,
     Incompatible,
 }
+
+#[derive(Serialize, Debug)]
+pub(crate) struct GetFilesByHashesBody {
+    pub hashes: Vec<String>,
+    pub algorithm: String,
+}
