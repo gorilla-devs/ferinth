@@ -1,61 +1,92 @@
 use crate::{
-    request::{request, API_URL_BASE},
-    structures::tag_structs::*,
-    Ferinth, Result,
+    request::API_URL_BASE, structures::tag_structs::*, url_join_ext::UrlJoinExt, Ferinth, Result,
 };
 
 impl Ferinth {
-    /// List the categories a project can take
+    /// List the categories, their icons, and applicable project types
+    ///
+    /// Example:
+    /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # let modrinth = ferinth::Ferinth::default();
+    /// let categories = modrinth.list_categories().await?;
+    /// # Ok(()) }
+    /// ```
     pub async fn list_categories(&self) -> Result<Vec<Category>> {
-        Ok(request(self, API_URL_BASE.join("tag/")?.join("category")?)
-            .await?
-            .json()
-            .await?)
+        self.get(API_URL_BASE.join_all(vec!["tag", "category"])).await
     }
 
-    /// List the Minecraft mod loaders
+    /// List the loaders, their icons, and supported project types
+    ///
+    /// Example:
+    /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # let modrinth = ferinth::Ferinth::default();
+    /// let loaders = modrinth.list_loaders().await?;
+    /// # Ok(()) }
+    /// ```
     pub async fn list_loaders(&self) -> Result<Vec<Loader>> {
-        Ok(request(self, API_URL_BASE.join("tag/")?.join("loader")?)
-            .await?
-            .json()
-            .await?)
+        self.get(API_URL_BASE.join_all(vec!["tag", "loader"])).await
     }
 
-    /// List the Minecraft versions
+    /// List the game versions and information about them
+    ///
+    /// Example:
+    /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # let modrinth = ferinth::Ferinth::default();
+    /// let game_versions = modrinth.list_game_versions().await?;
+    /// # Ok(()) }
+    /// ```
     pub async fn list_game_versions(&self) -> Result<Vec<GameVersion>> {
-        Ok(
-            request(self, API_URL_BASE.join("tag/")?.join("game_version")?)
-                .await?
-                .json()
-                .await?,
-        )
+        self.get(API_URL_BASE.join_all(vec!["tag", "game_version"]))
+            .await
     }
 
-    /// List licenses
+    /// List licenses and information about them
+    ///
+    /// Example:
+    /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # let modrinth = ferinth::Ferinth::default();
+    /// let licenses = modrinth.list_licenses().await?;
+    /// # Ok(()) }
+    /// ```
     pub async fn list_licenses(&self) -> Result<Vec<License>> {
-        Ok(request(self, API_URL_BASE.join("tag/")?.join("license")?)
-            .await?
-            .json()
-            .await?)
+        self.get(API_URL_BASE.join_all(vec!["tag", "license"])).await
     }
 
-    /// List donation platforms
+    /// List donation platforms and information about them
+    ///
+    /// Example:
+    /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # let modrinth = ferinth::Ferinth::default();
+    /// let donation_platforms = modrinth.list_donation_platforms().await?;
+    /// # Ok(()) }
+    /// ```
     pub async fn list_donation_platforms(&self) -> Result<Vec<DonationPlatform>> {
-        Ok(
-            request(self, API_URL_BASE.join("tag/")?.join("donation_platform")?)
-                .await?
-                .json()
-                .await?,
-        )
+        self.get(API_URL_BASE.join_all(vec!["tag", "donation_platform"]))
+            .await
     }
 
-    /// List report types
+    /// List valid report types
+    ///
+    /// Example:
+    /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # let modrinth = ferinth::Ferinth::default();
+    /// let report_types = modrinth.list_report_types().await?;
+    /// # Ok(()) }
+    /// ```
     pub async fn list_report_types(&self) -> Result<Vec<String>> {
-        Ok(
-            request(self, API_URL_BASE.join("tag/")?.join("report_type")?)
-                .await?
-                .json()
-                .await?,
-        )
+        self.get(API_URL_BASE.join_all(vec!["tag", "report_type"]))
+            .await
     }
 }

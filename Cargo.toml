@@ -1,26 +1,27 @@
 [package]
 name = "ferinth"
 # The major version specifies which version of the Modrinth API this supports
-version = "2.2.2"
+version = "2.3.0"
 edition = "2021"
 authors = ["Ilesh Thiada (theRookieCoder) <ileshkt@gmail.com>", "4JX"]
-description = "A simple library to use the Modrinth API in Rust projects"
+description = "A simple Rust wrapper for the official Modrinth API "
 repository = "https://github.com/theRookieCoder/ferinth"
 license = "MIT"
 publish = ["crates-io"]
 keywords = ["modrinth", "minecraft", "modding"]
 categories = ["api-bindings"]
-exclude = ["example/*"]
 
 [dependencies]
-reqwest = { version = "0", default-features = false, features = [ "json", "rustls-tls", ] }
-chrono = { version = "0", features = ["serde"] }
-serde = { version = "1", features = ["derive"] }
-lazy_static = "1"
-lazy-regex = "2"
-thiserror = "1"
-bytes = "1"
-url = "2"
+reqwest = { version = "~0.11.10", default-features = false, features = [
+    "json",
+    "rustls-tls",
+] }
+serde = { version = "~1.0.137", features = ["derive"] }
+chrono = { version = "~0.4.19", features = ["serde"] }
+lazy_static = "~1.4.0"
+serde_json = "~1.0.81"
+lazy-regex = "~2.3.0"
+thiserror = "~1.0.31"
 
 [dev-dependencies]
-tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+tokio = { version = "~1.19.2", features = ["rt-multi-thread", "macros"] }

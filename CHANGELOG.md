@@ -1,5 +1,14 @@
 # Changelog
 
+## `2.3.0`
+### 12.06.2022
+
+- Changed the way URLs are constructed and requests are made
+- Specified dependencies properly
+- Replaced `Furse::new()` with `Default`
+- Added all the new API calls (that do not need authentication)
+- Slugs with underscores are now considered valid
+
 ## `2.2.1`
 ### 08.05.2022
 

@@ -58,6 +58,26 @@ pub struct Hashes {
     pub sha1: Option<String>,
 }
 
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct HashesBody {
+    pub hashes: Vec<String>,
+    pub algorithm: HashAlgorithm,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct LatestVersionBody {
+    pub loaders: Vec<String>,
+    pub game_versions: Vec<String>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct LatestVersionsBody {
+    pub hashes: Vec<String>,
+    pub algorithm: HashAlgorithm,
+    pub loaders: Vec<String>,
+    pub game_versions: Vec<String>,
+}
+
 /// A dependency which describes what versions are required, break support, or are optional to the version's functionality
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Dependency {
@@ -67,6 +87,13 @@ pub struct Dependency {
     pub project_id: Option<ID>,
     /// The relationship this dependancy has with the version
     pub dependency_type: DependencyType,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum HashAlgorithm {
+    SHA512,
+    SHA1,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]

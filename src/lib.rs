@@ -20,6 +20,7 @@
 mod api_calls;
 mod request;
 pub mod structures;
+mod url_join_ext;
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
@@ -27,12 +28,12 @@ pub enum Error {
     NotBase62,
     #[error("A given string was not SHA1 compliant")]
     NotSHA1,
-    #[error("You have been rate limited. Please wait for {} seconds", .0)]
+    #[error("You have been rate limited, please wait for {} seconds", .0)]
     RateLimitExceeded(usize),
     #[error("{}", .0)]
     ReqwestError(#[from] reqwest::Error),
     #[error("{}", .0)]
-    URLParseError(#[from] url::ParseError),
+    JSONError(#[from] serde_json::Error),
 }
 
 pub(crate) type Result<T> = std::result::Result<T, Error>;
@@ -44,28 +45,12 @@ pub(crate) type Result<T> = std::result::Result<T, Error>;
 /// # use ferinth::Ferinth;
 /// # #[tokio::main]
 /// # async fn main() -> Result<(), ferinth::Error> {
-/// let modrinth = Ferinth::new();
+/// let modrinth = Ferinth::default();
 /// // Use the instance to call the API
 /// let sodium_mod = modrinth.get_project("sodium").await?;
 /// # Ok(()) }
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Ferinth {
     client: reqwest::Client,
-}
-
-impl Ferinth {
-    /// Create a new API instance
-    ///
-    /// `user_agent` should be the name of the program
-    ///
-    /// ```rust
-    /// # use ferinth::Ferinth;
-    /// let modrinth = Ferinth::new();
-    /// ```
-    pub fn new() -> Self {
-        Self {
-            client: reqwest::Client::new(),
-        }
-    }
 }
