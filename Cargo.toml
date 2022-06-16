@@ -13,9 +13,11 @@ categories = ["api-bindings"]
 exclude = ["example/*"]
 
 [dependencies]
+dotium = { path = "../dotium" }
 reqwest = { version = "0", default-features = false, features = [ "json", "rustls-tls", ] }
 chrono = { version = "0", features = ["serde"] }
 serde = { version = "1", features = ["derive"] }
+async-trait = "0"
 lazy_static = "1"
 lazy-regex = "2"
 thiserror = "1"

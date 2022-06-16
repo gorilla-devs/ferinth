@@ -1,6 +1,5 @@
 use crate::{Error, Ferinth, Result};
 use reqwest::{IntoUrl, Response, StatusCode, Url};
-
 lazy_static::lazy_static! {
     pub(crate) static ref API_URL_BASE: Url = Url::parse("https://api.modrinth.com/v2/").unwrap();
 }

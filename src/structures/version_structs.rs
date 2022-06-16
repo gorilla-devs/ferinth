@@ -1,4 +1,5 @@
 use super::*;
+use dotium::version::{ModLoader, VersionType};
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -33,7 +34,7 @@ pub struct Version {
     /// A list of Minecraft versions that this version supports
     pub game_versions: Vec<String>,
     /// The mod loaders that this version supports
-    pub loaders: Vec<String>,
+    pub loaders: Vec<ModLoader>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -47,7 +48,7 @@ pub struct VersionFile {
     /// Whether the file is the primary file of its version
     pub primary: bool,
     /// The size of the file
-    pub size: i32,
+    pub size: usize,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -67,14 +68,6 @@ pub struct Dependency {
     pub project_id: Option<ID>,
     /// The relationship this dependancy has with the version
     pub dependency_type: DependencyType,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
-#[serde(rename_all = "lowercase")]
-pub enum VersionType {
-    Alpha,
-    Beta,
-    Release,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]

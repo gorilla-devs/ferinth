@@ -1,4 +1,5 @@
 use super::*;
+use dotium::project::{DonationLink, Requirement, Status, Type};
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -8,7 +9,7 @@ pub struct Project {
     /// The project's slug. This can change at any time
     pub slug: String,
     /// The project type of the project
-    pub project_type: ProjectType,
+    pub project_type: Type,
     /// The ID of the team that has ownership of this project
     pub team: ID,
     /// The project's title or display name
@@ -25,15 +26,15 @@ pub struct Project {
     /// When the project was last updated
     pub updated: Datetime,
     /// The project's status
-    pub status: ProjectStatus,
+    pub status: Status,
     /// A message that a moderator sent regarding the project
     pub moderator_message: Option<ModeratorMessage>,
     /// The project's license
     pub license: License,
     /// The project's client side support range
-    pub client_side: ProjectSupportRange,
+    pub client_side: Requirement,
     /// The project's server side support range
-    pub server_side: ProjectSupportRange,
+    pub server_side: Requirement,
     /// The total number of downloads the project has
     pub downloads: usize,
     /// The total number of user following this project
@@ -69,21 +70,11 @@ pub struct ModeratorMessage {
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct License {
     /// The license's ID
-    pub id: String,
+    pub short: String,
     /// The license's long name
     pub name: String,
     /// A URL to this license
     pub url: Option<String>,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct DonationLink {
-    /// The donation link's platform ID
-    pub id: String,
-    /// The platform's long name
-    pub platform: String,
-    /// A link to this donation
-    pub url: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -104,31 +95,4 @@ pub struct GalleryItem {
 pub struct ProjectDependencies {
     pub projects: Vec<Project>,
     pub versions: Vec<version_structs::Version>,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
-#[serde(rename_all = "lowercase")]
-pub enum ProjectStatus {
-    Approved,
-    Rejected,
-    Draft,
-    Unlisted,
-    Archived,
-    Processing,
-    Unknown,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
-#[serde(rename_all = "lowercase")]
-pub enum ProjectSupportRange {
-    Required,
-    Optional,
-    Unsupported,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
-#[serde(rename_all = "lowercase")]
-pub enum ProjectType {
-    Mod,
-    Modpack,
 }

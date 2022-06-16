@@ -1,4 +1,5 @@
 use super::*;
+use dotium::project::Type;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -8,7 +9,7 @@ pub struct Category {
     /// The name of the category
     pub name: String,
     /// The project type this category is applicable to
-    pub project_type: project_structs::ProjectType,
+    pub project_type: Type,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -18,7 +19,7 @@ pub struct Loader {
     /// The name of the loader
     pub name: String,
     /// The project types that this loader is applicable to
-    pub supported_project_types: Vec<project_structs::ProjectType>,
+    pub supported_project_types: Vec<Type>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

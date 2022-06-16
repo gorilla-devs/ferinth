@@ -17,7 +17,10 @@
 //! - User authentication
 //! - Other types of requests
 
-mod api_calls;
+use dotium::DotiumTrait;
+
+pub mod api_calls;
+pub mod dotium_impl;
 mod request;
 pub mod structures;
 
@@ -36,6 +39,8 @@ pub enum Error {
 }
 
 pub(crate) type Result<T> = std::result::Result<T, Error>;
+pub(crate) type TraitResult<T> =
+    std::result::Result<T, Box<(dyn std::error::Error + Send + 'static)>>;
 
 /// An instance of the API to invoke API calls on.
 ///

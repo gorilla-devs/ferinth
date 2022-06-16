@@ -50,29 +50,29 @@ impl Ferinth {
         .json()
         .await?)
     }
+}
 
-    /// List the members of team with ID `team_id`
-    ///
-    /// Example:
-    /// ```rust
-    /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::new();
-    /// let mod_menu_team = modrinth.list_team_members("VMz4FpgB").await?;
-    /// assert!(mod_menu_team.len() == 4);
-    /// # Ok(()) }
-    /// ```
-    pub async fn list_team_members(&self, team_id: &str) -> Result<Vec<TeamMember>> {
-        check_id_slug(team_id)?;
-        Ok(request(
-            self,
-            API_URL_BASE
-                .join("team/")?
-                .join(&format!("{}/", team_id))?
-                .join("members")?,
-        )
-        .await?
-        .json()
-        .await?)
-    }
+/// List the members of team with ID `team_id`
+///
+/// Example:
+/// ```rust
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), ferinth::Error> {
+/// # let modrinth = ferinth::Ferinth::new();
+/// let mod_menu_team = modrinth.list_team_members("VMz4FpgB").await?;
+/// assert!(mod_menu_team.len() == 4);
+/// # Ok(()) }
+/// ```
+pub async fn list_team_members(client: &Ferinth, team_id: &str) -> Result<Vec<TeamMember>> {
+    check_id_slug(team_id)?;
+    Ok(request(
+        client,
+        API_URL_BASE
+            .join("team/")?
+            .join(&format!("{}/", team_id))?
+            .join("members")?,
+    )
+    .await?
+    .json()
+    .await?)
 }

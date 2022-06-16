@@ -16,3 +16,15 @@ After you have decided the API version to use, you can add this crate to your `C
 [dependencies]
 ferinth = "2" # For API version 2
 ```
+
+### Builing
+Currently the Dotium dependency is added by path for easier development, it needs to be cloned into the same directory as Ferinth.
+```
+git clone https://github.com/gorilla-devs/dotium.git
+cd dotium
+git checkout lib-2-lib-dotium
+cd ..
+git clone https://github.com/gorilla-devs/ferinth.git
+cd ferinth
+git checkout possibly-ferinth-rewrite
+```
