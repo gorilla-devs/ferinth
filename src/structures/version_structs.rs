@@ -17,9 +17,9 @@ pub struct Version {
     pub version_number: String,
     /// The version's changelog
     pub changelog: Option<String>,
-    #[deprecated(note = "Read from `Version.changelog` instead")]
+    #[deprecated = "Read from `Version.changelog` instead"]
     /// A link to the version's changelog
-    pub changelog_url: Option<String>,
+    pub changelog_url: Option<URL>,
     /// When this version was published
     pub date_published: Datetime,
     /// The number of downloads this version has
@@ -41,13 +41,13 @@ pub struct VersionFile {
     /// The file's hashes
     pub hashes: Hashes,
     /// A direct link to the file
-    pub url: String,
+    pub url: URL,
     /// The file's name
     pub filename: String,
     /// Whether the file is the primary file of its version
     pub primary: bool,
     /// The size of the file
-    pub size: i32,
+    pub size: Number,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

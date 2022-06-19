@@ -5,7 +5,8 @@ use serde::{Deserialize, Serialize};
 pub struct Project {
     /// The project's ID
     pub id: ID,
-    /// The project's slug. This can change at any time
+    /// The project's slug.
+    /// This can change at any time, so use the `id` for long term storage
     pub slug: String,
     /// The project type of the project
     pub project_type: ProjectType,
@@ -17,7 +18,7 @@ pub struct Project {
     pub description: String,
     /// A long form of the description
     pub body: String,
-    #[deprecated(note = "Read from `Project.body` instead")]
+    #[deprecated = "Read from `Project.body` instead"]
     /// A link to the long description of the project (only present for old projects)
     pub body_url: Option<String>,
     /// When the project was first published
@@ -35,23 +36,23 @@ pub struct Project {
     /// The project's server side support range
     pub server_side: ProjectSupportRange,
     /// The total number of downloads the project has
-    pub downloads: usize,
+    pub downloads: Number,
     /// The total number of user following this project
-    pub followers: usize,
+    pub followers: Number,
     /// A list of categories the project is in
     pub categories: Vec<String>,
     /// A list of the version IDs of the project
     pub versions: Vec<ID>,
     /// The link to the project's icon
-    pub icon_url: Option<String>,
+    pub icon_url: Option<URL>,
     /// A link to submit bugs or issues about the project
-    pub issues_url: Option<String>,
+    pub issues_url: Option<URL>,
     /// A link to the project's source code
-    pub source_url: Option<String>,
+    pub source_url: Option<URL>,
     /// A link to the project's wiki page or other relevant information
-    pub wiki_url: Option<String>,
-    /// A link to the project's discord
-    pub discord_url: Option<String>,
+    pub wiki_url: Option<URL>,
+    /// The project's discord invite
+    pub discord_url: Option<URL>,
     /// A list of donation links the project has
     pub donation_urls: Option<Vec<DonationLink>>,
     /// A list of images that have been uploaded to the project's gallery
@@ -73,23 +74,23 @@ pub struct License {
     /// The license's long name
     pub name: String,
     /// A URL to this license
-    pub url: Option<String>,
+    pub url: Option<URL>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct DonationLink {
-    /// The donation link's platform ID
+    /// The donation platform's ID
     pub id: String,
-    /// The platform's long name
+    /// The donation platform's long name
     pub platform: String,
     /// A link to this donation
-    pub url: String,
+    pub url: URL,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct GalleryItem {
     /// The URL of the gallery image
-    pub url: String,
+    pub url: URL,
     /// Whether the image is featured in the gallery
     pub featured: bool,
     /// The title of the gallery image

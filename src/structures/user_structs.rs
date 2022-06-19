@@ -6,7 +6,7 @@ pub struct User {
     /// The user's ID
     pub id: ID,
     /// The user's GitHub ID
-    pub github_id: usize,
+    pub github_id: Number,
     /// The user's username
     pub username: String,
     /// The user's display name
