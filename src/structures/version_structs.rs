@@ -53,9 +53,9 @@ pub struct VersionFile {
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Hashes {
     /// The SHA512 hash of the version file
-    pub sha512: Option<String>,
+    pub sha512: String,
     /// The SHA1 hash of the version file
-    pub sha1: Option<String>,
+    pub sha1: String,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
