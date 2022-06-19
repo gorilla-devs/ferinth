@@ -1,5 +1,12 @@
 # Changelog
 
+## `2.4.0`
+### 19.06.2022
+
+- [#7](https://github.com/gorilla-devs/ferinth/pull/7) File hashes are no longer behind an `Option`
+- Remove the `Option` from the `Project.donation_urls` vector
+- Replace `String` with `url::Url` where appropriate
+
 ## `2.3.0`
 ### 12.06.2022
 
