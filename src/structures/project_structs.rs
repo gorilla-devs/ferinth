@@ -54,7 +54,7 @@ pub struct Project {
     /// The project's discord invite
     pub discord_url: Option<URL>,
     /// A list of donation links the project has
-    pub donation_urls: Option<Vec<DonationLink>>,
+    pub donation_urls: Vec<DonationLink>,
     /// A list of images that have been uploaded to the project's gallery
     pub gallery: Vec<GalleryItem>,
 }
