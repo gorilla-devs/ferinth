@@ -110,4 +110,5 @@ pub enum DependencyType {
     Required,
     Optional,
     Incompatible,
+    Embedded,
 }

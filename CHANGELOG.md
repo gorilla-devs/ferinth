@@ -1,5 +1,12 @@
 # Changelog
 
+## `2.5.0`
+### 04.07.2022
+
+- Manually implement `Default` for `Ferinth` so that the user agent is set to `crate_name/version`
+- Add `Ferinth::new` with a user agent based on the [documentation](https://docs.modrinth.com/api-spec/#section/User-Agents)
+- Added `DependencyType::Embedded` to fix [gorilla-devs/ferium#169](https://github.com/gorilla-devs/ferium/issues/169)
+
 ## `2.4.0`
 ### 19.06.2022
 
