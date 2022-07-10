@@ -18,7 +18,7 @@ pub struct User {
     /// A description of the user
     pub bio: Option<String>,
     /// The time at which the user was created
-    pub created: Datetime,
+    pub created: UtcTime,
     /// The user's role
     pub role: UserRole,
 }

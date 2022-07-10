@@ -22,9 +22,9 @@ pub struct Project {
     /// A link to the long description of the project (only present for old projects)
     pub body_url: Option<String>,
     /// When the project was first published
-    pub published: Datetime,
+    pub published: UtcTime,
     /// When the project was last updated
-    pub updated: Datetime,
+    pub updated: UtcTime,
     /// The project's status
     pub status: ProjectStatus,
     /// A message that a moderator sent regarding the project
@@ -43,14 +43,19 @@ pub struct Project {
     pub categories: Vec<String>,
     /// A list of the version IDs of the project
     pub versions: Vec<ID>,
+    #[serde(deserialize_with = "deserialise_optional_url")]
     /// The link to the project's icon
     pub icon_url: Option<URL>,
+    #[serde(deserialize_with = "deserialise_optional_url")]
     /// A link to submit bugs or issues about the project
     pub issues_url: Option<URL>,
+    #[serde(deserialize_with = "deserialise_optional_url")]
     /// A link to the project's source code
     pub source_url: Option<URL>,
+    #[serde(deserialize_with = "deserialise_optional_url")]
     /// A link to the project's wiki page or other relevant information
     pub wiki_url: Option<URL>,
+    #[serde(deserialize_with = "deserialise_optional_url")]
     /// The project's discord invite
     pub discord_url: Option<URL>,
     /// A list of donation links the project has
@@ -73,6 +78,7 @@ pub struct License {
     pub id: String,
     /// The license's long name
     pub name: String,
+    #[serde(deserialize_with = "deserialise_optional_url")]
     /// A URL to this license
     pub url: Option<URL>,
 }
@@ -98,7 +104,7 @@ pub struct GalleryItem {
     /// The description of the gallery image
     pub description: Option<String>,
     /// The date and time the gallery image was created
-    pub created: Datetime,
+    pub created: UtcTime,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

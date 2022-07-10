@@ -28,7 +28,7 @@ pub struct GameVersion {
     /// The type of the game version
     pub version_type: GameVersionType,
     /// The date of the game version release
-    pub date: Datetime,
+    pub date: UtcTime,
     /// Whether this is a major version
     pub major: bool,
 }

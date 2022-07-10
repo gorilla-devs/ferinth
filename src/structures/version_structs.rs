@@ -18,10 +18,11 @@ pub struct Version {
     /// The version's changelog
     pub changelog: Option<String>,
     #[deprecated = "Read from `Version.changelog` instead"]
+    #[serde(deserialize_with = "deserialise_optional_url")]
     /// A link to the version's changelog
     pub changelog_url: Option<URL>,
     /// When this version was published
-    pub date_published: Datetime,
+    pub date_published: UtcTime,
     /// The number of downloads this version has
     pub downloads: usize,
     /// The version's type
