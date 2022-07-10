@@ -1,5 +1,4 @@
 use super::*;
-use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Category {

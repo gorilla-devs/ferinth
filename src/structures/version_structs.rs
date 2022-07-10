@@ -1,5 +1,4 @@
 use super::*;
-use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Version {
@@ -20,7 +19,7 @@ pub struct Version {
     #[deprecated = "Read from `Version.changelog` instead"]
     #[serde(deserialize_with = "deserialise_optional_url")]
     /// A link to the version's changelog
-    pub changelog_url: Option<URL>,
+    pub changelog_url: Option<Url>,
     /// When this version was published
     pub date_published: UtcTime,
     /// The number of downloads this version has
@@ -42,7 +41,7 @@ pub struct VersionFile {
     /// The file's hashes
     pub hashes: Hashes,
     /// A direct link to the file
-    pub url: URL,
+    pub url: Url,
     /// The file's name
     pub filename: String,
     /// Whether the file is the primary file of its version

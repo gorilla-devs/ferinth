@@ -1,5 +1,4 @@
 use super::*;
-use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct User {
@@ -14,7 +13,7 @@ pub struct User {
     /// The user's email, only visible to the user
     pub email: Option<String>,
     /// A link to the user's avatar
-    pub avatar_url: URL,
+    pub avatar_url: Url,
     /// A description of the user
     pub bio: Option<String>,
     /// The time at which the user was created

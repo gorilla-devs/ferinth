@@ -1,5 +1,4 @@
 use super::*;
-use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Project {
@@ -45,19 +44,19 @@ pub struct Project {
     pub versions: Vec<ID>,
     #[serde(deserialize_with = "deserialise_optional_url")]
     /// The link to the project's icon
-    pub icon_url: Option<URL>,
+    pub icon_url: Option<Url>,
     #[serde(deserialize_with = "deserialise_optional_url")]
     /// A link to submit bugs or issues about the project
-    pub issues_url: Option<URL>,
+    pub issues_url: Option<Url>,
     #[serde(deserialize_with = "deserialise_optional_url")]
     /// A link to the project's source code
-    pub source_url: Option<URL>,
+    pub source_url: Option<Url>,
     #[serde(deserialize_with = "deserialise_optional_url")]
     /// A link to the project's wiki page or other relevant information
-    pub wiki_url: Option<URL>,
+    pub wiki_url: Option<Url>,
     #[serde(deserialize_with = "deserialise_optional_url")]
     /// The project's discord invite
-    pub discord_url: Option<URL>,
+    pub discord_url: Option<Url>,
     /// A list of donation links the project has
     pub donation_urls: Vec<DonationLink>,
     /// A list of images that have been uploaded to the project's gallery
@@ -80,7 +79,7 @@ pub struct License {
     pub name: String,
     #[serde(deserialize_with = "deserialise_optional_url")]
     /// A URL to this license
-    pub url: Option<URL>,
+    pub url: Option<Url>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -90,13 +89,13 @@ pub struct DonationLink {
     /// The donation platform's long name
     pub platform: String,
     /// A link to this donation
-    pub url: URL,
+    pub url: Url,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct GalleryItem {
     /// The URL of the gallery image
-    pub url: URL,
+    pub url: Url,
     /// Whether the image is featured in the gallery
     pub featured: bool,
     /// The title of the gallery image
