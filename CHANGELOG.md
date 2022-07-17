@@ -3,7 +3,7 @@
 ## `2.5.1`
 ### 10.07.2022
 
-- Fixed a bug where if an empty string was provided for an `Option<URL>` field, the deserialiser would try to parse the url and error out rather than return `None`.
+- Fixed a bug where if an empty string was provided for an `Option<URL>` field, the deserialiser would try to parse the url and error out rather than return `None`
 - Renamed the `Datetime` alias to `UtcTime`
 
 ## `2.5.0`

@@ -16,7 +16,7 @@ reqwest = { version = "~0.11.11", default-features = false, features = [
     "json",
     "rustls-tls",
 ] }
-serde = { version = "~1.0.138", features = ["derive"] }
+serde = { version = "~1.0.139", features = ["derive"] }
 chrono = { version = "~0.4.19", features = ["serde"] }
 url = { version = "~2.2.2", features = ["serde"] }
 lazy_static = "~1.4.0"
@@ -25,4 +25,4 @@ lazy-regex = "~2.3.0"
 thiserror = "~1.0.31"
 
 [dev-dependencies]
-tokio = { version = "~1.19.2", features = ["rt-multi-thread", "macros"] }
+tokio = { version = "~1.20.0", features = ["rt-multi-thread", "macros"] }

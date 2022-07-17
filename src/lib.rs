@@ -73,8 +73,9 @@ impl Default for Ferinth {
 }
 
 impl Ferinth {
-    /// Instantiate the container with the provided [user agent](https://docs.modrinth.com/api-spec/#section/User-Agents).
-    /// `program_name` is required, and the `version` and `contact` are optional but recommended by Modrinth.
+    /// Instantiate the container with the provided [user agent](https://docs.modrinth.com/api-spec/#section/User-Agents) information.
+    ///
+    /// `program_name` is required, and the `version` and `contact` are optional but recommended
     pub fn new(program_name: &str, version: Option<&str>, contact: Option<&str>) -> Self {
         Self {
             client: Client::builder()
