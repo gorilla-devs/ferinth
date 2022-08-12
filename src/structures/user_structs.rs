@@ -50,6 +50,7 @@ pub struct TeamMember {
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
+#[non_exhaustive]
 pub enum UserRole {
     Developer,
     Moderator,

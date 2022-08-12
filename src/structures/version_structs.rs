@@ -106,6 +106,7 @@ pub enum VersionType {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
+#[non_exhaustive]
 pub enum DependencyType {
     Required,
     Optional,

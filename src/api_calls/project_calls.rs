@@ -76,4 +76,20 @@ impl Ferinth {
         self.get(API_URL_BASE.join_all(vec!["project", project_id, "dependencies"]))
             .await
     }
+
+    /// Check whether the given mod ID/slug is valid.
+    /// Returns the exact mod ID.
+    ///
+    /// Example:
+    /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # let modrinth = ferinth::Ferinth::default();
+    /// assert!("AANobbMI".to_string() == modrinth.resolve_id_slug("sodium").await?.id);
+    /// # Ok(()) }
+    /// ```
+    pub async fn resolve_id_slug(&self, id_slug: &str) -> Result<ResolveIDSlugResponse> {
+        self.get(API_URL_BASE.join_all(vec!["project", id_slug, "check"]))
+            .await
+    }
 }

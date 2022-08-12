@@ -112,6 +112,11 @@ pub struct ProjectDependencies {
     pub versions: Vec<version_structs::Version>,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ResolveIDSlugResponse {
+    pub id: String,
+}
+
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum ProjectStatus {
@@ -134,7 +139,9 @@ pub enum ProjectSupportRange {
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
+#[non_exhaustive] // More project types may be added in the future
 pub enum ProjectType {
     Mod,
     Modpack,
+    ResourcePack,
 }

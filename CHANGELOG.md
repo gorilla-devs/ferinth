@@ -1,5 +1,13 @@
 # Changelog
 
+## `2.5.2`
+### 12.08.2022
+
+- Update dependencies
+- Add a [new API call](https://docs.modrinth.com/api-spec/#tag/projects/operation/checkProjectValidity)
+- Add resource packs to the project types enum
+- Make `ProjectType`, `UserRole`, and `DependencyType` non-exhaustive
+
 ## `2.5.1`
 ### 10.07.2022
 
