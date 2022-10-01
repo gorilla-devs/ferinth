@@ -1,7 +1,7 @@
-pub mod project_structs;
-pub mod tag_structs;
-pub mod user_structs;
-pub mod version_structs;
+pub mod project;
+pub mod tag;
+pub mod user;
+pub mod version;
 
 pub type UtcTime = chrono::DateTime<chrono::Utc>;
 pub type Number = usize;

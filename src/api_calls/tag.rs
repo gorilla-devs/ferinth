@@ -1,5 +1,5 @@
 use crate::{
-    request::API_URL_BASE, structures::tag_structs::*, url_join_ext::UrlJoinExt, Ferinth, Result,
+    request::API_URL_BASE, structures::tag::*, url_join_ext::UrlJoinExt, Ferinth, Result,
 };
 
 impl Ferinth {

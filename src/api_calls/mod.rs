@@ -1,9 +1,9 @@
-pub mod project_calls;
-pub mod tag_calls;
-pub mod team_calls;
-pub mod user_calls;
-pub mod version_calls;
-pub mod version_file_calls;
+pub mod project;
+pub mod tag;
+pub mod team;
+pub mod user;
+pub mod version;
+pub mod version_file;
 
 use crate::{Error, Result};
 

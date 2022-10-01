@@ -109,7 +109,7 @@ pub struct GalleryItem {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ProjectDependencies {
     pub projects: Vec<Project>,
-    pub versions: Vec<version_structs::Version>,
+    pub versions: Vec<version::Version>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -142,6 +142,21 @@ pub enum ProjectSupportRange {
 #[non_exhaustive] // More project types may be added in the future
 pub enum ProjectType {
     Mod,
+    Plugin,
     Modpack,
     ResourcePack,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum FileExt {
+    PNG,
+    JPG,
+    JPEG,
+    BMP,
+    GIF,
+    WebP,
+    SVG,
+    SVGZ,
+    RGB,
 }

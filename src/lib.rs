@@ -22,7 +22,7 @@ mod request;
 pub mod structures;
 mod url_join_ext;
 
-use reqwest::Client;
+use reqwest::{header, Client};
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
@@ -36,6 +36,8 @@ pub enum Error {
     ReqwestError(#[from] reqwest::Error),
     #[error("{}", .0)]
     JSONError(#[from] serde_json::Error),
+    #[error("The GitHub token provided is invalid")]
+    InvalidGitHubToken(#[from] header::InvalidHeaderValue),
 }
 
 pub(crate) type Result<T> = std::result::Result<T, Error>;
@@ -67,17 +69,25 @@ impl Default for Ferinth {
                     env!("CARGO_PKG_VERSION")
                 ))
                 .build()
-                .unwrap(),
+                .expect("TLS backend failed to initialise"),
         }
     }
 }
 
 impl Ferinth {
-    /// Instantiate the container with the provided [user agent](https://docs.modrinth.com/api-spec/#section/User-Agents) information.
+    /// Instantiate the container with the provided [user agent](https://docs.modrinth.com/api-spec/#section/User-Agents) information,
+    /// and an optional GitHub token for authorisation.
     ///
-    /// `program_name` is required, and the `version` and `contact` are optional but recommended
-    pub fn new(program_name: &str, version: Option<&str>, contact: Option<&str>) -> Self {
-        Self {
+    /// `program_name` is required, and the `version` and `contact` are optional, but recommended.
+    ///
+    /// This function fails if the GitHub token provided is invalid.
+    pub fn new(
+        program_name: &str,
+        version: Option<&str>,
+        contact: Option<&str>,
+        authorisation: Option<&str>,
+    ) -> Result<Self> {
+        Ok(Self {
             client: Client::builder()
                 .user_agent(format!(
                     "{}{}{}",
@@ -85,8 +95,16 @@ impl Ferinth {
                     version.map_or("".into(), |version| format!("/{}", version)),
                     contact.map_or("".into(), |contact| format!(" ({})", contact))
                 ))
+                .default_headers(if let Some(authorisation) = authorisation {
+                    header::HeaderMap::from_iter(vec![(
+                        header::AUTHORIZATION,
+                        header::HeaderValue::from_str(authorisation)?,
+                    )])
+                } else {
+                    header::HeaderMap::new()
+                })
                 .build()
                 .unwrap(),
-        }
+        })
     }
 }

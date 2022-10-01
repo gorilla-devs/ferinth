@@ -1,5 +1,15 @@
 # Changelog
 
+## `2.7.0`
+### 01.10.2022
+
+- Update dependencies
+- Add support for authorised requests
+- Remove `_calls` and `_structs` from filenames
+- Change `resolve_id_slug()` to `does_exist()`
+- Add `follow()`, `add_user()`, `list_multiple_teams_members()`, `join_team()`, `transfer_ownership()`, `get_current_user()`, `get_notification()`, `followed_projects()`, and `submit_report()`
+- Add `ProjectType::Plugin`, `FileExt`, `Notification`, `Report`, `ReportSubmission`, `NotificationAction`, `ReportItemType`, `NotificationType`
+
 ## `2.6.0`
 ### 12.08.2022
 

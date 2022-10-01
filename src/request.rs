@@ -27,15 +27,15 @@ impl Ferinth {
     }
 
     /// Perform a GET request to `url` with `query` parameters, and deserialise the response
-    pub(crate) async fn get_with_query<T, S1, S2>(
+    pub(crate) async fn get_with_query<T, K, V>(
         &self,
         mut url: Url,
-        query: &[(S1, S2)],
+        query: &[(K, V)],
     ) -> Result<T>
     where
         T: DeserializeOwned,
-        S1: AsRef<str>,
-        S2: AsRef<str>,
+        K: AsRef<str>,
+        V: AsRef<str>,
     {
         url.query_pairs_mut().extend_pairs(query);
         self.get(url).await
@@ -45,7 +45,7 @@ impl Ferinth {
     pub(crate) async fn post<T, B>(&self, url: Url, body: &B) -> Result<T>
     where
         T: DeserializeOwned,
-        B: Serialize,
+        B: Serialize + ?Sized,
     {
         let response = self.client.post(url).json(body).send().await?;
         if StatusCode::TOO_MANY_REQUESTS == response.status() {
@@ -62,17 +62,17 @@ impl Ferinth {
     }
 
     /// Perform a POST request to `url` with `body` and `query` parameters, and deserialise the response
-    pub(crate) async fn post_with_query<T, B, S1, S2>(
+    pub(crate) async fn post_with_query<T, B, K, V>(
         &self,
         mut url: Url,
         body: &B,
-        query: &[(S1, S2)],
+        query: &[(K, V)],
     ) -> Result<T>
     where
         T: DeserializeOwned,
-        B: Serialize,
-        S1: AsRef<str>,
-        S2: AsRef<str>,
+        B: Serialize + ?Sized,
+        K: AsRef<str>,
+        V: AsRef<str>,
     {
         url.query_pairs_mut().extend_pairs(query);
         self.post(url, body).await

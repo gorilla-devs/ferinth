@@ -1,6 +1,6 @@
 use super::check_id_slug;
 use crate::{
-    request::API_URL_BASE, structures::version_structs::*, url_join_ext::UrlJoinExt, Ferinth,
+    request::API_URL_BASE, structures::version::*, url_join_ext::UrlJoinExt, Ferinth,
     Result,
 };
 
