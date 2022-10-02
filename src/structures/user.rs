@@ -58,14 +58,14 @@ pub struct Notification {
     pub title: String,
     /// The body of the notification
     pub text: String,
-    /// A link to the related project/version
-    pub link: Url,
+    /// A relative link to the related project/version
+    pub link: String,
     /// Whether the notification has been read
     pub read: bool,
     /// The time at which the notification was created
     pub created: UtcTime,
     /// A list of actions that can be performed
-    pub actions: Option<NotificationAction>,
+    pub actions: Vec<NotificationAction>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

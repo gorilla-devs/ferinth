@@ -127,7 +127,7 @@ impl Ferinth {
     /// #     Some(env!("MODRINTH_TOKEN")),
     /// # )?;
     /// let current_user = modrinth.get_current_user().await?;
-    /// modrinth.get_notifications(&current_user.id).await?;
+    /// modrinth.followed_projects(&current_user.id).await?;
     /// # Ok(()) }
     /// ```
     pub async fn followed_projects(&self, user_id: &str) -> Result<Vec<Project>> {
