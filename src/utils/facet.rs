@@ -26,6 +26,12 @@ struct FacetBuilder {
 }
 
 impl FacetBuilder {
+    /// Creates a new [`FacetBuilder`]
+    /// # Example
+    /// ```rs
+    /// // Search for 1.18.2 mods
+    /// let search = FacetBuilder::new(ModrinthFacet::version("1.18.2"))
+    /// ```
     fn new(facet: Facet) -> FacetBuilder {
         FacetBuilder {
             stack: vec![],
@@ -33,17 +39,37 @@ impl FacetBuilder {
         }
     }
 
+    /// Adds an AND expression to the current builder.  
+    /// # Example
+    /// ```rs
+    /// // Search for 1.18.2 AND quilt mods
+    /// let search = FacetBuilder::new(ModrinthFacet::version("1.18.2"))    
+    ///     .and(ModrinthFacet::category("quilt"))
+    ///     .build();
+    /// // Builds to : [["version:1.18.2","category:quilt"]]
+    /// ```
     fn and(mut self, facet: Facet) -> FacetBuilder {
         self.cur.push(facet);
         self
     }
 
+    /// Adds an OR expression to the current builder.  
+    /// # Example
+    /// ```rs
+    /// // Search for 1.18.2 AND quilt OR fabric mods
+    /// let search = FacetBuilder::new(ModrinthFacet::version("1.18.2"))    
+    ///     .and(ModrinthFacet::category("quilt"))
+    ///     .or(ModrinthFacet::category("fabric"))
+    ///     .build();
+    /// // Builds to : [["version:1.18.2","category:quilt"], ["category:fabric"]]
+    /// ```
     fn or(mut self, facet: Facet) -> FacetBuilder {
         self.stack.push(self.cur);
         self.cur = vec![facet];
         self
     }
 
+    /// Serializes the [`FacetBuilder`] into the structure required by Modrinth (Meilisearch)
     fn build(mut self) -> Vec<Vec<String>> {
         self.stack.push(self.cur);
         self.stack
