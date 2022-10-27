@@ -6,7 +6,7 @@ struct Facet {
 }
 
 impl Facet {
-    fn new<T: Into<String>>(key: T, value: T) -> Facet {
+    pub fn new<T: Into<String>>(key: T, value: T) -> Facet {
         Facet {
             key: key.into(),
             value: value.into(),
@@ -32,7 +32,7 @@ impl FacetBuilder {
     /// // Search for 1.18.2 mods
     /// let search = FacetBuilder::new(ModrinthFacet::version("1.18.2"))
     /// ```
-    fn new(facet: Facet) -> FacetBuilder {
+    pub fn new(facet: Facet) -> FacetBuilder {
         FacetBuilder {
             stack: vec![],
             cur: vec![facet],
@@ -48,7 +48,7 @@ impl FacetBuilder {
     ///     .build();
     /// // Builds to : [["version:1.18.2","category:quilt"]]
     /// ```
-    fn and(mut self, facet: Facet) -> FacetBuilder {
+    pub fn and(mut self, facet: Facet) -> FacetBuilder {
         self.cur.push(facet);
         self
     }
@@ -63,14 +63,14 @@ impl FacetBuilder {
     ///     .build();
     /// // Builds to : [["version:1.18.2","category:quilt"], ["category:fabric"]]
     /// ```
-    fn or(mut self, facet: Facet) -> FacetBuilder {
+    pub fn or(mut self, facet: Facet) -> FacetBuilder {
         self.stack.push(self.cur);
         self.cur = vec![facet];
         self
     }
 
     /// Serializes the [`FacetBuilder`] into the structure required by Modrinth (Meilisearch)
-    fn build(mut self) -> Vec<Vec<String>> {
+    pub fn build(mut self) -> Vec<Vec<String>> {
         self.stack.push(self.cur);
         self.stack
             .iter()
@@ -85,7 +85,7 @@ impl ModrinthFacet {
     /// Creates a valid Modrinth [`Facet`]  
     /// # Arguments
     /// * `version` - The minecraft version to filter the results from
-    fn version<T: Into<String>>(version: T) -> Facet {
+    pub fn version<T: Into<String>>(version: T) -> Facet {
         Facet {
             key: "versions".to_string(),
             value: version.into(),
@@ -94,7 +94,7 @@ impl ModrinthFacet {
     /// Creates a valid Modrinth [`Facet`]  
     /// # Arguments
     /// * `project_type` - The [`ProjectType`] to filter the results from
-    fn project_type(project_type: ProjectType) -> Facet {
+    pub fn project_type(project_type: ProjectType) -> Facet {
         Facet {
             key: "project_type".to_string(),
             value: format!("{:?}", project_type).to_lowercase(),
@@ -103,7 +103,7 @@ impl ModrinthFacet {
     /// Creates a valid Modrinth [`Facet`]  
     /// # Arguments
     /// * `license` - The license ID (e.g. mit, arr) to filter the results from
-    fn license<T: Into<String>>(license: T) -> Facet {
+    pub fn license<T: Into<String>>(license: T) -> Facet {
         Facet {
             key: "license".to_string(),
             value: license.into(),
@@ -112,7 +112,7 @@ impl ModrinthFacet {
     /// Creates a valid Modrinth [`Facet`]  
     /// # Arguments
     /// * `category` - The loader or category to filter the results from
-    fn category<T: Into<String>>(category: T) -> Facet {
+    pub fn category<T: Into<String>>(category: T) -> Facet {
         Facet {
             key: "categories".to_string(),
             value: category.into(),
