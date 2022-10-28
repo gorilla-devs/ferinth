@@ -80,7 +80,7 @@ impl FacetBuilder {
         self.stack.push(self.cur);
         self.stack
             .iter()
-            .map(|x| x.iter().map(|z| z.into()))
+            .map(|x| x.iter().map(|z| z.into()).collect())
             .collect()
     }
 }
