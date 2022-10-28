@@ -54,3 +54,15 @@ pub enum SortingMethod {
     Newest,
     Updated,
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct SearchResponse {
+    /// The list of results
+    hits: Vec<SearchResult>,
+    /// The number of results that were skipped by the query
+    offset: Number,
+    /// The number of results that were returned by the query
+    limit: Number,
+    /// The total number of results that match the query
+    total_hits: Number,
+}
