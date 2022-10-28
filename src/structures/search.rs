@@ -44,3 +44,13 @@ pub struct SearchResult {
     /// All gallery images attached to the project
     pub gallery: Vec<Url>,
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "lowercase")]
+pub enum SortingMethod {
+    Relevance,
+    Downloads,
+    Follows,
+    Newest,
+    Updated,
+}
