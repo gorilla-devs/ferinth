@@ -20,6 +20,12 @@ impl Into<String> for Facet {
     }
 }
 
+impl Into<String> for &Facet {
+    fn into(self) -> String {
+        format!("{}:{}", self.key, self.value)
+    }
+}
+
 struct FacetBuilder {
     stack: Vec<Vec<Facet>>,
     cur: Vec<Facet>,
