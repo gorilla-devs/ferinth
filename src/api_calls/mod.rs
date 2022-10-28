@@ -1,4 +1,5 @@
 pub mod project;
+pub mod search;
 pub mod tag;
 pub mod team;
 pub mod user;
