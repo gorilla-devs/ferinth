@@ -79,7 +79,7 @@ impl Ferinth {
     /// # async fn main() -> Result<(), ferinth::Error> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let jellysquid_projects = modrinth.list_projects("TEZXhE2U").await?;
-    /// assert!(jellysquid_projects.len() == 4);
+    /// assert!(jellysquid_projects.len() == 3);
     /// # Ok(()) }
     /// ```
     pub async fn list_projects(&self, user_id: &str) -> Result<Vec<Project>> {

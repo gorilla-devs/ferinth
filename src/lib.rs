@@ -10,12 +10,11 @@
 //! - All structure definitions based on <https://docs.modrinth.com/api-spec/>
 //! - All of the GET and POST calls that don't require authentication
 //!
-//! This crate uses [RusTLS](https://docs.rs/rustls/) rather than OpenSSL, because OpenSSL is outdated and slower.
+//! This crate uses [Rustls](https://docs.rs/rustls/) rather than OpenSSL, because OpenSSL is outdated and slower.
 //!
 //! The following features still need to be implemented
 //! - Search projects
-//! - User authentication
-//! - Other types of requests
+//! - Some types of requests
 
 mod api_calls;
 mod request;

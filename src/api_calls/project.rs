@@ -83,6 +83,8 @@ impl Ferinth {
         Ok(res.id)
     }
 
+    /* TODO: Binary POST body required
+
     /// Add the given gallery `image`, with the file `ext`ention and an optional `title`, to `project_id`.
     /// State whether the image should be `featured` or not, and optionally provide a `description`.
     ///
@@ -91,7 +93,7 @@ impl Ferinth {
     /// REQUIRES AUTHENTICATION!
     ///
     /// Example:
-    /// ```ignore
+    /// ```
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), ferinth::Error> {
     /// # let modrinth = ferinth::Ferinth::new(
@@ -111,7 +113,6 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
 
-    /* TODO: Binary POST body required
     pub async fn add_gallery_image(
         &self,
         project_id: &str,
