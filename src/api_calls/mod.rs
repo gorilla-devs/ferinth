@@ -7,13 +7,12 @@ pub mod version_file;
 
 use crate::{Error, Result};
 
-/// Verify that a given string `input` is base62 and Modrinth slugs compliant
+/// Verify that a given string `input` is compliant with Modrinth IDs or slugs
 pub(crate) fn check_id_slug(input: &str) -> Result<()> {
-    // Check if there is any character that isn't valid in base62 e.g. '/'
-    match lazy_regex::regex_is_match!("[^a-zA-Z0-9-_]", input) {
-        true => Err(Error::NotBase62),
-        false => Ok(()),
-    }
+    // regex taken from [Modrinth documentation](https://docs.modrinth.com/api-spec/#tag/project_model)
+    lazy_regex::regex_is_match!(r#"^[\w!@$()`.+,"\-']{3,64}$"#, input)
+        .then_some(())
+        .ok_or(Error::NotBase62)
 }
 
 /// Verify that a given string `input` is SHA1 compliant

@@ -1,6 +1,4 @@
-use crate::{
-    request::API_URL_BASE, structures::tag::*, url_join_ext::UrlJoinExt, Ferinth, Result,
-};
+use crate::{request::API_URL_BASE, structures::tag::*, url_join_ext::UrlJoinExt, Ferinth, Result};
 
 impl Ferinth {
     /// List the categories, their icons, and applicable project types
@@ -14,7 +12,8 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn list_categories(&self) -> Result<Vec<Category>> {
-        self.get(API_URL_BASE.join_all(vec!["tag", "category"])).await
+        self.get(API_URL_BASE.join_all(vec!["tag", "category"]))
+            .await
     }
 
     /// List the loaders, their icons, and supported project types
@@ -57,7 +56,8 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn list_licenses(&self) -> Result<Vec<License>> {
-        self.get(API_URL_BASE.join_all(vec!["tag", "license"])).await
+        self.get(API_URL_BASE.join_all(vec!["tag", "license"]))
+            .await
     }
 
     /// List donation platforms and information about them

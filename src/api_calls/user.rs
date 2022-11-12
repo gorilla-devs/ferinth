@@ -56,8 +56,7 @@ impl Ferinth {
     /// # async fn main() -> Result<(), ferinth::Error> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let users = modrinth.get_multiple_users(&["TEZXhE2U", "7Azq6eD8"]).await?;
-    /// assert!(&users[0].username == "jellysquid3");
-    /// assert!(&users[1].username == "theRookieCoder");
+    /// assert!(users.len() == 2);
     /// # Ok(()) }
     /// ```
     pub async fn get_multiple_users(&self, user_ids: &[&str]) -> Result<Vec<User>> {

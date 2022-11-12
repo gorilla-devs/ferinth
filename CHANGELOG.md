@@ -1,5 +1,15 @@
 # Changelog
 
+## `2.7.1`
+### 12.11.2022
+
+- Update dependencies
+- Small improvements and test fixes
+- Updated structs to Labrinth `v2.5.0`
+- Reordered struct fields to match documentation, and removed redundant doc-comments
+- Updated `api_calls::check_id_slug` to use the regex provided in the documentation
+- Renamed `structures::user::Notification`'s `type_field` to `notification_type`
+
 ## `2.7.0`
 ### 01.10.2022
 

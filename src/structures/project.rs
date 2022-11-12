@@ -2,63 +2,68 @@ use super::*;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Project {
-    /// The project's ID
-    pub id: ID,
-    /// The project's slug.
-    /// This can change at any time, so use the `id` for long term storage
+    /// The project's slug, used for vanity URLs.
+    /// This can change at any time, so use the `id` for long term storage.
     pub slug: String,
-    /// The project type of the project
-    pub project_type: ProjectType,
-    /// The ID of the team that has ownership of this project
-    pub team: ID,
-    /// The project's title or display name
+    /// The project's title or name
     pub title: String,
     /// A short description of the project
     pub description: String,
-    /// A long form of the description
-    pub body: String,
-    #[deprecated = "Read from `Project.body` instead"]
-    /// A link to the long description of the project (only present for old projects)
-    pub body_url: Option<String>,
-    /// When the project was first published
-    pub published: UtcTime,
-    /// When the project was last updated
-    pub updated: UtcTime,
-    /// The project's status
-    pub status: ProjectStatus,
-    /// A message that a moderator sent regarding the project
-    pub moderator_message: Option<ModeratorMessage>,
-    /// The project's license
-    pub license: License,
+    /// A list of categories the project is in
+    pub categories: Vec<String>,
     /// The project's client side support range
     pub client_side: ProjectSupportRange,
     /// The project's server side support range
     pub server_side: ProjectSupportRange,
+    /// A long form description of the project
+    pub body: String,
+    /// A list of categories which are searchable but non-primary
+    pub additional_categories: Vec<String>,
+    /// A link to submit bugs or issues with the project
+    #[serde(deserialize_with = "deserialise_optional_url")]
+    pub issues_url: Option<Url>,
+    /// A link to the project's source code
+    #[serde(deserialize_with = "deserialise_optional_url")]
+    pub source_url: Option<Url>,
+    /// A link to the project's wiki page or other relevant information
+    #[serde(deserialize_with = "deserialise_optional_url")]
+    pub wiki_url: Option<Url>,
+    /// The project's Discord server invite
+    #[serde(deserialize_with = "deserialise_optional_url")]
+    pub discord_url: Option<Url>,
+    /// A list of donation links for the project
+    pub donation_urls: Vec<DonationLink>,
+    /// The project type of the project
+    pub project_type: ProjectType,
     /// The total number of downloads the project has
     pub downloads: Number,
-    /// The total number of user following this project
+    /// The link to the project's icon
+    #[serde(deserialize_with = "deserialise_optional_url")]
+    pub icon_url: Option<Url>,
+    /// The project's ID
+    pub id: ID,
+    /// The ID of the team that has ownership of this project
+    pub team: ID,
+    /// A link to the long description of the project (only present for old projects)
+    #[deprecated = "Read from `body` instead"]
+    #[serde(deserialize_with = "deserialise_optional_url")]
+    pub body_url: Option<Url>,
+    /// A message that a moderator sent regarding the project
+    pub moderator_message: Option<ModeratorMessage>,
+    /// When the project was first published
+    pub published: UtcTime,
+    /// When the project was last updated
+    pub updated: UtcTime,
+    /// The date the project's status was set to approved or unlisted
+    pub approved: Option<UtcTime>,
+    /// The total number of users following the project
     pub followers: Number,
-    /// A list of categories the project is in
-    pub categories: Vec<String>,
+    /// The project's status
+    pub status: ProjectStatus,
+    /// The project's license
+    pub license: License,
     /// A list of the version IDs of the project
     pub versions: Vec<ID>,
-    #[serde(deserialize_with = "deserialise_optional_url")]
-    /// The link to the project's icon
-    pub icon_url: Option<Url>,
-    #[serde(deserialize_with = "deserialise_optional_url")]
-    /// A link to submit bugs or issues about the project
-    pub issues_url: Option<Url>,
-    #[serde(deserialize_with = "deserialise_optional_url")]
-    /// A link to the project's source code
-    pub source_url: Option<Url>,
-    #[serde(deserialize_with = "deserialise_optional_url")]
-    /// A link to the project's wiki page or other relevant information
-    pub wiki_url: Option<Url>,
-    #[serde(deserialize_with = "deserialise_optional_url")]
-    /// The project's discord invite
-    pub discord_url: Option<Url>,
-    /// A list of donation links the project has
-    pub donation_urls: Vec<DonationLink>,
     /// A list of images that have been uploaded to the project's gallery
     pub gallery: Vec<GalleryItem>,
 }
@@ -73,12 +78,12 @@ pub struct ModeratorMessage {
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct License {
-    /// The license's ID
+    /// The license ID of a project, retrieved from the license's get route
     pub id: String,
     /// The license's long name
     pub name: String,
+    /// The URL to this license
     #[serde(deserialize_with = "deserialise_optional_url")]
-    /// A URL to this license
     pub url: Option<Url>,
 }
 
@@ -86,9 +91,9 @@ pub struct License {
 pub struct DonationLink {
     /// The donation platform's ID
     pub id: String,
-    /// The donation platform's long name
+    /// The donation platform this link is for
     pub platform: String,
-    /// A link to this donation
+    /// A link to the donation platform and user
     pub url: Url,
 }
 

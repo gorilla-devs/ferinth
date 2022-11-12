@@ -1,23 +1,23 @@
-use super::*;
+use super::{project::ProjectType, *};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Category {
-    /// The SVG icon of the category
+    /// The category's SVG icon
     pub icon: String,
-    /// The name of the category
     pub name: String,
     /// The project type this category is applicable to
-    pub project_type: project::ProjectType,
+    pub project_type: ProjectType,
+    /// The header under which the category should go
+    pub header: String,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Loader {
-    /// The SVG icon of the loader
+    /// The loader's SVG icon
     pub icon: String,
-    /// The name of the loader
     pub name: String,
     /// The project types that this loader is applicable to
-    pub supported_project_types: Vec<project::ProjectType>,
+    pub supported_project_types: Vec<ProjectType>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

@@ -2,23 +2,19 @@ use super::*;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct User {
-    /// The user's ID
-    pub id: ID,
-    /// The user's GitHub ID
-    pub github_id: Number,
-    /// The user's username
     pub username: String,
     /// The user's display name
     pub name: Option<String>,
-    /// The user's email, only visible to the user
+    /// The user's email, only visible to the user itself when authenticated
     pub email: Option<String>,
-    /// A link to the user's avatar
-    pub avatar_url: Url,
     /// A description of the user
     pub bio: Option<String>,
+    pub id: ID,
+    /// The user's GitHub ID
+    pub github_id: Option<Number>,
+    pub avatar_url: Url,
     /// The time at which the user was created
     pub created: UtcTime,
-    /// The user's role
     pub role: UserRole,
 }
 
@@ -26,14 +22,12 @@ pub struct User {
 pub struct TeamMember {
     /// The ID of the member's team
     pub team_id: ID,
-    /// The user associated with the member
     pub user: User,
-    /// This team member's role
     pub role: String,
     /// The user's permissions in bitflag format
-    /// (requires authorization to view)
+    /// (requires authorisation to view)
     ///
-    /// In order from first to eighth bit, the bits are:
+    /// In order from first to eighth bit, they indicate:
     /// - UPLOAD_VERSION
     /// - DELETE_VERSION
     /// - EDIT_DETAILS
@@ -43,8 +37,8 @@ pub struct TeamMember {
     /// - EDIT_MEMBER
     /// - DELETE_PROJECT
     pub permissions: Option<u8>,
-    /// Whether the user has accepted membership on the team
-    /// (requires authorization to view)
+    /// Whether the user has accepted membership of the team
+    /// (requires authorisation to view)
     pub accepted: bool,
 }
 
@@ -54,9 +48,9 @@ pub struct Notification {
     /// The ID of the user who received the notification
     pub user_id: ID,
     #[serde(rename = "type")]
-    pub type_field: Option<NotificationType>,
+    pub notification_type: Option<NotificationType>,
     pub title: String,
-    /// The body of the notification
+    /// The body text of the notification
     pub text: String,
     /// A relative link to the related project/version
     pub link: String,

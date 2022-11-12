@@ -2,43 +2,39 @@ use super::*;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Version {
-    /// The version's ID
+    pub name: String,
+    /// The version's number.
+    /// Ideally, this will follow semantic versioning.
+    pub version_number: String,
+    pub changelog: Option<String>,
+    /// A list of specific versions of projects that this version depends on
+    pub dependencies: Vec<Dependency>,
+    /// A list of Minecraft versions that this version supports
+    pub game_versions: Vec<String>,
+    /// The release channel for this version
+    pub version_type: VersionType,
+    /// The mod loaders that this version supports
+    pub loaders: Vec<String>,
+    /// Whether the version is featured or not
+    pub featured: bool,
     pub id: ID,
     /// The ID of the project this version is for
     pub project_id: ID,
     /// The ID of the author who published this version
     pub author_id: ID,
-    /// Whether the version is 'featured' or not
-    pub featured: bool,
-    /// The name of this version
-    pub name: String,
-    /// The version's number. Ideally, this will follow semantic versioning
-    pub version_number: String,
-    /// The version's changelog
-    pub changelog: Option<String>,
-    #[deprecated = "Read from `Version.changelog` instead"]
-    #[serde(deserialize_with = "deserialise_optional_url")]
-    /// A link to the version's changelog
-    pub changelog_url: Option<Url>,
-    /// When this version was published
     pub date_published: UtcTime,
-    /// The number of downloads this version has
+    /// The number of times this version has been downloaded
     pub downloads: usize,
-    /// The version's type
-    pub version_type: VersionType,
+    /// A link to the version's changelog
+    #[deprecated = "Read from `changelog` instead"]
+    #[serde(deserialize_with = "deserialise_optional_url")]
+    pub changelog_url: Option<Url>,
     /// A list of files available for download
     pub files: Vec<VersionFile>,
-    /// This version's dependencies
-    pub dependencies: Vec<Dependency>,
-    /// A list of Minecraft versions that this version supports
-    pub game_versions: Vec<String>,
-    /// The mod loaders that this version supports
-    pub loaders: Vec<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct VersionFile {
-    /// The file's hashes
     pub hashes: Hashes,
     /// A direct link to the file
     pub url: Url,
@@ -46,7 +42,7 @@ pub struct VersionFile {
     pub filename: String,
     /// Whether the file is the primary file of its version
     pub primary: bool,
-    /// The size of the file
+    /// The size of the file in bytes
     pub size: Number,
 }
 
@@ -81,11 +77,10 @@ pub struct LatestVersionsBody {
 /// A dependency which describes what versions are required, break support, or are optional to the version's functionality
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Dependency {
-    /// The version ID of the dependency
     pub version_id: Option<ID>,
-    /// The project ID of the dependency
     pub project_id: Option<ID>,
-    /// The relationship this dependancy has with the version
+    /// The file name of the dependency, mostly for showing external dependencies on modpacks
+    pub file_name: Option<String>,
     pub dependency_type: DependencyType,
 }
 
