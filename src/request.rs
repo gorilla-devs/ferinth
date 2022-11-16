@@ -27,17 +27,32 @@ impl Ferinth {
     }
 
     /// Perform a GET request to `url` with `query` parameters, and deserialise the response
-    pub(crate) async fn get_with_query<T, K, V>(
-        &self,
-        mut url: Url,
-        query: &[(K, V)],
-    ) -> Result<T>
+    pub(crate) async fn get_with_query<T, K, V>(&self, mut url: Url, query: &[(K, V)]) -> Result<T>
     where
         T: DeserializeOwned,
         K: AsRef<str>,
         V: AsRef<str>,
     {
         url.query_pairs_mut().extend_pairs(query);
+        self.get(url).await
+    }
+
+    pub(crate) async fn get_with_optional_query<T, K, V>(
+        &self,
+        mut url: Url,
+        query: &[(K, Option<V>)],
+    ) -> Result<T>
+    where
+        T: DeserializeOwned,
+        K: AsRef<str>,
+        V: AsRef<str>,
+    {
+        let some_queries: Vec<(&K, &V)> = query
+            .iter()
+            .filter(|(k, v)| v.is_some())
+            .map(|(k, v)| (k, v.as_ref().unwrap()))
+            .collect();
+        url.query_pairs_mut().extend_pairs(some_queries.as_slice());
         self.get(url).await
     }
 
