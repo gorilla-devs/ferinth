@@ -52,10 +52,11 @@ impl FacetBuilder {
     /// let search = FacetBuilder::new(ModrinthFacet::version("1.18.2"))    
     ///     .and(ModrinthFacet::category("quilt"))
     ///     .build();
-    /// // Builds to : [["version:1.18.2","category:quilt"]]
+    /// // Builds to : [["version:1.18.2"],["category:quilt"]]
     /// ```
     pub fn and(mut self, facet: Facet) -> FacetBuilder {
-        self.cur.push(facet);
+        self.stack.push(self.cur);
+        self.cur = vec![facet];
         self
     }
 
@@ -67,11 +68,10 @@ impl FacetBuilder {
     ///     .and(ModrinthFacet::category("quilt"))
     ///     .or(ModrinthFacet::category("fabric"))
     ///     .build();
-    /// // Builds to : [["version:1.18.2","category:quilt"], ["category:fabric"]]
+    /// // Builds to : [["version:1.18.2"],["category:quilt", "category:fabric"]]
     /// ```
     pub fn or(mut self, facet: Facet) -> FacetBuilder {
-        self.stack.push(self.cur);
-        self.cur = vec![facet];
+        self.cur.push(facet);
         self
     }
 
