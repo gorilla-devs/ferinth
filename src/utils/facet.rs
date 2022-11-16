@@ -1,6 +1,6 @@
 use crate::structures::project::ProjectType;
 
-struct Facet {
+pub struct Facet {
     key: String,
     value: String,
 }
@@ -26,7 +26,7 @@ impl Into<String> for &Facet {
     }
 }
 
-struct FacetBuilder {
+pub struct FacetBuilder {
     stack: Vec<Vec<Facet>>,
     cur: Vec<Facet>,
 }
@@ -85,7 +85,7 @@ impl FacetBuilder {
     }
 }
 
-struct ModrinthFacet {}
+pub struct ModrinthFacet {}
 
 impl ModrinthFacet {
     /// Creates a valid Modrinth [`Facet`]  

@@ -20,7 +20,7 @@ mod api_calls;
 mod request;
 pub mod structures;
 mod url_join_ext;
-mod utils;
+pub mod utils;
 
 use reqwest::{header, Client};
 
