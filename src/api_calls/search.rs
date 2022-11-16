@@ -17,16 +17,20 @@ impl Ferinth {
         filters: Option<String>,
         version: Option<String>,
     ) -> Result<SearchResponse> {
-        self.get_with_query(
+        let facetRequest = if facets.is_empty() { None } else { Some(serde_json::to_string(&facets)?) };
+        let offsetRequest = if offset.is_none() { None } else { Some(offset.unwrap().to_string()) };
+        let limitRequest = if limit.is_none() { None } else { Some(limit.unwrap().to_string()) };
+
+        self.get_with_optional_query(
             API_URL_BASE.join_all(vec!["search"]),
             &[
-                ("query", query),
-                ("facets", serde_json::to_string(&facets)?),
-                ("index", serde_json::to_string(&index)?),
-                ("offset", serde_json::to_string(&offset.unwrap_or(0))?),
-                ("limit", serde_json::to_string(&limit.unwrap_or(10))?),
-                ("filters", filters.unwrap_or(String::default())),
-                ("version", version.unwrap_or(String::default())),
+                ("query", Some(query)),
+                ("facets", facetRequest),
+                ("index", Some(format!("{:?}",index).to_lowercase())),
+                ("offset",offsetRequest),
+                ("limit", limitRequest),
+                ("filters", filters),
+                ("version", version),
             ],
         )
         .await
