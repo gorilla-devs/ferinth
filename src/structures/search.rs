@@ -58,11 +58,11 @@ pub enum SortingMethod {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SearchResponse {
     /// The list of results
-    hits: Vec<SearchResult>,
+    pub hits: Vec<SearchResult>,
     /// The number of results that were skipped by the query
-    offset: Number,
+    pub offset: Number,
     /// The number of results that were returned by the query
-    limit: Number,
+    pub limit: Number,
     /// The total number of results that match the query
-    total_hits: Number,
+    pub total_hits: Number,
 }
