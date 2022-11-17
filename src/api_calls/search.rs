@@ -7,6 +7,45 @@ use crate::{Ferinth, Result};
 type Facets = Vec<Vec<String>>;
 
 impl Ferinth {
+    /// Searches a project based on the `query` provided with
+    /// support for additional filtering
+    ///
+    /// Example:
+    /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # use ferinth::structures::search::SortingMethod;
+    ///
+    /// let modrinth = ferinth::Ferinth::default();
+    /// let sodium_result = modrinth.search("sodium".to_string(),vec![], SortingMethod::Relevance, None, None, None, None).await?;
+    /// assert_eq!(
+    ///     sodium_result.hits.get(0)?.title,
+    ///     "Sodium",
+    /// );
+    /// # Ok(()) }
+    /// ```
+    ///
+    /// You can also use [`ModrinthFacet`](crate::utils::facet::ModrinthFacet) and [`FacetBuilder`](crate::utils::facet::FacetBuilder) to filter by version/loader using facets in a type-safe manner.
+    ///
+    /// Example:
+    /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # use ferinth::structures::search::SortingMethod;
+    /// # use ferinth::utils::facet::{FacetBuilder, ModrinthFacet};
+    ///
+    /// let modrinth = ferinth::Ferinth::default();
+    ///
+    /// let facets = FacetBuilder::new(ModrinthFacet::version("1.19.2"))
+    ///     .and(ModrinthFacet::category("quilt")).build();
+    ///
+    /// let ok_zoomer_response = modrinth.search("ok zoomer".to_string(), facets, SortingMethod::Relevance, None, None, None, None).await?;
+    /// assert_eq!(
+    ///     ok_zoomer_response.hits.get(0)?.title,
+    ///     "Ok Zoomer",
+    /// );
+    /// # Ok(()) }
+    /// ```
     pub async fn search(
         &self,
         query: String,
