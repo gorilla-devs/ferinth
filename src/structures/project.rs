@@ -148,6 +148,7 @@ pub enum ProjectSupportRange {
 pub enum ProjectType {
     Mod,
     Plugin,
+    Shader,
     Modpack,
     ResourcePack,
 }
