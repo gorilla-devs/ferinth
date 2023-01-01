@@ -1,7 +1,5 @@
-use super::check_id_slug;
-use crate::{
-    request::API_URL_BASE, structures::user::*, url_join_ext::UrlJoinExt, Ferinth, Result,
-};
+use super::*;
+use crate::structures::user::*;
 
 impl Ferinth {
     /// List the members of team with ID `team_id`

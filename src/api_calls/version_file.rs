@@ -1,8 +1,5 @@
-use super::check_sha1_hash;
-use crate::{
-    request::API_URL_BASE, structures::version::*, url_join_ext::UrlJoinExt, Ferinth,
-    Result,
-};
+use super::*;
+use crate::structures::version::*;
 use std::collections::HashMap;
 
 impl Ferinth {

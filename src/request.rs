@@ -27,11 +27,7 @@ impl Ferinth {
     }
 
     /// Perform a GET request to `url` with `query` parameters, and deserialise the response
-    pub(crate) async fn get_with_query<T, K, V>(
-        &self,
-        mut url: Url,
-        query: &[(K, V)],
-    ) -> Result<T>
+    pub(crate) async fn get_with_query<T, K, V>(&self, mut url: Url, query: &[(K, V)]) -> Result<T>
     where
         T: DeserializeOwned,
         K: AsRef<str>,

@@ -1,4 +1,5 @@
-use crate::{request::API_URL_BASE, structures::tag::*, url_join_ext::UrlJoinExt, Ferinth, Result};
+use super::*;
+use crate::structures::tag::*;
 
 impl Ferinth {
     /// List the categories, their icons, and applicable project types

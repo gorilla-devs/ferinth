@@ -1,8 +1,5 @@
-use super::check_id_slug;
-use crate::{
-    request::API_URL_BASE, structures::version::*, url_join_ext::UrlJoinExt, Ferinth,
-    Result,
-};
+use super::*;
+use crate::structures::version::*;
 
 impl Ferinth {
     /// Get the versions of project with ID `project_id`

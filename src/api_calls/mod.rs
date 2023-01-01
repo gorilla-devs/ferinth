@@ -1,11 +1,12 @@
 pub mod project;
+pub mod search;
 pub mod tag;
 pub mod team;
 pub mod user;
 pub mod version;
 pub mod version_file;
 
-use crate::{Error, Result};
+use crate::{request::API_URL_BASE, url_join_ext::UrlJoinExt, Error, Ferinth, Result};
 
 /// Verify that a given string `input` is compliant with Modrinth IDs or slugs
 pub(crate) fn check_id_slug(input: &str) -> Result<()> {

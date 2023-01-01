@@ -1,8 +1,5 @@
-use super::check_id_slug;
-use crate::{
-    request::API_URL_BASE, structures::project::*, url_join_ext::UrlJoinExt, Ferinth,
-    Result,
-};
+use super::*;
+use crate::structures::project::*;
 
 impl Ferinth {
     /// Get a project with ID `project_id`
@@ -162,7 +159,7 @@ impl Ferinth {
     }
 
     /// Follow the given `project_id`.
-    /// 
+    ///
     /// REQUIRES AUTHENTICATION!
     ///
     /// Example:

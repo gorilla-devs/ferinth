@@ -1,10 +1,5 @@
-use super::check_id_slug;
-use crate::{
-    request::API_URL_BASE,
-    structures::{project::Project, user::*},
-    url_join_ext::UrlJoinExt,
-    Ferinth, Result,
-};
+use super::*;
+use crate::structures::{project::Project, user::*};
 
 impl Ferinth {
     /// Get user with ID `user_id`
