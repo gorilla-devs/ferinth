@@ -25,8 +25,8 @@ use reqwest::{header, Client};
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
-    #[error("A given string was not base62 compliant")]
-    NotBase62,
+    #[error("A given string is not a valid Modrinth ID or slug")]
+    InvalidIDorSlug,
     #[error("A given string was not SHA1 compliant")]
     NotSHA1,
     #[error("You have been rate limited, please wait for {} seconds", .0)]

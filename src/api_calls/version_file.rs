@@ -1,7 +1,6 @@
 use super::check_sha1_hash;
 use crate::{
-    request::API_URL_BASE, structures::version::*, url_join_ext::UrlJoinExt, Ferinth,
-    Result,
+    request::API_URL_BASE, structures::version::*, url_join_ext::UrlJoinExt, Ferinth, Result,
 };
 use std::collections::HashMap;
 
@@ -19,7 +18,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn get_version_from_hash(&self, file_hash: &str) -> Result<Version> {
-        check_sha1_hash(file_hash)?;
+        check_sha1_hash(&[file_hash])?;
         self.get(API_URL_BASE.join_all(vec!["version_file", file_hash]))
             .await
     }
@@ -45,9 +44,7 @@ impl Ferinth {
         &self,
         file_hashes: Vec<String>,
     ) -> Result<HashMap<String, Version>> {
-        for file_hash in &file_hashes {
-            check_sha1_hash(file_hash)?;
-        }
+        check_sha1_hash(&file_hashes)?;
         self.post(
             API_URL_BASE.join_all(vec!["version_files"]),
             &HashesBody {
@@ -64,7 +61,7 @@ impl Ferinth {
         file_hash: &str,
         filters: &LatestVersionBody,
     ) -> Result<Version> {
-        check_sha1_hash(file_hash)?;
+        check_sha1_hash(&[file_hash])?;
         self.post_with_query(
             API_URL_BASE.join_all(vec!["version_file", file_hash, "update"]),
             filters,
@@ -79,9 +76,7 @@ impl Ferinth {
         file_hashes: Vec<String>,
         filters: LatestVersionBody,
     ) -> Result<Vec<Version>> {
-        for file_hash in &file_hashes {
-            check_sha1_hash(file_hash)?;
-        }
+        check_sha1_hash(&file_hashes)?;
         self.post(
             API_URL_BASE.join_all(vec!["version_files", "update"]),
             &LatestVersionsBody {

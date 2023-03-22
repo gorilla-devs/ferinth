@@ -1,7 +1,6 @@
 use super::check_id_slug;
 use crate::{
-    request::API_URL_BASE, structures::version::*, url_join_ext::UrlJoinExt, Ferinth,
-    Result,
+    request::API_URL_BASE, structures::version::*, url_join_ext::UrlJoinExt, Ferinth, Result,
 };
 
 impl Ferinth {
@@ -17,7 +16,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn list_versions(&self, project_id: &str) -> Result<Vec<Version>> {
-        check_id_slug(project_id)?;
+        check_id_slug(&[project_id])?;
         self.get(API_URL_BASE.join_all(vec!["project", project_id, "version"]))
             .await
     }
@@ -44,7 +43,7 @@ impl Ferinth {
         game_versions: Option<&[&str]>,
         featured: Option<bool>,
     ) -> Result<Vec<Version>> {
-        check_id_slug(project_id)?;
+        check_id_slug(&[project_id])?;
         let mut query = Vec::new();
         if let Some(loaders) = loaders {
             query.push(("loaders", serde_json::to_string(loaders)?));
@@ -78,7 +77,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn get_version(&self, version_id: &str) -> Result<Version> {
-        check_id_slug(version_id)?;
+        check_id_slug(&[version_id])?;
         self.get(API_URL_BASE.join_all(vec!["version", version_id]))
             .await
     }
@@ -100,9 +99,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn get_multiple_versions(&self, version_ids: &[&str]) -> Result<Vec<Version>> {
-        for versions_id in version_ids {
-            check_id_slug(versions_id)?;
-        }
+        check_id_slug(version_ids)?;
         self.get_with_query(
             API_URL_BASE.join_all(vec!["versions"]),
             &[("ids", &serde_json::to_string(version_ids)?)],

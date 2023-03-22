@@ -20,7 +20,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn get_user(&self, user_id: &str) -> Result<User> {
-        check_id_slug(user_id)?;
+        check_id_slug(&[user_id])?;
         self.get(API_URL_BASE.join_all(vec!["user", user_id])).await
     }
 
@@ -60,9 +60,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn get_multiple_users(&self, user_ids: &[&str]) -> Result<Vec<User>> {
-        for user_id in user_ids {
-            check_id_slug(user_id)?;
-        }
+        check_id_slug(user_ids)?;
         self.get_with_query(
             API_URL_BASE.join_all(vec!["users"]),
             &[("ids", &serde_json::to_string(user_ids)?)],
@@ -78,11 +76,11 @@ impl Ferinth {
     /// # async fn main() -> Result<(), ferinth::Error> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let jellysquid_projects = modrinth.list_projects("TEZXhE2U").await?;
-    /// assert!(jellysquid_projects.len() == 3);
+    /// assert!(jellysquid_projects.len() == 4);
     /// # Ok(()) }
     /// ```
     pub async fn list_projects(&self, user_id: &str) -> Result<Vec<Project>> {
-        check_id_slug(user_id)?;
+        check_id_slug(&[user_id])?;
         self.get(API_URL_BASE.join_all(vec!["user", user_id, "projects"]))
             .await
     }
@@ -106,7 +104,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn get_notifications(&self, user_id: &str) -> Result<Vec<Notification>> {
-        check_id_slug(user_id)?;
+        check_id_slug(&[user_id])?;
         self.get(API_URL_BASE.join_all(vec!["user", user_id, "notifications"]))
             .await
     }
@@ -130,7 +128,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn followed_projects(&self, user_id: &str) -> Result<Vec<Project>> {
-        check_id_slug(user_id)?;
+        check_id_slug(&[user_id])?;
         self.get(API_URL_BASE.join_all(vec!["user", user_id, "follows"]))
             .await
     }
@@ -164,7 +162,7 @@ impl Ferinth {
         item_type: ReportItemType,
         body: String,
     ) -> Result<Vec<Project>> {
-        check_id_slug(&item_id)?;
+        check_id_slug(&[&item_id])?;
         self.post(
             API_URL_BASE.join_all(vec!["report"]),
             &ReportSubmission {

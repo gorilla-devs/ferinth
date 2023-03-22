@@ -1,7 +1,6 @@
 use super::check_id_slug;
 use crate::{
-    request::API_URL_BASE, structures::project::*, url_join_ext::UrlJoinExt, Ferinth,
-    Result,
+    request::API_URL_BASE, structures::project::*, url_join_ext::UrlJoinExt, Ferinth, Result,
 };
 
 impl Ferinth {
@@ -27,7 +26,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn get_project(&self, project_id: &str) -> Result<Project> {
-        check_id_slug(project_id)?;
+        check_id_slug(&[project_id])?;
         self.get(API_URL_BASE.join_all(vec!["project", project_id]))
             .await
     }
@@ -49,9 +48,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn get_multiple_projects(&self, project_ids: &[&str]) -> Result<Vec<Project>> {
-        for project_id in project_ids {
-            check_id_slug(project_id)?;
-        }
+        check_id_slug(project_ids)?;
         self.get_with_query(
             API_URL_BASE.join_all(vec!["projects"]),
             &[("ids", &serde_json::to_string(project_ids)?)],
@@ -76,7 +73,7 @@ impl Ferinth {
         struct Response {
             id: String,
         }
-        check_id_slug(project_id)?;
+        check_id_slug(&[project_id])?;
         let res: Response = self
             .get(API_URL_BASE.join_all(vec!["project", project_id, "check"]))
             .await?;
@@ -156,13 +153,13 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn get_project_dependencies(&self, project_id: &str) -> Result<ProjectDependencies> {
-        check_id_slug(project_id)?;
+        check_id_slug(&[project_id])?;
         self.get(API_URL_BASE.join_all(vec!["project", project_id, "dependencies"]))
             .await
     }
 
     /// Follow the given `project_id`.
-    /// 
+    ///
     /// REQUIRES AUTHENTICATION!
     ///
     /// Example:
@@ -188,7 +185,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn follow(&self, project_id: &str) -> Result<()> {
-        check_id_slug(project_id)?;
+        check_id_slug(&[project_id])?;
         self.post(
             API_URL_BASE.join_all(vec!["project", project_id, "follow"]),
             "",

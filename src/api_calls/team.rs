@@ -16,7 +16,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn list_project_team_members(&self, project_id: &str) -> Result<Vec<TeamMember>> {
-        check_id_slug(project_id)?;
+        check_id_slug(&[project_id])?;
         self.get(API_URL_BASE.join_all(vec!["project", project_id, "members"]))
             .await
     }
@@ -33,7 +33,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn list_team_members(&self, team_id: &str) -> Result<Vec<TeamMember>> {
-        check_id_slug(team_id)?;
+        check_id_slug(&[team_id])?;
         self.get(API_URL_BASE.join_all(vec!["team", team_id, "members"]))
             .await
     }
@@ -88,9 +88,7 @@ impl Ferinth {
         &self,
         team_ids: &[&str],
     ) -> Result<Vec<Vec<TeamMember>>> {
-        for team_id in team_ids {
-            check_id_slug(team_id)?;
-        }
+        check_id_slug(team_ids)?;
         self.get_with_query(
             API_URL_BASE.join_all(vec!["teams"]),
             &[("ids", serde_json::to_string(&team_ids)?)],
