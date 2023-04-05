@@ -1,4 +1,4 @@
-use crate::{request::API_URL_BASE, structures::tag::*, url_join_ext::UrlJoinExt, Ferinth, Result};
+use crate::{structures::tag::*, url_ext::UrlJoinAll, Ferinth, Result, API_BASE_URL};
 
 impl Ferinth {
     /// List the categories, their icons, and applicable project types
@@ -12,7 +12,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn list_categories(&self) -> Result<Vec<Category>> {
-        self.get(API_URL_BASE.join_all(vec!["tag", "category"]))
+        self.get(API_BASE_URL.join_all(vec!["tag", "category"]))
             .await
     }
 
@@ -27,7 +27,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn list_loaders(&self) -> Result<Vec<Loader>> {
-        self.get(API_URL_BASE.join_all(vec!["tag", "loader"])).await
+        self.get(API_BASE_URL.join_all(vec!["tag", "loader"])).await
     }
 
     /// List the game versions and information about them
@@ -41,7 +41,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn list_game_versions(&self) -> Result<Vec<GameVersion>> {
-        self.get(API_URL_BASE.join_all(vec!["tag", "game_version"]))
+        self.get(API_BASE_URL.join_all(vec!["tag", "game_version"]))
             .await
     }
 
@@ -56,7 +56,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn list_licenses(&self) -> Result<Vec<License>> {
-        self.get(API_URL_BASE.join_all(vec!["tag", "license"]))
+        self.get(API_BASE_URL.join_all(vec!["tag", "license"]))
             .await
     }
 
@@ -71,7 +71,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn list_donation_platforms(&self) -> Result<Vec<DonationPlatform>> {
-        self.get(API_URL_BASE.join_all(vec!["tag", "donation_platform"]))
+        self.get(API_BASE_URL.join_all(vec!["tag", "donation_platform"]))
             .await
     }
 
@@ -86,7 +86,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn list_report_types(&self) -> Result<Vec<String>> {
-        self.get(API_URL_BASE.join_all(vec!["tag", "report_type"]))
+        self.get(API_BASE_URL.join_all(vec!["tag", "report_type"]))
             .await
     }
 }

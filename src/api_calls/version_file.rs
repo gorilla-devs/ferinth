@@ -1,6 +1,8 @@
 use super::check_sha1_hash;
 use crate::{
-    request::API_URL_BASE, structures::version::*, url_join_ext::UrlJoinExt, Ferinth, Result,
+    structures::version::*,
+    url_ext::{UrlJoinAll, UrlWithQuery},
+    Ferinth, Result, API_BASE_URL,
 };
 use std::collections::HashMap;
 
@@ -19,7 +21,7 @@ impl Ferinth {
     /// ```
     pub async fn get_version_from_hash(&self, file_hash: &str) -> Result<Version> {
         check_sha1_hash(&[file_hash])?;
-        self.get(API_URL_BASE.join_all(vec!["version_file", file_hash]))
+        self.get(API_BASE_URL.join_all(vec!["version_file", file_hash]))
             .await
     }
 
@@ -45,8 +47,8 @@ impl Ferinth {
         file_hashes: Vec<String>,
     ) -> Result<HashMap<String, Version>> {
         check_sha1_hash(&file_hashes)?;
-        self.post(
-            API_URL_BASE.join_all(vec!["version_files"]),
+        self.post_json(
+            API_BASE_URL.join_all(vec!["version_files"]),
             &HashesBody {
                 hashes: file_hashes,
                 algorithm: HashAlgorithm::SHA1,
@@ -62,10 +64,11 @@ impl Ferinth {
         filters: &LatestVersionBody,
     ) -> Result<Version> {
         check_sha1_hash(&[file_hash])?;
-        self.post_with_query(
-            API_URL_BASE.join_all(vec!["version_file", file_hash, "update"]),
+        self.post_json(
+            API_BASE_URL
+                .join_all(vec!["version_file", file_hash, "update"])
+                .with_query(&[("algorithm", &serde_json::to_string(&HashAlgorithm::SHA1)?)]),
             filters,
-            &[("algorithm", &serde_json::to_string(&HashAlgorithm::SHA1)?)],
         )
         .await
     }
@@ -77,8 +80,8 @@ impl Ferinth {
         filters: LatestVersionBody,
     ) -> Result<Vec<Version>> {
         check_sha1_hash(&file_hashes)?;
-        self.post(
-            API_URL_BASE.join_all(vec!["version_files", "update"]),
+        self.post_json(
+            API_BASE_URL.join_all(vec!["version_files", "update"]),
             &LatestVersionsBody {
                 hashes: file_hashes,
                 algorithm: HashAlgorithm::SHA1,

@@ -16,14 +16,38 @@
 //! - Search projects
 //! - Some types of requests
 
+#![deny(clippy::unwrap_used)]
+#![warn(missing_docs)]
+
 mod api_calls;
 mod request;
 pub mod structures;
-mod url_join_ext;
+mod url_ext;
 
+use once_cell::sync::Lazy;
 use reqwest::{header, Client};
+use url::Url;
+
+/// The base URL for the Modrinth API
+pub static BASE_URL: Lazy<Url> =
+    Lazy::new(|| Url::parse("https://api.modrinth.com/").expect("Invalid base URL"));
+
+/// The base URL for the current version of the Modrinth API
+pub static API_BASE_URL: Lazy<Url> = Lazy::new(|| {
+    BASE_URL
+        .join(concat!(
+            'v',
+            env!(
+                "CARGO_PKG_VERSION_MAJOR",
+                "Make sure you're compiling with cargo!",
+            ),
+            '/'
+        ))
+        .expect("Invalid API version route")
+});
 
 #[derive(thiserror::Error, Debug)]
+#[allow(missing_docs)]
 pub enum Error {
     #[error("A given string is not a valid Modrinth ID or slug")]
     InvalidIDorSlug,
@@ -39,7 +63,7 @@ pub enum Error {
     InvalidGitHubToken(#[from] header::InvalidHeaderValue),
 }
 
-pub(crate) type Result<T> = std::result::Result<T, Error>;
+pub type Result<T> = std::result::Result<T, Error>;
 
 /// An instance of the API to invoke API calls on.
 ///
@@ -68,24 +92,26 @@ impl Default for Ferinth {
                     env!("CARGO_PKG_VERSION")
                 ))
                 .build()
-                .expect("TLS backend failed to initialise"),
+                .expect("Failed to initialise TLS backend"),
         }
     }
 }
 
 impl Ferinth {
-    /// Instantiate the container with the provided [user agent](https://docs.modrinth.com/api-spec/#section/User-Agents) information,
-    /// and an optional GitHub token for authorisation.
+    /// Instantiate the container with the provided [user agent](https://docs.modrinth.com/api-spec/#section/User-Agents) details,
+    /// and an optional GitHub token for `authorisation`.
     ///
-    /// `program_name` is required, and the `version` and `contact` are optional, but recommended.
+    /// `program_name` is required, and `version` and `contact` are optional, but recommended.
     ///
-    /// This function fails if the GitHub token provided is invalid.
+    /// This function fails if the GitHub `authorisation` token provided is invalid.
     pub fn new(
         program_name: &str,
         version: Option<&str>,
         contact: Option<&str>,
         authorisation: Option<&str>,
     ) -> Result<Self> {
+        use header::{HeaderMap, HeaderValue};
+
         Ok(Self {
             client: Client::builder()
                 .user_agent(format!(
@@ -95,15 +121,24 @@ impl Ferinth {
                     contact.map_or("".into(), |contact| format!(" ({})", contact))
                 ))
                 .default_headers(if let Some(authorisation) = authorisation {
-                    header::HeaderMap::from_iter(vec![(
+                    HeaderMap::from_iter(vec![(
                         header::AUTHORIZATION,
-                        header::HeaderValue::from_str(authorisation)?,
+                        HeaderValue::from_str(authorisation)?,
                     )])
                 } else {
-                    header::HeaderMap::new()
+                    HeaderMap::new()
                 })
                 .build()
-                .unwrap(),
+                .expect("Failed to initialise TLS backend"),
         })
+    }
+
+    /// Check `self`'s connection to the Modrinth API.
+    pub async fn check_api(&self) -> Result<()> {
+        let response = self.client.get(BASE_URL.as_ref()).send().await?;
+        Ok(request::check_rate_limit(response)?
+            .error_for_status()?
+            .json()
+            .await?)
     }
 }

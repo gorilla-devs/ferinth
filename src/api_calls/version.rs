@@ -1,6 +1,8 @@
 use super::check_id_slug;
 use crate::{
-    request::API_URL_BASE, structures::version::*, url_join_ext::UrlJoinExt, Ferinth, Result,
+    structures::version::*,
+    url_ext::{UrlJoinAll, UrlWithQuery},
+    Ferinth, Result, API_BASE_URL,
 };
 
 impl Ferinth {
@@ -17,7 +19,7 @@ impl Ferinth {
     /// ```
     pub async fn list_versions(&self, project_id: &str) -> Result<Vec<Version>> {
         check_id_slug(&[project_id])?;
-        self.get(API_URL_BASE.join_all(vec!["project", project_id, "version"]))
+        self.get(API_BASE_URL.join_all(vec!["project", project_id, "version"]))
             .await
     }
 
@@ -58,9 +60,10 @@ impl Ferinth {
             .into_iter()
             .map(|this| (this.0, this.1))
             .collect::<Vec<_>>();
-        self.get_with_query(
-            API_URL_BASE.join_all(vec!["project", project_id, "version"]),
-            &query,
+        self.get(
+            API_BASE_URL
+                .join_all(vec!["project", project_id, "version"])
+                .with_query(query),
         )
         .await
     }
@@ -78,7 +81,7 @@ impl Ferinth {
     /// ```
     pub async fn get_version(&self, version_id: &str) -> Result<Version> {
         check_id_slug(&[version_id])?;
-        self.get(API_URL_BASE.join_all(vec!["version", version_id]))
+        self.get(API_BASE_URL.join_all(vec!["version", version_id]))
             .await
     }
 
@@ -100,9 +103,10 @@ impl Ferinth {
     /// ```
     pub async fn get_multiple_versions(&self, version_ids: &[&str]) -> Result<Vec<Version>> {
         check_id_slug(version_ids)?;
-        self.get_with_query(
-            API_URL_BASE.join_all(vec!["versions"]),
-            &[("ids", &serde_json::to_string(version_ids)?)],
+        self.get(
+            API_BASE_URL
+                .join_all(vec!["versions"])
+                .with_query(&[("ids", &serde_json::to_string(version_ids)?)]),
         )
         .await
     }

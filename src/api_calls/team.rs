@@ -1,6 +1,8 @@
 use super::check_id_slug;
 use crate::{
-    request::API_URL_BASE, structures::user::*, url_join_ext::UrlJoinExt, Ferinth, Result,
+    structures::user::*,
+    url_ext::{UrlJoinAll, UrlWithQuery},
+    Ferinth, Result, API_BASE_URL,
 };
 
 impl Ferinth {
@@ -17,7 +19,7 @@ impl Ferinth {
     /// ```
     pub async fn list_project_team_members(&self, project_id: &str) -> Result<Vec<TeamMember>> {
         check_id_slug(&[project_id])?;
-        self.get(API_URL_BASE.join_all(vec!["project", project_id, "members"]))
+        self.get(API_BASE_URL.join_all(vec!["project", project_id, "members"]))
             .await
     }
 
@@ -34,16 +36,15 @@ impl Ferinth {
     /// ```
     pub async fn list_team_members(&self, team_id: &str) -> Result<Vec<TeamMember>> {
         check_id_slug(&[team_id])?;
-        self.get(API_URL_BASE.join_all(vec!["team", team_id, "members"]))
+        self.get(API_BASE_URL.join_all(vec!["team", team_id, "members"]))
             .await
     }
 
-    /// Send an invite to `user_id` to join `team_id`.
+    /// Send an invite to the user of `user_id` to join the team of `team_id`.
     ///
     /// REQUIRES AUTHENTICATION!
     ///
-    /// Example:
-    /// ```ignore
+    /// ```no_run
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), ferinth::Error> {
     /// # let modrinth = ferinth::Ferinth::new(
@@ -52,7 +53,9 @@ impl Ferinth {
     /// #     None,
     /// #     Some(env!("MODRINTH_TOKEN")),
     /// # )?;
-    /// modrinth.add_user("XXXXXXXX", "YYYYYYYY").await
+    /// # let team_id = env!("TEST_TEAM_ID");
+    /// # let user_id = env!("TEST_USER_ID");
+    /// modrinth.add_user(team_id, user_id).await
     /// # }
     /// ```
     pub async fn add_user(&self, team_id: &str, user_id: &str) -> Result<()> {
@@ -61,8 +64,8 @@ impl Ferinth {
             user_id: &'a str,
         }
 
-        self.post(
-            API_URL_BASE.join_all(vec!["team", team_id, "members"]),
+        self.post_json(
+            API_BASE_URL.join_all(vec!["team", team_id, "members"]),
             &Body { user_id },
         )
         .await
@@ -89,19 +92,19 @@ impl Ferinth {
         team_ids: &[&str],
     ) -> Result<Vec<Vec<TeamMember>>> {
         check_id_slug(team_ids)?;
-        self.get_with_query(
-            API_URL_BASE.join_all(vec!["teams"]),
-            &[("ids", serde_json::to_string(&team_ids)?)],
+        self.get(
+            API_BASE_URL
+                .join_all(vec!["teams"])
+                .with_query(&[("ids", serde_json::to_string(&team_ids)?)]),
         )
         .await
     }
 
-    /// Accept an invite to join `team_id`.
+    /// Accept an invite to join the team of `team_id`
     ///
     /// REQUIRES AUTHENTICATION!
     ///
-    /// Example:
-    /// ```ignore
+    /// ```no_run
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), ferinth::Error> {
     /// # let modrinth = ferinth::Ferinth::new(
@@ -110,11 +113,12 @@ impl Ferinth {
     /// #     None,
     /// #     Some(env!("MODRINTH_TOKEN")),
     /// # )?;
-    /// modrinth.join_team("XXXXXXXX").await
+    /// # let team_id = env!("TEST_TEAM_ID");
+    /// modrinth.join_team(team_id).await
     /// # }
     /// ```
     pub async fn join_team(&self, team_id: &str) -> Result<()> {
-        self.post(API_URL_BASE.join_all(vec!["team", team_id, "join"]), "")
+        self.post_json(API_BASE_URL.join_all(vec!["team", team_id, "join"]), "")
             .await
     }
 
@@ -123,7 +127,7 @@ impl Ferinth {
     /// REQUIRES AUTHENTICATION!
     ///
     /// Example:
-    /// ```ignore
+    /// ```no_run
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), ferinth::Error> {
     /// # let modrinth = ferinth::Ferinth::new(
@@ -132,7 +136,9 @@ impl Ferinth {
     /// #     None,
     /// #     Some(env!("MODRINTH_TOKEN")),
     /// # )?;
-    /// modrinth.add_user("XXXXXXXX", "YYYYYYYY").await
+    /// # let team_id = env!("TEST_TEAM_ID");
+    /// # let user_id = env!("TEST_USER_ID");
+    /// modrinth.add_user(team_id, user_id).await
     /// # }
     /// ```
     pub async fn transfer_ownership(&self, team_id: &str, user_id: &str) -> Result<()> {
@@ -141,8 +147,8 @@ impl Ferinth {
             user_id: &'a str,
         }
 
-        self.post(
-            API_URL_BASE.join_all(vec!["team", team_id, "owner"]),
+        self.post_json(
+            API_BASE_URL.join_all(vec!["team", team_id, "owner"]),
             &Body { user_id },
         )
         .await

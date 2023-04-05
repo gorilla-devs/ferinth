@@ -1,9 +1,8 @@
 use super::check_id_slug;
 use crate::{
-    request::API_URL_BASE,
     structures::{project::Project, user::*},
-    url_join_ext::UrlJoinExt,
-    Ferinth, Result,
+    url_ext::{UrlJoinAll, UrlWithQuery},
+    Ferinth, Result, API_BASE_URL,
 };
 
 impl Ferinth {
@@ -21,7 +20,7 @@ impl Ferinth {
     /// ```
     pub async fn get_user(&self, user_id: &str) -> Result<User> {
         check_id_slug(&[user_id])?;
-        self.get(API_URL_BASE.join_all(vec!["user", user_id])).await
+        self.get(API_BASE_URL.join_all(vec!["user", user_id])).await
     }
 
     /// Get the user of the current authorisation header
@@ -44,7 +43,7 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn get_current_user(&self) -> Result<User> {
-        self.get(API_URL_BASE.join_all(vec!["user"])).await
+        self.get(API_BASE_URL.join_all(vec!["user"])).await
     }
 
     /// Get multiple users with IDs `user_ids`
@@ -61,9 +60,10 @@ impl Ferinth {
     /// ```
     pub async fn get_multiple_users(&self, user_ids: &[&str]) -> Result<Vec<User>> {
         check_id_slug(user_ids)?;
-        self.get_with_query(
-            API_URL_BASE.join_all(vec!["users"]),
-            &[("ids", &serde_json::to_string(user_ids)?)],
+        self.get(
+            API_BASE_URL
+                .join_all(vec!["users"])
+                .with_query([("ids", serde_json::to_string(user_ids)?)]),
         )
         .await
     }
@@ -81,7 +81,7 @@ impl Ferinth {
     /// ```
     pub async fn list_projects(&self, user_id: &str) -> Result<Vec<Project>> {
         check_id_slug(&[user_id])?;
-        self.get(API_URL_BASE.join_all(vec!["user", user_id, "projects"]))
+        self.get(API_BASE_URL.join_all(vec!["user", user_id, "projects"]))
             .await
     }
 
@@ -105,7 +105,7 @@ impl Ferinth {
     /// ```
     pub async fn get_notifications(&self, user_id: &str) -> Result<Vec<Notification>> {
         check_id_slug(&[user_id])?;
-        self.get(API_URL_BASE.join_all(vec!["user", user_id, "notifications"]))
+        self.get(API_BASE_URL.join_all(vec!["user", user_id, "notifications"]))
             .await
     }
 
@@ -123,13 +123,13 @@ impl Ferinth {
     /// #     None,
     /// #     Some(env!("MODRINTH_TOKEN")),
     /// # )?;
-    /// let current_user = modrinth.get_current_user().await?;
-    /// modrinth.followed_projects(&current_user.id).await?;
-    /// # Ok(()) }
+    /// # let current_user = modrinth.get_current_user().await?;
+    /// modrinth.followed_projects(&current_user.id).await
+    /// # }
     /// ```
     pub async fn followed_projects(&self, user_id: &str) -> Result<Vec<Project>> {
         check_id_slug(&[user_id])?;
-        self.get(API_URL_BASE.join_all(vec!["user", user_id, "follows"]))
+        self.get(API_BASE_URL.join_all(vec!["user", user_id, "follows"]))
             .await
     }
 
@@ -137,7 +137,6 @@ impl Ferinth {
     ///
     /// REQUIRES AUTHENTICATION!
     ///
-    /// Example:
     /// ```ignore
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), ferinth::Error> {
@@ -152,8 +151,8 @@ impl Ferinth {
     ///     "XXXXXXXX",
     ///     ferinth::structures::user::ReportItemType::User,
     ///     "This is an example report",
-    /// ).await?
-    /// # Ok(()) }
+    /// ).await
+    /// # }
     /// ```
     pub async fn submit_report(
         &self,
@@ -163,8 +162,8 @@ impl Ferinth {
         body: String,
     ) -> Result<Vec<Project>> {
         check_id_slug(&[&item_id])?;
-        self.post(
-            API_URL_BASE.join_all(vec!["report"]),
+        self.post_json(
+            API_BASE_URL.join_all(vec!["report"]),
             &ReportSubmission {
                 report_type,
                 item_id,
