@@ -13,7 +13,7 @@ impl Ferinth {
     /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// // A mod file has the hash `795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf`, so we can get the version it belongs to
     /// let sodium_version = modrinth.get_version_from_hash("795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf").await?;
@@ -33,7 +33,7 @@ impl Ferinth {
     /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let sodium_hash = "795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf";
     /// let snwylvspls_hash = "994ee99d172a5950a51ec2d08c158d270722d871";

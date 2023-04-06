@@ -12,7 +12,7 @@ impl Ferinth {
     /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let mod_menu_team = modrinth.list_project_team_members("mOgUt4GM").await?;
     /// assert!(mod_menu_team.len() == 4);
@@ -31,7 +31,7 @@ impl Ferinth {
     /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let mod_menu_team = modrinth.list_team_members("VMz4FpgB").await?;
     /// assert!(mod_menu_team.len() == 4);
@@ -51,16 +51,14 @@ impl Ferinth {
     ///
     /// ```no_run
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::new(
     /// #     env!("CARGO_CRATE_NAME"),
     /// #     Some(env!("CARGO_PKG_VERSION")),
     /// #     None,
     /// #     Some(env!("MODRINTH_TOKEN")),
     /// # )?;
-    /// # let team_id = env!("TEST_TEAM_ID");
-    /// # let user_id = env!("TEST_USER_ID");
-    /// modrinth.add_user(team_id, user_id).await
+    /// modrinth.add_user("XXXXXXXX", "YYYYYYYY").await
     /// # }
     /// ```
     pub async fn add_user(&self, team_id: &str, user_id: &str) -> Result<()> {
@@ -81,7 +79,7 @@ impl Ferinth {
     /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let teams = modrinth.list_multiple_teams_members(&[
     ///     "4reLOAKe",
@@ -113,15 +111,14 @@ impl Ferinth {
     ///
     /// ```no_run
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::new(
     /// #     env!("CARGO_CRATE_NAME"),
     /// #     Some(env!("CARGO_PKG_VERSION")),
     /// #     None,
     /// #     Some(env!("MODRINTH_TOKEN")),
     /// # )?;
-    /// # let team_id = env!("TEST_TEAM_ID");
-    /// modrinth.join_team(team_id).await
+    /// modrinth.join_team("XXXXXXXX").await
     /// # }
     /// ```
     pub async fn join_team(&self, team_id: &str) -> Result<()> {
@@ -138,16 +135,14 @@ impl Ferinth {
     /// Example:
     /// ```no_run
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::new(
     /// #     env!("CARGO_CRATE_NAME"),
     /// #     Some(env!("CARGO_PKG_VERSION")),
     /// #     None,
     /// #     Some(env!("MODRINTH_TOKEN")),
     /// # )?;
-    /// # let team_id = env!("TEST_TEAM_ID");
-    /// # let user_id = env!("TEST_USER_ID");
-    /// modrinth.add_user(team_id, user_id).await
+    /// modrinth.transfer_ownership("XXXXXXXX", "YYYYYYYY").await
     /// # }
     /// ```
     pub async fn transfer_ownership(&self, team_id: &str, user_id: &str) -> Result<()> {

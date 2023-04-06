@@ -13,7 +13,7 @@ impl Ferinth {
     /// ```rust
     /// # use ferinth::structures::user::UserRole;
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let jellysquid = modrinth.get_user("TEZXhE2U").await?;
     /// assert!(jellysquid.role == UserRole::Developer);
@@ -34,7 +34,7 @@ impl Ferinth {
     /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::new(
     /// #     env!("CARGO_CRATE_NAME"),
     /// #     Some(env!("CARGO_PKG_VERSION")),
@@ -42,7 +42,7 @@ impl Ferinth {
     /// #     Some(env!("MODRINTH_TOKEN")),
     /// # )?;
     /// let current_user = modrinth.get_current_user().await?;
-    /// // The email should be visible as we are authourised to view this user's email
+    /// // The email should be visible as we are authorised to view this user's email
     /// assert!(current_user.email.is_some());
     /// # Ok(()) }
     /// ```
@@ -59,7 +59,7 @@ impl Ferinth {
     /// ```rust
     /// # use ferinth::structures::user::UserRole;
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let users = modrinth.get_multiple_users(&["TEZXhE2U", "7Azq6eD8"]).await?;
     /// assert!(users.len() == 2);
@@ -82,7 +82,7 @@ impl Ferinth {
     /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let jellysquid_projects = modrinth.list_projects("TEZXhE2U").await?;
     /// assert!(jellysquid_projects.len() == 4);
@@ -103,7 +103,7 @@ impl Ferinth {
     /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::new(
     /// #     env!("CARGO_CRATE_NAME"),
     /// #     Some(env!("CARGO_PKG_VERSION")),
@@ -111,7 +111,7 @@ impl Ferinth {
     /// #     Some(env!("MODRINTH_TOKEN")),
     /// # )?;
     /// let current_user = modrinth.get_current_user().await?;
-    /// modrinth.get_notifications(&current_user.id).await?;
+    /// let notifications = modrinth.get_notifications(&current_user.id).await?;
     /// # Ok(()) }
     /// ```
     pub async fn get_notifications(&self, user_id: &str) -> Result<Vec<Notification>> {
@@ -129,7 +129,7 @@ impl Ferinth {
     /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::new(
     /// #     env!("CARGO_CRATE_NAME"),
     /// #     Some(env!("CARGO_PKG_VERSION")),
@@ -137,8 +137,8 @@ impl Ferinth {
     /// #     Some(env!("MODRINTH_TOKEN")),
     /// # )?;
     /// # let current_user = modrinth.get_current_user().await?;
-    /// modrinth.followed_projects(&current_user.id).await
-    /// # }
+    /// let projects = modrinth.followed_projects(&current_user.id).await?;
+    /// # Ok(()) }
     /// ```
     pub async fn followed_projects(&self, user_id: &str) -> Result<Vec<Project>> {
         check_id_slug(&[user_id])?;
@@ -150,11 +150,13 @@ impl Ferinth {
 
     /// Submit a report to the moderators
     ///
+    /// `report_type`s can be found using the [`Ferinth::list_report_types`] route.
+    ///
     /// REQUIRES AUTHENTICATION!
     ///
-    /// ```ignore
+    /// ```no_run
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::new(
     /// #     env!("CARGO_CRATE_NAME"),
     /// #     Some(env!("CARGO_PKG_VERSION")),
@@ -162,12 +164,12 @@ impl Ferinth {
     /// #     Some(env!("MODRINTH_TOKEN")),
     /// # )?;
     /// let current_user = modrinth.submit_report(
-    ///     ???,
-    ///     "XXXXXXXX",
+    ///     "other".to_string(),
+    ///     "XXXXXXXX".to_string(),
     ///     ferinth::structures::user::ReportItemType::User,
-    ///     "This is an example report",
-    /// ).await
-    /// # }
+    ///     "This is an example report".to_string(),
+    /// ).await?;
+    /// # Ok(()) }
     /// ```
     pub async fn submit_report(
         &self,

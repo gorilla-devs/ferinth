@@ -12,7 +12,7 @@ impl Ferinth {
     /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let sodium_versions = modrinth.list_versions("AANobbMI").await?;
     /// assert!(sodium_versions[0].project_id == "AANobbMI");
@@ -35,7 +35,7 @@ impl Ferinth {
     /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let sodium_forge_versions = modrinth.list_versions_filtered("AANobbMI", Some(&["forge"]), None, None).await?;
     /// assert!(sodium_forge_versions.is_empty());
@@ -78,7 +78,7 @@ impl Ferinth {
     /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let sodium_version = modrinth.get_version("xuWxRZPd").await?;
     /// assert!(sodium_version.project_id == "AANobbMI");
@@ -97,7 +97,7 @@ impl Ferinth {
     /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let versions = modrinth.get_multiple_versions(&[
     ///     "sxWTUZpD",

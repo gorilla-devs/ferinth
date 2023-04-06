@@ -1,3 +1,7 @@
+//! API calls related to tags
+//!
+//! [documentation](https://docs.modrinth.com/api-spec/#tag/tags)
+
 use crate::{
     request::RequestBuilderCustomSend, structures::tag::*, url_ext::UrlJoinAll, Ferinth, Result,
     API_BASE_URL,
@@ -6,10 +10,9 @@ use crate::{
 impl Ferinth {
     /// List the categories, their icons, and applicable project types
     ///
-    /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let categories = modrinth.list_categories().await?;
     /// # Ok(()) }
@@ -23,10 +26,9 @@ impl Ferinth {
 
     /// List the loaders, their icons, and supported project types
     ///
-    /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let loaders = modrinth.list_loaders().await?;
     /// # Ok(()) }
@@ -40,10 +42,9 @@ impl Ferinth {
 
     /// List the game versions and information about them
     ///
-    /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let game_versions = modrinth.list_game_versions().await?;
     /// # Ok(()) }
@@ -57,10 +58,9 @@ impl Ferinth {
 
     /// List licenses and information about them
     ///
-    /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let licenses = modrinth.list_licenses().await?;
     /// # Ok(()) }
@@ -74,10 +74,9 @@ impl Ferinth {
 
     /// List donation platforms and information about them
     ///
-    /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let donation_platforms = modrinth.list_donation_platforms().await?;
     /// # Ok(()) }
@@ -91,10 +90,9 @@ impl Ferinth {
 
     /// List valid report types
     ///
-    /// Example:
     /// ```rust
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
+    /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let report_types = modrinth.list_report_types().await?;
     /// # Ok(()) }

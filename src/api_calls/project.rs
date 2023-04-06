@@ -101,12 +101,17 @@ impl Ferinth {
 
     /// Get `count` number of random projects
     ///
+    /// Due to [an issue with labrinth](https://github.com/modrinth/labrinth/issues/548),
+    /// the amount of mods returned will most likely be less than `count`.
+    ///
     /// ```rust
     /// # #[tokio::main]
     /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let random_mods = modrinth.get_random_projects(5).await?;
-    /// assert_eq!(random_mods.len(), 5);
+    /// // The proper check has been disabled due to the reason mentioned above
+    /// // assert_eq!(random_mods.len(), 5);
+    /// assert!(random_mods.len() <= 5);
     /// # Ok(()) }
     /// ```
     pub async fn get_random_projects(&self, count: Number) -> Result<Vec<Project>> {
@@ -136,7 +141,7 @@ impl Ferinth {
     /// modrinth.change_project_icon(
     ///     project_id,
     ///     image,
-    ///     ferinth::structures::project::FileExt::PNG
+    ///     ferinth::structures::project::ImageFileExt::PNG
     /// ).await
     /// # }
     /// ```
