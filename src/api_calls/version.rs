@@ -1,5 +1,6 @@
 use super::check_id_slug;
 use crate::{
+    request::RequestBuilderCustomSend,
     structures::version::*,
     url_ext::{UrlJoinAll, UrlWithQuery},
     Ferinth, Result, API_BASE_URL,
@@ -19,7 +20,9 @@ impl Ferinth {
     /// ```
     pub async fn list_versions(&self, project_id: &str) -> Result<Vec<Version>> {
         check_id_slug(&[project_id])?;
-        self.get(API_BASE_URL.join_all(vec!["project", project_id, "version"]))
+        self.client
+            .get(API_BASE_URL.join_all(vec!["project", project_id, "version"]))
+            .custom_send_json()
             .await
     }
 
@@ -60,12 +63,14 @@ impl Ferinth {
             .into_iter()
             .map(|this| (this.0, this.1))
             .collect::<Vec<_>>();
-        self.get(
-            API_BASE_URL
-                .join_all(vec!["project", project_id, "version"])
-                .with_query(query),
-        )
-        .await
+        self.client
+            .get(
+                API_BASE_URL
+                    .join_all(vec!["project", project_id, "version"])
+                    .with_query(query),
+            )
+            .custom_send_json()
+            .await
     }
 
     /// Get version with ID `version_id`
@@ -81,7 +86,9 @@ impl Ferinth {
     /// ```
     pub async fn get_version(&self, version_id: &str) -> Result<Version> {
         check_id_slug(&[version_id])?;
-        self.get(API_BASE_URL.join_all(vec!["version", version_id]))
+        self.client
+            .get(API_BASE_URL.join_all(vec!["version", version_id]))
+            .custom_send_json()
             .await
     }
 
@@ -103,11 +110,13 @@ impl Ferinth {
     /// ```
     pub async fn get_multiple_versions(&self, version_ids: &[&str]) -> Result<Vec<Version>> {
         check_id_slug(version_ids)?;
-        self.get(
-            API_BASE_URL
-                .join_all(vec!["versions"])
-                .with_query(&[("ids", &serde_json::to_string(version_ids)?)]),
-        )
-        .await
+        self.client
+            .get(
+                API_BASE_URL
+                    .join_all(vec!["versions"])
+                    .with_query(&[("ids", &serde_json::to_string(version_ids)?)]),
+            )
+            .custom_send_json()
+            .await
     }
 }

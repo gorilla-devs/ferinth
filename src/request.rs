@@ -1,10 +1,32 @@
-use crate::{Error, Ferinth, Result};
-use reqwest::{
-    header::{HeaderValue, CONTENT_TYPE},
-    Body, Response, StatusCode,
-};
-use serde::{de::DeserializeOwned, Serialize};
-use url::Url;
+use crate::{Error, Result};
+use async_trait::async_trait;
+use reqwest::{RequestBuilder, Response, StatusCode};
+use serde::de::DeserializeOwned;
+
+#[async_trait]
+pub(crate) trait RequestBuilderCustomSend {
+    /// Custom send method with error checking
+    async fn custom_send(self) -> Result<Response>;
+
+    /// Custom send method with error checking and JSON deserialisation
+    async fn custom_send_json<T>(self) -> Result<T>
+    where
+        T: DeserializeOwned;
+}
+
+#[async_trait]
+impl RequestBuilderCustomSend for RequestBuilder {
+    async fn custom_send(self) -> Result<Response> {
+        Ok(check_rate_limit(self.send().await?)?.error_for_status()?)
+    }
+
+    async fn custom_send_json<T>(self) -> Result<T>
+    where
+        T: DeserializeOwned,
+    {
+        Ok(self.custom_send().await?.json().await?)
+    }
+}
 
 pub(crate) fn check_rate_limit(response: Response) -> Result<Response> {
     if response.status() == StatusCode::TOO_MANY_REQUESTS {
@@ -23,55 +45,5 @@ pub(crate) fn check_rate_limit(response: Response) -> Result<Response> {
         ))
     } else {
         Ok(response)
-    }
-}
-
-impl Ferinth {
-    /// Perform a GET request to `url`, and deserialise the response
-    pub(crate) async fn get<T>(&self, url: Url) -> Result<T>
-    where
-        T: DeserializeOwned,
-    {
-        let response = self.client.get(url).send().await?;
-        Ok(check_rate_limit(response)?
-            .error_for_status()?
-            .json()
-            .await?)
-    }
-
-    /// Perform a POST request to `url` with `body` of `content_type`, and deserialise the response
-    pub(crate) async fn post<B: Into<Body>>(
-        &self,
-        url: Url,
-        body: B,
-        content_type: &str,
-    ) -> Result<Response> {
-        let response = self
-            .client
-            .post(url)
-            .body(body)
-            .header(CONTENT_TYPE, HeaderValue::from_str(content_type)?)
-            .send()
-            .await?;
-        Ok(check_rate_limit(response)?.error_for_status()?)
-    }
-
-    /// Perform a POST request to `url` with `body`, and deserialise the response
-    pub(crate) async fn post_json<T, B>(&self, url: Url, body: &B) -> Result<T>
-    where
-        T: DeserializeOwned,
-        B: Serialize + ?Sized,
-    {
-        let response = self.client.post(url).json(body).send().await?;
-        Ok(check_rate_limit(response)?
-            .error_for_status()?
-            .json()
-            .await?)
-    }
-
-    /// Perform a DELETE request to `url`
-    pub(crate) async fn delete(&self, url: Url) -> Result<Response> {
-        let response = self.client.delete(url).send().await?;
-        Ok(check_rate_limit(response)?.error_for_status()?)
     }
 }

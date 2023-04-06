@@ -1,8 +1,17 @@
+//! API calls related to projects
+//!
+//! [documentation](https://docs.modrinth.com/api-spec/#tag/projects)
+
 use super::check_id_slug;
 use crate::{
+    request::RequestBuilderCustomSend,
     structures::{project::*, Number},
     url_ext::{UrlJoinAll, UrlWithQuery},
     Ferinth, Result, API_BASE_URL,
+};
+use reqwest::{
+    header::{HeaderValue, CONTENT_TYPE},
+    Body, Url,
 };
 
 impl Ferinth {
@@ -26,8 +35,26 @@ impl Ferinth {
     /// ```
     pub async fn get_project(&self, project_id: &str) -> Result<Project> {
         check_id_slug(&[project_id])?;
-        self.get(API_BASE_URL.join_all(vec!["project", project_id]))
+        self.client
+            .get(API_BASE_URL.join_all(vec!["project", project_id]))
+            .custom_send_json()
             .await
+    }
+
+    /// Delete the project of `project_id`
+    ///
+    /// REQUIRES AUTHENTICATION!
+    ///
+    /// ```ignore
+    /// modrinth.delete_project(project_id).await?;
+    /// ```
+    pub async fn delete_project(&self, project_id: &str) -> Result<()> {
+        check_id_slug(&[project_id])?;
+        self.client
+            .delete(API_BASE_URL.join_all(vec!["project", project_id]))
+            .custom_send()
+            .await?;
+        Ok(())
     }
 
     /// Get multiple projects with IDs `project_ids`
@@ -47,12 +74,29 @@ impl Ferinth {
     /// ```
     pub async fn get_multiple_projects(&self, project_ids: &[&str]) -> Result<Vec<Project>> {
         check_id_slug(project_ids)?;
-        self.get(
-            API_BASE_URL
-                .join_all(vec!["projects"])
-                .with_query(&[("ids", &serde_json::to_string(project_ids)?)]),
-        )
-        .await
+        self.client
+            .get(
+                API_BASE_URL
+                    .join_all(vec!["projects"])
+                    .with_query(&[("ids", &serde_json::to_string(project_ids)?)]),
+            )
+            .custom_send_json()
+            .await
+    }
+
+    /// Edit multiple projects with IDs `project_ids` with the given `edits`
+    pub async fn edit_multiple_projects(
+        &self,
+        project_ids: &[&str],
+        edits: EditMultipleProjectsRequestBody,
+    ) -> Result<()> {
+        check_id_slug(project_ids)?;
+        self.client
+            .patch(API_BASE_URL.join_all(vec!["projects"]))
+            .json(&edits)
+            .custom_send()
+            .await?;
+        Ok(())
     }
 
     /// Get `count` number of random projects
@@ -66,12 +110,54 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn get_random_projects(&self, count: Number) -> Result<Vec<Project>> {
-        self.get(
-            API_BASE_URL
-                .join_all(vec!["projects_random"])
-                .with_query(&[("count", &count.to_string())]),
-        )
-        .await
+        self.client
+            .get(
+                API_BASE_URL
+                    .join_all(vec!["projects_random"])
+                    .with_query(&[("count", &count.to_string())]),
+            )
+            .custom_send_json()
+            .await
+    }
+
+    /// Change the icon of the project of `project_id` to `image` with file `ext`ension
+    ///
+    /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> ferinth::Result<()> {
+    /// # let modrinth = ferinth::Ferinth::new(
+    /// #     env!("CARGO_CRATE_NAME"),
+    /// #     Some(env!("CARGO_PKG_VERSION")),
+    /// #     None,
+    /// #     Some(env!("MODRINTH_TOKEN")),
+    /// # )?;
+    /// # let project_id = env!("TEST_PROJECT_ID");
+    /// # let image = std::fs::read("test_image.png").expect("Failed to read test image");
+    /// modrinth.change_project_icon(
+    ///     project_id,
+    ///     image,
+    ///     ferinth::structures::project::FileExt::PNG
+    /// ).await
+    /// # }
+    /// ```
+    pub async fn change_project_icon<B: Into<Body>>(
+        &self,
+        project_id: &str,
+        image: B,
+        ext: FileExt,
+    ) -> Result<()> {
+        check_id_slug(&[project_id])?;
+        self.client
+            .patch(
+                API_BASE_URL
+                    .join_all(vec!["project", project_id, "icon"])
+                    .with_query(&[("ext", ext.to_string())]),
+            )
+            .body(image)
+            .header(CONTENT_TYPE, format!("image/{}", ext))
+            .custom_send()
+            .await?;
+        Ok(())
     }
 
     /// Check if the given ID or slug refers to an existing project.
@@ -92,7 +178,9 @@ impl Ferinth {
         }
         check_id_slug(&[project_id])?;
         let res: Response = self
+            .client
             .get(API_BASE_URL.join_all(vec!["project", project_id, "check"]))
+            .custom_send_json()
             .await?;
         Ok(res.id)
     }
@@ -104,31 +192,20 @@ impl Ferinth {
     ///
     /// REQUIRES AUTHENTICATION!
     ///
-    /// ```rust
-    /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::new(
-    /// #     env!("CARGO_CRATE_NAME"),
-    /// #     Some(env!("CARGO_PKG_VERSION")),
-    /// #     None,
-    /// #     Some(env!("MODRINTH_TOKEN")),
-    /// # )?;
-    /// # let project_id = env!("TEST_PROJECT_ID");
-    /// # let image_data = &std::fs::read("test_image.png").expect("Failed to read test image");
+    /// ```ignore
     /// modrinth.add_gallery_image(
     ///     project_id,
     ///     image_data,
-    ///     ferinth::structures::project::FileExt::PNG,
+    ///     project::FileExt::PNG,
     ///     true,
     ///     Some("Test image".to_string()),
     ///     Some("This is a test image".to_string()),
     /// ).await?;
-    /// # Ok(()) }
     /// ```
-    pub async fn add_gallery_image(
+    pub async fn add_gallery_image<B: Into<Body>>(
         &self,
         project_id: &str,
-        image: &[u8],
+        image: B,
         ext: FileExt,
         featured: bool,
         title: Option<String>,
@@ -142,14 +219,41 @@ impl Ferinth {
         if let Some(description) = description {
             query.push(("description", description));
         }
-        self.post(
-            API_BASE_URL
-                .join_all(vec!["project", project_id, "gallery"])
-                .with_query(query),
-            image.to_vec(),
-            &format!("image/{}", ext),
-        )
-        .await?;
+        self.client
+            .post(
+                API_BASE_URL
+                    .join_all(vec!["project", project_id, "gallery"])
+                    .with_query(query),
+            )
+            .body(image)
+            .header(
+                CONTENT_TYPE,
+                HeaderValue::from_str(&format!("image/{}", ext))?,
+            )
+            .custom_send()
+            .await?;
+        Ok(())
+    }
+
+    /// Delete the gallery image of `image_url` from the project of `project_id`
+    ///
+    /// ```ignore
+    /// modrinth.delete_gallery_image(project_id, image_url).await?;
+    /// ```
+    pub async fn delete_gallery_image<U: Into<Url>>(
+        &self,
+        project_id: &str,
+        image_url: U,
+    ) -> Result<()> {
+        check_id_slug(&[project_id])?;
+        self.client
+            .delete(
+                API_BASE_URL
+                    .join_all(vec!["project", project_id, "gallery"])
+                    .with_query(&[("url", image_url.into())]),
+            )
+            .custom_send()
+            .await?;
         Ok(())
     }
 
@@ -166,7 +270,9 @@ impl Ferinth {
     /// ```
     pub async fn get_project_dependencies(&self, project_id: &str) -> Result<ProjectDependencies> {
         check_id_slug(&[project_id])?;
-        self.get(API_BASE_URL.join_all(vec!["project", project_id, "dependencies"]))
+        self.client
+            .get(API_BASE_URL.join_all(vec!["project", project_id, "dependencies"]))
+            .custom_send_json()
             .await
     }
 
@@ -179,11 +285,11 @@ impl Ferinth {
     /// ```
     pub async fn follow(&self, project_id: &str) -> Result<()> {
         check_id_slug(&[project_id])?;
-        self.post_json(
-            API_BASE_URL.join_all(vec!["project", project_id, "follow"]),
-            "",
-        )
-        .await
+        self.client
+            .post(API_BASE_URL.join_all(vec!["project", project_id, "follow"]))
+            .custom_send()
+            .await?;
+        Ok(())
     }
 
     /// Unfollow the project of `project_id`
@@ -195,8 +301,61 @@ impl Ferinth {
     /// ```
     pub async fn unfollow(&self, project_id: &str) -> Result<()> {
         check_id_slug(&[project_id])?;
-        self.delete(API_BASE_URL.join_all(vec!["project", project_id, "follow"]))
+        self.client
+            .delete(API_BASE_URL.join_all(vec!["project", project_id, "follow"]))
+            .custom_send()
             .await?;
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{structures::project, Ferinth, Result};
+
+    #[tokio::test]
+    async fn follow() -> Result<()> {
+        let modrinth = Ferinth::new(
+            env!("CARGO_CRATE_NAME"),
+            Some(env!("CARGO_PKG_VERSION")),
+            None,
+            Some(env!("MODRINTH_TOKEN")),
+        )?;
+        let project_id = env!("TEST_PROJECT_ID");
+
+        modrinth.follow(project_id).await?;
+        modrinth.unfollow(project_id).await?;
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn gallery() -> Result<()> {
+        let modrinth = Ferinth::new(
+            env!("CARGO_CRATE_NAME"),
+            Some(env!("CARGO_PKG_VERSION")),
+            None,
+            Some(env!("MODRINTH_TOKEN")),
+        )?;
+        let project_id = env!("TEST_PROJECT_ID");
+
+        let project = modrinth.get_project(project_id).await?;
+        modrinth
+            .delete_gallery_image(project_id, project.gallery[0].url.clone())
+            .await?;
+
+        let image_data = std::fs::read("test_image.png").expect("Failed to read test image");
+        modrinth
+            .add_gallery_image(
+                project_id,
+                image_data,
+                project::FileExt::PNG,
+                true,
+                Some("Test image, do not delete".to_string()),
+                Some(chrono::offset::Local::now().to_string()),
+            )
+            .await?;
+
         Ok(())
     }
 }

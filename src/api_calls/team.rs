@@ -1,5 +1,6 @@
 use super::check_id_slug;
 use crate::{
+    request::RequestBuilderCustomSend,
     structures::user::*,
     url_ext::{UrlJoinAll, UrlWithQuery},
     Ferinth, Result, API_BASE_URL,
@@ -19,7 +20,9 @@ impl Ferinth {
     /// ```
     pub async fn list_project_team_members(&self, project_id: &str) -> Result<Vec<TeamMember>> {
         check_id_slug(&[project_id])?;
-        self.get(API_BASE_URL.join_all(vec!["project", project_id, "members"]))
+        self.client
+            .get(API_BASE_URL.join_all(vec!["project", project_id, "members"]))
+            .custom_send_json()
             .await
     }
 
@@ -36,7 +39,9 @@ impl Ferinth {
     /// ```
     pub async fn list_team_members(&self, team_id: &str) -> Result<Vec<TeamMember>> {
         check_id_slug(&[team_id])?;
-        self.get(API_BASE_URL.join_all(vec!["team", team_id, "members"]))
+        self.client
+            .get(API_BASE_URL.join_all(vec!["team", team_id, "members"]))
+            .custom_send_json()
             .await
     }
 
@@ -64,11 +69,11 @@ impl Ferinth {
             user_id: &'a str,
         }
 
-        self.post_json(
-            API_BASE_URL.join_all(vec!["team", team_id, "members"]),
-            &Body { user_id },
-        )
-        .await
+        self.client
+            .post(API_BASE_URL.join_all(vec!["team", team_id, "members"]))
+            .json(&Body { user_id })
+            .custom_send_json()
+            .await
     }
 
     /// List the members of teams with IDs `team_ids`.
@@ -92,12 +97,14 @@ impl Ferinth {
         team_ids: &[&str],
     ) -> Result<Vec<Vec<TeamMember>>> {
         check_id_slug(team_ids)?;
-        self.get(
-            API_BASE_URL
-                .join_all(vec!["teams"])
-                .with_query(&[("ids", serde_json::to_string(&team_ids)?)]),
-        )
-        .await
+        self.client
+            .get(
+                API_BASE_URL
+                    .join_all(vec!["teams"])
+                    .with_query(&[("ids", serde_json::to_string(&team_ids)?)]),
+            )
+            .custom_send_json()
+            .await
     }
 
     /// Accept an invite to join the team of `team_id`
@@ -118,7 +125,9 @@ impl Ferinth {
     /// # }
     /// ```
     pub async fn join_team(&self, team_id: &str) -> Result<()> {
-        self.post_json(API_BASE_URL.join_all(vec!["team", team_id, "join"]), "")
+        self.client
+            .post(API_BASE_URL.join_all(vec!["team", team_id, "join"]))
+            .custom_send_json()
             .await
     }
 
@@ -147,10 +156,10 @@ impl Ferinth {
             user_id: &'a str,
         }
 
-        self.post_json(
-            API_BASE_URL.join_all(vec!["team", team_id, "owner"]),
-            &Body { user_id },
-        )
-        .await
+        self.client
+            .post(API_BASE_URL.join_all(vec!["team", team_id, "owner"]))
+            .json(&Body { user_id })
+            .custom_send_json()
+            .await
     }
 }

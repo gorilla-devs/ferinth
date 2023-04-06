@@ -1,3 +1,7 @@
+//! Models related to tags
+//!
+//! [documentation](https://docs.modrinth.com/api-spec/#tag/tags)
+
 use super::{project::ProjectType, *};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

@@ -1,3 +1,7 @@
+//! Models related to users
+//! 
+//! [documentation](https://docs.modrinth.com/api-spec/#tag/user_model)
+
 use super::*;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

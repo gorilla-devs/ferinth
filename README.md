@@ -10,9 +10,6 @@ It provides API bindings for the [Modrinth API](https://docs.modrinth.com), is i
 
 ## Use
 
-**The major version of this crate's version directly corresponds to the Modrinth API version it uses**. So for example if you want to use the Modrinth API version 2, which is the latest one available now, then specify this crate version as `2`.  
-After you have decided the API version to use, you can add this crate to your `Cargo.toml` like so
-```toml
-[dependencies]
-ferinth = "2" # For API version 2
-```
+**The major version of this crate's version directly corresponds to the Modrinth API version it uses**.
+
+So for example if you want to use the Modrinth API version 2, which is the latest one available now, then specify this crate's major version as `2`.

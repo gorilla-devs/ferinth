@@ -1,5 +1,6 @@
 use super::check_id_slug;
 use crate::{
+    request::RequestBuilderCustomSend,
     structures::{project::Project, user::*},
     url_ext::{UrlJoinAll, UrlWithQuery},
     Ferinth, Result, API_BASE_URL,
@@ -20,7 +21,10 @@ impl Ferinth {
     /// ```
     pub async fn get_user(&self, user_id: &str) -> Result<User> {
         check_id_slug(&[user_id])?;
-        self.get(API_BASE_URL.join_all(vec!["user", user_id])).await
+        self.client
+            .get(API_BASE_URL.join_all(vec!["user", user_id]))
+            .custom_send_json()
+            .await
     }
 
     /// Get the user of the current authorisation header
@@ -43,7 +47,10 @@ impl Ferinth {
     /// # Ok(()) }
     /// ```
     pub async fn get_current_user(&self) -> Result<User> {
-        self.get(API_BASE_URL.join_all(vec!["user"])).await
+        self.client
+            .get(API_BASE_URL.join_all(vec!["user"]))
+            .custom_send_json()
+            .await
     }
 
     /// Get multiple users with IDs `user_ids`
@@ -60,12 +67,14 @@ impl Ferinth {
     /// ```
     pub async fn get_multiple_users(&self, user_ids: &[&str]) -> Result<Vec<User>> {
         check_id_slug(user_ids)?;
-        self.get(
-            API_BASE_URL
-                .join_all(vec!["users"])
-                .with_query([("ids", serde_json::to_string(user_ids)?)]),
-        )
-        .await
+        self.client
+            .get(
+                API_BASE_URL
+                    .join_all(vec!["users"])
+                    .with_query([("ids", serde_json::to_string(user_ids)?)]),
+            )
+            .custom_send_json()
+            .await
     }
 
     /// Get a list of projects that the user owns
@@ -81,7 +90,9 @@ impl Ferinth {
     /// ```
     pub async fn list_projects(&self, user_id: &str) -> Result<Vec<Project>> {
         check_id_slug(&[user_id])?;
-        self.get(API_BASE_URL.join_all(vec!["user", user_id, "projects"]))
+        self.client
+            .get(API_BASE_URL.join_all(vec!["user", user_id, "projects"]))
+            .custom_send_json()
             .await
     }
 
@@ -105,7 +116,9 @@ impl Ferinth {
     /// ```
     pub async fn get_notifications(&self, user_id: &str) -> Result<Vec<Notification>> {
         check_id_slug(&[user_id])?;
-        self.get(API_BASE_URL.join_all(vec!["user", user_id, "notifications"]))
+        self.client
+            .get(API_BASE_URL.join_all(vec!["user", user_id, "notifications"]))
+            .custom_send_json()
             .await
     }
 
@@ -129,7 +142,9 @@ impl Ferinth {
     /// ```
     pub async fn followed_projects(&self, user_id: &str) -> Result<Vec<Project>> {
         check_id_slug(&[user_id])?;
-        self.get(API_BASE_URL.join_all(vec!["user", user_id, "follows"]))
+        self.client
+            .get(API_BASE_URL.join_all(vec!["user", user_id, "follows"]))
+            .custom_send_json()
             .await
     }
 
@@ -162,15 +177,15 @@ impl Ferinth {
         body: String,
     ) -> Result<Vec<Project>> {
         check_id_slug(&[&item_id])?;
-        self.post_json(
-            API_BASE_URL.join_all(vec!["report"]),
-            &ReportSubmission {
+        self.client
+            .post(API_BASE_URL.join_all(vec!["report"]))
+            .json(&ReportSubmission {
                 report_type,
                 item_id,
                 item_type,
                 body,
-            },
-        )
-        .await
+            })
+            .custom_send_json()
+            .await
     }
 }

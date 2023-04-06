@@ -1,5 +1,6 @@
 use super::check_sha1_hash;
 use crate::{
+    request::RequestBuilderCustomSend,
     structures::version::*,
     url_ext::{UrlJoinAll, UrlWithQuery},
     Ferinth, Result, API_BASE_URL,
@@ -21,7 +22,9 @@ impl Ferinth {
     /// ```
     pub async fn get_version_from_hash(&self, file_hash: &str) -> Result<Version> {
         check_sha1_hash(&[file_hash])?;
-        self.get(API_BASE_URL.join_all(vec!["version_file", file_hash]))
+        self.client
+            .get(API_BASE_URL.join_all(vec!["version_file", file_hash]))
+            .custom_send_json()
             .await
     }
 
@@ -47,14 +50,14 @@ impl Ferinth {
         file_hashes: Vec<String>,
     ) -> Result<HashMap<String, Version>> {
         check_sha1_hash(&file_hashes)?;
-        self.post_json(
-            API_BASE_URL.join_all(vec!["version_files"]),
-            &HashesBody {
+        self.client
+            .post(API_BASE_URL.join_all(vec!["version_files"]))
+            .json(&HashesBody {
                 hashes: file_hashes,
                 algorithm: HashAlgorithm::SHA1,
-            },
-        )
-        .await
+            })
+            .custom_send_json()
+            .await
     }
 
     /// Get the latest version of the given `file_hash` based on some `filters`
@@ -64,13 +67,15 @@ impl Ferinth {
         filters: &LatestVersionBody,
     ) -> Result<Version> {
         check_sha1_hash(&[file_hash])?;
-        self.post_json(
-            API_BASE_URL
-                .join_all(vec!["version_file", file_hash, "update"])
-                .with_query(&[("algorithm", &serde_json::to_string(&HashAlgorithm::SHA1)?)]),
-            filters,
-        )
-        .await
+        self.client
+            .post(
+                API_BASE_URL
+                    .join_all(vec!["version_file", file_hash, "update"])
+                    .with_query(&[("algorithm", &serde_json::to_string(&HashAlgorithm::SHA1)?)]),
+            )
+            .json(filters)
+            .custom_send_json()
+            .await
     }
 
     /// Get the latest versions of the given `file_hashes` based on some `filters`
@@ -80,15 +85,15 @@ impl Ferinth {
         filters: LatestVersionBody,
     ) -> Result<Vec<Version>> {
         check_sha1_hash(&file_hashes)?;
-        self.post_json(
-            API_BASE_URL.join_all(vec!["version_files", "update"]),
-            &LatestVersionsBody {
+        self.client
+            .post(API_BASE_URL.join_all(vec!["version_files", "update"]))
+            .json(&LatestVersionsBody {
                 hashes: file_hashes,
                 algorithm: HashAlgorithm::SHA1,
                 loaders: filters.loaders,
                 game_versions: filters.game_versions,
-            },
-        )
-        .await
+            })
+            .custom_send_json()
+            .await
     }
 }

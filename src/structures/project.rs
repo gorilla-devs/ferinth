@@ -1,4 +1,6 @@
-use std::fmt::Display;
+//! Models related to projects
+//! 
+//! [documentation](https://docs.modrinth.com/api-spec/#tag/project_model)
 
 use super::*;
 
@@ -124,6 +126,37 @@ pub struct ResolveIDSlugResponse {
     pub id: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+/// Fields to edit on all projects specified
+pub struct EditMultipleProjectsRequestBody {
+    /// Set all of the categories to the categories specified here
+    pub categories: Vec<String>,
+    /// Add all of the categories specified here
+    pub add_categories: Vec<String>,
+    /// Remove all of the categories specified here
+    pub remove_categories: Vec<String>,
+    /// Set all of the additional categories to the categories specified here
+    pub additional_categories: Vec<String>,
+    /// Add all of the additional categories specified here
+    pub add_additional_categories: Vec<String>,
+    /// Remove all of the additional categories specified here
+    pub remove_additional_categories: Vec<String>,
+    /// Set all of the donation links to the donation links specified here
+    pub donation_urls: Vec<DonationLink>,
+    /// Add all of the donation links specified here
+    pub add_donation_urls: Vec<DonationLink>,
+    /// Remove all of the donation links specified here
+    pub remove_donation_urls: Vec<DonationLink>,
+    /// A link to where to submit bugs or issues with the projects
+    pub issues_url: Option<String>,
+    /// A link to the source code of the projects
+    pub source_url: Option<String>,
+    /// A link to the projects' wiki page or other relevant information
+    pub wiki_url: Option<String>,
+    /// An optional invite link to the projects' discord
+    pub discord_url: Option<String>,
+}
+
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum ProjectStatus {
@@ -168,7 +201,7 @@ pub enum FileExt {
     RGB,
 }
 
-impl Display for FileExt {
+impl std::fmt::Display for FileExt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", format!("{:?}", self).to_lowercase())
     }

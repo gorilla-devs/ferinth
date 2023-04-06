@@ -1,3 +1,7 @@
+//! Models related to versions
+//!
+//! [documentation](https://docs.modrinth.com/api-spec/#tag/version_model)
+
 use super::*;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

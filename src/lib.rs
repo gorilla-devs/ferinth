@@ -1,20 +1,18 @@
 //! # Ferinth
 //!
-//! Ferinth is a simple library for using the [Modrinth API](https://github.com/modrinth/labrinth/wiki/API-Documentation) in Rust.
-//! It uses [Reqwest](https://docs.rs/reqwest/) as its HTTPS client and deserialises responses to strongly typed structs using [SerDe](https://serde.rs/).
+//! [![github badge](https://img.shields.io/badge/GitHub-Ferinth-informational?style=for-the-badge&logo=github&labelColor=555555)](https://github.com/gorilla-devs/ferinth)
+//! [![crates badge](https://img.shields.io/crates/v/ferinth?logo=rust&style=for-the-badge)](https://crates.io/crates/ferinth)
+//! [![docs.rs](https://img.shields.io/docsrs/ferinth?logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyByb2xlPSJpbWciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDUxMiA1MTIiPjxwYXRoIGZpbGw9IiNmNWY1ZjUiIGQ9Ik00ODguNiAyNTAuMkwzOTIgMjE0VjEwNS41YzAtMTUtOS4zLTI4LjQtMjMuNC0zMy43bC0xMDAtMzcuNWMtOC4xLTMuMS0xNy4xLTMuMS0yNS4zIDBsLTEwMCAzNy41Yy0xNC4xIDUuMy0yMy40IDE4LjctMjMuNCAzMy43VjIxNGwtOTYuNiAzNi4yQzkuMyAyNTUuNSAwIDI2OC45IDAgMjgzLjlWMzk0YzAgMTMuNiA3LjcgMjYuMSAxOS45IDMyLjJsMTAwIDUwYzEwLjEgNS4xIDIyLjEgNS4xIDMyLjIgMGwxMDMuOS01MiAxMDMuOSA1MmMxMC4xIDUuMSAyMi4xIDUuMSAzMi4yIDBsMTAwLTUwYzEyLjItNi4xIDE5LjktMTguNiAxOS45LTMyLjJWMjgzLjljMC0xNS05LjMtMjguNC0yMy40LTMzLjd6TTM1OCAyMTQuOGwtODUgMzEuOXYtNjguMmw4NS0zN3Y3My4zek0xNTQgMTA0LjFsMTAyLTM4LjIgMTAyIDM4LjJ2LjZsLTEwMiA0MS40LTEwMi00MS40di0uNnptODQgMjkxLjFsLTg1IDQyLjV2LTc5LjFsODUtMzguOHY3NS40em0wLTExMmwtMTAyIDQxLjQtMTAyLTQxLjR2LS42bDEwMi0zOC4yIDEwMiAzOC4ydi42em0yNDAgMTEybC04NSA0Mi41di03OS4xbDg1LTM4Ljh2NzUuNHptMC0xMTJsLTEwMiA0MS40LTEwMi00MS40di0uNmwxMDItMzguMiAxMDIgMzguMnYuNnoiPjwvcGF0aD48L3N2Zz4K&style=for-the-badge)](https://docs.rs/ferinth)
 //!
-//! ## Features
+//! Ferinth is a simple library to use the Modrinth API in Rust projects
 //!
-//! This crate includes the following:
+//! It provides API bindings for the [Modrinth API](https://docs.modrinth.com), is intuitive to use, and provides typed structs for all the structures used.
 //!
-//! - All structure definitions based on <https://docs.modrinth.com/api-spec/>
-//! - All of the GET and POST calls that don't require authentication
+//! ## Use
 //!
-//! This crate uses [Rustls](https://docs.rs/rustls/) rather than OpenSSL, because OpenSSL is outdated and slower.
+//! **The major version of this crate's version directly corresponds to the Modrinth API version it uses**.
 //!
-//! The following features still need to be implemented
-//! - Search projects
-//! - Some types of requests
+//! So for example if you want to use the Modrinth API version 2, which is the latest one available now, then specify this crate's major version as `2`.
 
 #![deny(clippy::unwrap_used)]
 #![warn(missing_docs)]
@@ -43,16 +41,16 @@ pub static API_BASE_URL: Lazy<Url> = Lazy::new(|| {
             ),
             '/'
         ))
-        .expect("Invalid API version route")
+        .expect("Invalid API base URL")
 });
 
 #[derive(thiserror::Error, Debug)]
 #[allow(missing_docs)]
 pub enum Error {
-    #[error("A given string is not a valid Modrinth ID or slug")]
+    #[error("Ivalid Modrinth ID or slug")]
     InvalidIDorSlug,
-    #[error("A given string was not SHA1 compliant")]
-    NotSHA1,
+    #[error("Invalid SHA1 hash")]
+    InvalidSHA1,
     #[error("You have been rate limited, please wait for {} seconds", .0)]
     RateLimitExceeded(usize),
     #[error("{}", .0)]
@@ -63,19 +61,29 @@ pub enum Error {
     InvalidGitHubToken(#[from] header::InvalidHeaderValue),
 }
 
+#[allow(missing_docs)]
 pub type Result<T> = std::result::Result<T, Error>;
 
 /// An instance of the API to invoke API calls on.
 ///
-/// To initialise this container,
-/// ```rust
-/// # use ferinth::Ferinth;
-/// # #[tokio::main]
-/// # async fn main() -> Result<(), ferinth::Error> {
-/// let modrinth = Ferinth::default();
-/// // Use the instance to call the API
-/// let sodium_mod = modrinth.get_project("sodium").await?;
-/// # Ok(()) }
+/// There are two methods initialise this container:
+///
+/// Use the `Default` implementation to set the user agent based on the crate name and version.
+///    This will not have authentication.
+///
+/// ```ignore
+/// let modrinth = ferinth::Ferinth::default();
+/// ```
+///
+/// Use the `new()` function to set a custom user agent and authentication token.
+///
+/// ```ignore
+/// let modrinth = ferinth::Ferinth::new(
+///     env!("CARGO_CRATE_NAME"),
+///     Some(env!("CARGO_PKG_VERSION")),
+///     Some("contact@program.com"),
+///     args.modrinth_token.as_ref(),
+/// )?;
 /// ```
 #[derive(Debug, Clone)]
 pub struct Ferinth {
@@ -101,11 +109,11 @@ impl Ferinth {
     /// Instantiate the container with the provided [user agent](https://docs.modrinth.com/api-spec/#section/User-Agents) details,
     /// and an optional GitHub token for `authorisation`.
     ///
-    /// `program_name` is required, and `version` and `contact` are optional, but recommended.
+    /// `program_name` is required, while `version` and `contact` are optional but recommended.
     ///
-    /// This function fails if the GitHub `authorisation` token provided is invalid.
+    /// This function fails if the GitHub `authorisation` token provided is invalid header data.
     pub fn new(
-        program_name: &str,
+        name: &str,
         version: Option<&str>,
         contact: Option<&str>,
         authorisation: Option<&str>,
@@ -116,7 +124,7 @@ impl Ferinth {
             client: Client::builder()
                 .user_agent(format!(
                     "{}{}{}",
-                    program_name,
+                    name,
                     version.map_or("".into(), |version| format!("/{}", version)),
                     contact.map_or("".into(), |contact| format!(" ({})", contact))
                 ))
@@ -134,11 +142,18 @@ impl Ferinth {
     }
 
     /// Check `self`'s connection to the Modrinth API.
+    ///
+    /// ```rust
+    /// # #[tokio::main]
+    /// # async fn main() -> ferinth::Result<()> {
+    /// # let modrinth = ferinth::Ferinth::default();
+    /// modrinth.check_api().await
+    /// # }
+    /// ```
     pub async fn check_api(&self) -> Result<()> {
-        let response = self.client.get(BASE_URL.as_ref()).send().await?;
-        Ok(request::check_rate_limit(response)?
-            .error_for_status()?
-            .json()
-            .await?)
+        use request::RequestBuilderCustomSend;
+
+        self.client.get(BASE_URL.as_ref()).custom_send().await?;
+        Ok(())
     }
 }
