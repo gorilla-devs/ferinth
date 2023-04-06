@@ -144,7 +144,7 @@ impl Ferinth {
         &self,
         project_id: &str,
         image: B,
-        ext: FileExt,
+        ext: ImageFileExt,
     ) -> Result<()> {
         check_id_slug(&[project_id])?;
         self.client
@@ -206,7 +206,7 @@ impl Ferinth {
         &self,
         project_id: &str,
         image: B,
-        ext: FileExt,
+        ext: ImageFileExt,
         featured: bool,
         title: Option<String>,
         description: Option<String>,
@@ -349,7 +349,7 @@ mod tests {
             .add_gallery_image(
                 project_id,
                 image_data,
-                project::FileExt::PNG,
+                project::ImageFileExt::PNG,
                 true,
                 Some("Test image, do not delete".to_string()),
                 Some(chrono::offset::Local::now().to_string()),
