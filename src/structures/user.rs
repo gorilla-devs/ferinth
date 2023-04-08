@@ -1,5 +1,5 @@
 //! Models related to users
-//! 
+//!
 //! [documentation](https://docs.modrinth.com/api-spec/#tag/user_model)
 
 use super::*;
@@ -17,9 +17,14 @@ pub struct User {
     /// The user's GitHub ID
     pub github_id: Option<Number>,
     pub avatar_url: Url,
-    /// The time at which the user was created
+    /// When the user was created
     pub created: UtcTime,
     pub role: UserRole,
+    /// Any badges applicable to this user.
+    /// These are currently unused and not displayed, and as such are subject to change.
+    ///
+    /// [documentation](https://docs.modrinth.com/api-spec/#tag/user_model)
+    pub badges: Number,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -31,7 +36,7 @@ pub struct TeamMember {
     /// The user's permissions in bitflag format
     /// (requires authorisation to view)
     ///
-    /// In order from first to eighth bit, they indicate:
+    /// In order from first to tenth bit, they indicate:
     /// - UPLOAD_VERSION
     /// - DELETE_VERSION
     /// - EDIT_DETAILS
@@ -40,10 +45,16 @@ pub struct TeamMember {
     /// - REMOVE_MEMBER
     /// - EDIT_MEMBER
     /// - DELETE_PROJECT
-    pub permissions: Option<u8>,
+    /// - VIEW_ANALYTICS
+    /// - VIEW_PAYOUTS
+    pub permissions: Option<Number>,
     /// Whether the user has accepted membership of the team
     /// (requires authorisation to view)
     pub accepted: bool,
+    /// The split of payouts going to this user.
+    /// The proportion of payouts they get is their split divided by the sum of the splits of all members.
+    pub payouts_split: Option<Number>,
+    pub ordering: Option<Number>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -56,11 +67,11 @@ pub struct Notification {
     pub title: String,
     /// The body text of the notification
     pub text: String,
-    /// A relative link to the related project/version
+    /// A _relative_ link to the related project/version
     pub link: String,
     /// Whether the notification has been read
     pub read: bool,
-    /// The time at which the notification was created
+    /// When the notification was created
     pub created: UtcTime,
     /// A list of actions that can be performed
     pub actions: Vec<NotificationAction>,
@@ -97,7 +108,7 @@ pub(crate) struct ReportSubmission {
 pub struct NotificationAction {
     pub title: String,
     /// The route to call when this notification action is called.
-    /// Contains the HTTP method and route respectively
+    /// Contains the HTTP method and route respectively.
     pub action_route: (String, String),
 }
 
@@ -113,6 +124,7 @@ pub enum ReportItemType {
 pub enum NotificationType {
     ProjectUpdate,
     TeamInvite,
+    StatusUpdate,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]

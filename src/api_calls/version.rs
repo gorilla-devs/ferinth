@@ -1,21 +1,20 @@
 use super::check_id_slug;
 use crate::{
     request::RequestBuilderCustomSend,
-    structures::version::*,
+    structures::{version::*, UtcTime},
     url_ext::{UrlJoinAll, UrlWithQuery},
     Ferinth, Result, API_BASE_URL,
 };
 
 impl Ferinth {
-    /// Get the versions of project with ID `project_id`
+    /// Get the versions of the project of `project_id`
     ///
-    /// Example:
     /// ```rust
     /// # #[tokio::main]
     /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let sodium_versions = modrinth.list_versions("AANobbMI").await?;
-    /// assert!(sodium_versions[0].project_id == "AANobbMI");
+    /// sodium_versions.iter().for_each(|v| assert_eq!(v.project_id, "AANobbMI"));
     /// # Ok(()) }
     /// ```
     pub async fn list_versions(&self, project_id: &str) -> Result<Vec<Version>> {
@@ -26,18 +25,25 @@ impl Ferinth {
             .await
     }
 
-    /// Get the versions of project with ID `project_id` with filters
+    /// Get the versions of the project of `project_id`, filtered using the following:
     ///
-    /// `loaders`: The types of loaders to filter for
-    /// `game_versions`: The game versions to filter for
-    /// `featured`: Filter for featured or non-featured versions only
+    /// |||
+    /// |-|-|
+    /// | `loaders` | The loaders to filter for |
+    /// | `game_versions` | The game versions to filter for |
+    /// | `featured` | Filter for featured or non-featured versions only |
     ///
-    /// Example:
     /// ```rust
     /// # #[tokio::main]
     /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
-    /// let sodium_forge_versions = modrinth.list_versions_filtered("AANobbMI", Some(&["forge"]), None, None).await?;
+    /// let sodium_forge_versions = modrinth.list_versions_filtered(
+    ///     "AANobbMI",
+    ///     Some(&["forge"]),
+    ///     None,
+    ///     None
+    /// ).await?;
+    /// // Sodium is not made for Forge
     /// assert!(sodium_forge_versions.is_empty());
     /// # Ok(()) }
     /// ```
@@ -49,39 +55,27 @@ impl Ferinth {
         featured: Option<bool>,
     ) -> Result<Vec<Version>> {
         check_id_slug(&[project_id])?;
-        let mut query = Vec::new();
+        let mut url = API_BASE_URL.join_all(vec!["project", project_id, "version"]);
         if let Some(loaders) = loaders {
-            query.push(("loaders", serde_json::to_string(loaders)?));
+            url = url.with_query_json("loaders", loaders)?;
         }
         if let Some(game_versions) = game_versions {
-            query.push(("game_versions", serde_json::to_string(game_versions)?));
+            url = url.with_query_json("game_versions", game_versions)?;
         }
         if let Some(featured) = featured {
-            query.push(("featured", serde_json::to_string(&featured)?));
+            url = url.with_query_json("featured", featured)?;
         }
-        let query = query
-            .into_iter()
-            .map(|this| (this.0, this.1))
-            .collect::<Vec<_>>();
-        self.client
-            .get(
-                API_BASE_URL
-                    .join_all(vec!["project", project_id, "version"])
-                    .with_query(query),
-            )
-            .custom_send_json()
-            .await
+        self.client.get(url).custom_send_json().await
     }
 
-    /// Get version with ID `version_id`
+    /// Get the version of `version_id`
     ///
-    /// Example:
     /// ```rust
     /// # #[tokio::main]
     /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let sodium_version = modrinth.get_version("xuWxRZPd").await?;
-    /// assert!(sodium_version.project_id == "AANobbMI");
+    /// assert_eq!(sodium_version.id, "xuWxRZPd");
     /// # Ok(()) }
     /// ```
     pub async fn get_version(&self, version_id: &str) -> Result<Version> {
@@ -92,7 +86,60 @@ impl Ferinth {
             .await
     }
 
-    /// Get multiple versions with IDs `version_ids`
+    /// Delete the version of `version_id`
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> ferinth::Result<()> {
+    /// # let modrinth = ferinth::Ferinth::default();
+    /// modrinth.delete_version("xuWxRZPd").await
+    /// # }
+    /// ```
+    pub async fn delete_version(&self, version_id: &str) -> Result<()> {
+        check_id_slug(&[version_id])?;
+        self.client
+            .delete(API_BASE_URL.join_all(vec!["version", version_id]))
+            .custom_send()
+            .await?;
+        Ok(())
+    }
+
+    /**
+    Schedule a change in the `status` of the version of `version_id` at `time`
+
+    ```no_run
+    # #[tokio::main]
+    # async fn main() -> ferinth::Result<()> {
+    # let modrinth = ferinth::Ferinth::default();
+    // Release the version of ID `xuWxRZPd` in three hours to the public
+    modrinth.schedule_version(
+        "xuWxRZPd",
+        &(chrono::offset::Utc::now() + chrono::Duration::hours(3)),
+        &ferinth::structures::version::RequestedStatus::Listed
+    ).await
+    # }
+    ```
+    */
+    pub async fn schedule_version(
+        &self,
+        version_id: &str,
+        time: &UtcTime,
+        status: &RequestedStatus,
+    ) -> Result<()> {
+        check_id_slug(&[version_id])?;
+        self.client
+            .post(
+                API_BASE_URL
+                    .join_all(vec!["version", version_id, "schedule"])
+                    .with_query_json("requested_status", status)?
+                    .with_query_json("time", time)?,
+            )
+            .custom_send()
+            .await?;
+        Ok(())
+    }
+
+    /// Get multiple versions of `version_ids`
     ///
     /// Example:
     /// ```rust
@@ -103,9 +150,7 @@ impl Ferinth {
     ///     "sxWTUZpD",
     ///     "mgPpe4NY",
     /// ]).await?;
-    /// for version in versions {
-    ///     assert!(version.project_id == "of7wIinq");
-    /// }
+    /// versions.iter().for_each(|v| assert_eq!(v.project_id, "of7wIinq"));
     /// # Ok(()) }
     /// ```
     pub async fn get_multiple_versions(&self, version_ids: &[&str]) -> Result<Vec<Version>> {
@@ -114,7 +159,7 @@ impl Ferinth {
             .get(
                 API_BASE_URL
                     .join_all(vec!["versions"])
-                    .with_query(&[("ids", &serde_json::to_string(version_ids)?)]),
+                    .with_query_json("ids", version_ids)?,
             )
             .custom_send_json()
             .await

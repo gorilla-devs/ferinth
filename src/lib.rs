@@ -57,8 +57,8 @@ pub enum Error {
     ReqwestError(#[from] reqwest::Error),
     #[error("{}", .0)]
     JSONError(#[from] serde_json::Error),
-    #[error("The GitHub token provided is invalid")]
-    InvalidGitHubToken(#[from] header::InvalidHeaderValue),
+    #[error("{}", .0)]
+    InvalidHeaderValue(#[from] header::InvalidHeaderValue),
 }
 
 #[allow(missing_docs)]

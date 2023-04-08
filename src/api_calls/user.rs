@@ -16,7 +16,7 @@ impl Ferinth {
     /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let jellysquid = modrinth.get_user("TEZXhE2U").await?;
-    /// assert!(jellysquid.role == UserRole::Developer);
+    /// assert_eq!(jellysquid.role, UserRole::Developer);
     /// # Ok(()) }
     /// ```
     pub async fn get_user(&self, user_id: &str) -> Result<User> {
@@ -62,7 +62,7 @@ impl Ferinth {
     /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let users = modrinth.get_multiple_users(&["TEZXhE2U", "7Azq6eD8"]).await?;
-    /// assert!(users.len() == 2);
+    /// assert_eq!(users.len(), 2);
     /// # Ok(()) }
     /// ```
     pub async fn get_multiple_users(&self, user_ids: &[&str]) -> Result<Vec<User>> {
@@ -71,7 +71,7 @@ impl Ferinth {
             .get(
                 API_BASE_URL
                     .join_all(vec!["users"])
-                    .with_query([("ids", serde_json::to_string(user_ids)?)]),
+                    .with_query_json("ids", user_ids)?,
             )
             .custom_send_json()
             .await
@@ -85,7 +85,7 @@ impl Ferinth {
     /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let jellysquid_projects = modrinth.list_projects("TEZXhE2U").await?;
-    /// assert!(jellysquid_projects.len() == 4);
+    /// assert_eq!(jellysquid_projects.len(), 4);
     /// # Ok(()) }
     /// ```
     pub async fn list_projects(&self, user_id: &str) -> Result<Vec<Project>> {

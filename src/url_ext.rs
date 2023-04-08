@@ -1,6 +1,6 @@
 //! Extensions to `url::Url` to make it generally easier to use
 
-use std::borrow::Borrow;
+use serde::Serialize;
 use url::Url;
 
 pub trait UrlJoinAll {
@@ -21,25 +21,26 @@ impl UrlJoinAll for Url {
     }
 }
 
-pub trait UrlWithQuery {
-    /// Add the provided `queries` to `self` and return `self`
-    fn with_query<I, K, V>(self, queries: I) -> Self
-    where
-        I: IntoIterator,
-        I::Item: Borrow<(K, V)>,
-        K: AsRef<str>,
-        V: AsRef<str>;
+pub trait UrlWithQuery
+where
+    Self: Sized,
+{
+    /// Add the provided `query` to `self` and return `self`
+    fn with_query<V: ToString>(self, name: &str, value: V) -> Self;
+
+    /// Add the provided `query` to `self` and return `self`
+    fn with_query_json<V: Serialize>(self, name: &str, value: V) -> serde_json::Result<Self>;
 }
 
 impl UrlWithQuery for Url {
-    fn with_query<I, K, V>(mut self, queries: I) -> Self
-    where
-        I: IntoIterator,
-        I::Item: Borrow<(K, V)>,
-        K: AsRef<str>,
-        V: AsRef<str>,
-    {
-        self.query_pairs_mut().extend_pairs(queries);
+    fn with_query<V: ToString>(mut self, name: &str, value: V) -> Self {
+        self.query_pairs_mut().append_pair(name, &value.to_string());
         self
+    }
+
+    fn with_query_json<V: Serialize>(mut self, name: &str, value: V) -> serde_json::Result<Self> {
+        self.query_pairs_mut()
+            .append_pair(name, &serde_json::to_string(&value)?);
+        Ok(self)
     }
 }

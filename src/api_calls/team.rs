@@ -15,7 +15,7 @@ impl Ferinth {
     /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let mod_menu_team = modrinth.list_project_team_members("mOgUt4GM").await?;
-    /// assert!(mod_menu_team.len() == 4);
+    /// assert_eq!(mod_menu_team.len(), 4);
     /// # Ok(()) }
     /// ```
     pub async fn list_project_team_members(&self, project_id: &str) -> Result<Vec<TeamMember>> {
@@ -34,7 +34,7 @@ impl Ferinth {
     /// # async fn main() -> ferinth::Result<()> {
     /// # let modrinth = ferinth::Ferinth::default();
     /// let mod_menu_team = modrinth.list_team_members("VMz4FpgB").await?;
-    /// assert!(mod_menu_team.len() == 4);
+    /// assert_eq!(mod_menu_team.len(), 4);
     /// # Ok(()) }
     /// ```
     pub async fn list_team_members(&self, team_id: &str) -> Result<Vec<TeamMember>> {
@@ -87,7 +87,7 @@ impl Ferinth {
     ///     "BZoBsPo6",
     ///     "peSx5UYg",
     /// ]).await?;
-    /// assert!(teams.len() == 4);
+    /// assert_eq!(teams.len(), 4);
     /// # Ok(()) }
     /// ```
     pub async fn list_multiple_teams_members(
@@ -99,7 +99,7 @@ impl Ferinth {
             .get(
                 API_BASE_URL
                     .join_all(vec!["teams"])
-                    .with_query(&[("ids", serde_json::to_string(&team_ids)?)]),
+                    .with_query_json("ids", team_ids)?,
             )
             .custom_send_json()
             .await

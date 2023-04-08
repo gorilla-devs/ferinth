@@ -78,7 +78,7 @@ impl Ferinth {
             .get(
                 API_BASE_URL
                     .join_all(vec!["projects"])
-                    .with_query(&[("ids", &serde_json::to_string(project_ids)?)]),
+                    .with_query_json("ids", project_ids)?,
             )
             .custom_send_json()
             .await
@@ -119,7 +119,7 @@ impl Ferinth {
             .get(
                 API_BASE_URL
                     .join_all(vec!["projects_random"])
-                    .with_query(&[("count", &count.to_string())]),
+                    .with_query("count", count),
             )
             .custom_send_json()
             .await
@@ -141,7 +141,7 @@ impl Ferinth {
     /// modrinth.change_project_icon(
     ///     project_id,
     ///     image,
-    ///     ferinth::structures::project::ImageFileExt::PNG
+    ///     &ferinth::structures::project::ImageFileExt::PNG
     /// ).await
     /// # }
     /// ```
@@ -149,14 +149,14 @@ impl Ferinth {
         &self,
         project_id: &str,
         image: B,
-        ext: ImageFileExt,
+        ext: &ImageFileExt,
     ) -> Result<()> {
         check_id_slug(&[project_id])?;
         self.client
             .patch(
                 API_BASE_URL
                     .join_all(vec!["project", project_id, "icon"])
-                    .with_query(&[("ext", ext.to_string())]),
+                    .with_query("ext", ext),
             )
             .body(image)
             .header(CONTENT_TYPE, format!("image/{}", ext))
@@ -211,25 +211,22 @@ impl Ferinth {
         &self,
         project_id: &str,
         image: B,
-        ext: ImageFileExt,
+        ext: &ImageFileExt,
         featured: bool,
         title: Option<String>,
         description: Option<String>,
     ) -> Result<()> {
         check_id_slug(&[project_id])?;
-        let mut query = vec![("ext", ext.to_string()), ("featured", featured.to_string())];
+        let mut url = API_BASE_URL.join_all(vec!["project", project_id, "gallery"]);
+        url = url.with_query("ext", ext).with_query("featured", featured);
         if let Some(title) = title {
-            query.push(("title", title));
+            url = url.with_query("title", title);
         }
         if let Some(description) = description {
-            query.push(("description", description));
+            url = url.with_query("description", description);
         }
         self.client
-            .post(
-                API_BASE_URL
-                    .join_all(vec!["project", project_id, "gallery"])
-                    .with_query(query),
-            )
+            .post(url)
             .body(image)
             .header(
                 CONTENT_TYPE,
@@ -255,7 +252,7 @@ impl Ferinth {
             .delete(
                 API_BASE_URL
                     .join_all(vec!["project", project_id, "gallery"])
-                    .with_query(&[("url", image_url.into())]),
+                    .with_query("url", image_url.into()),
             )
             .custom_send()
             .await?;
@@ -354,7 +351,7 @@ mod tests {
             .add_gallery_image(
                 project_id,
                 image_data,
-                project::ImageFileExt::PNG,
+                &project::ImageFileExt::PNG,
                 true,
                 Some("Test image, do not delete".to_string()),
                 Some(chrono::offset::Local::now().to_string()),
