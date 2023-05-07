@@ -1,14 +1,14 @@
-use super::check_id_slug;
-use crate::{
-    request::RequestBuilderCustomSend,
-    structures::{project::Project, user::*},
-    url_ext::{UrlJoinAll, UrlWithQuery},
-    Ferinth, Result, API_BASE_URL,
-};
+//! API calls related to users
+//!
+//! [documentation](https://docs.modrinth.com/api-spec/#tag/users)
+
+use super::*;
+use crate::structures::{project::Project, user::*};
+use reqwest::Body;
 
 impl Ferinth {
     /**
-    Get the user of `user_id`, which can be the user's ID or username
+    Get the user of `user_id`
 
     ```rust
     # #[tokio::main]
@@ -31,9 +31,9 @@ impl Ferinth {
     }
 
     /**
-    Delete the user of `user_id`, which can be the user's ID or username
+    Delete the user of `user_id`
 
-    REQUIRES AUTHENTICATION!
+    REQUIRES AUTHENTICATION and appropriate permissions!
 
     ```no_run
     # #[tokio::main]
@@ -53,7 +53,7 @@ impl Ferinth {
     }
 
     /**
-    Get the user of the current authorisation header
+    Get the user from the current authorisation header
 
     REQUIRES AUTHENTICATION!
 
@@ -80,7 +80,7 @@ impl Ferinth {
     }
 
     /**
-    Get multiple users of `user_ids`
+    Get the users of `user_ids`
 
     ```rust
     # use ferinth::structures::user::UserRole;
@@ -105,7 +105,25 @@ impl Ferinth {
     }
 
     /**
-    Get the user's projects
+    Change the avatar of the user of `user_id` to `image`
+
+    REQUIRES AUTHENTICATION!
+
+    The image may be up to `2 Mib` large.
+    By default, the user's GitHub avatar is used.
+    */
+    pub async fn change_avatar<B: Into<Body>>(&self, user_id: &str, image: B) -> Result<()> {
+        check_id_slug(&[user_id])?;
+        self.client
+            .post(API_BASE_URL.join_all(vec!["user", user_id, "icon"]))
+            .body(image)
+            .custom_send()
+            .await?;
+        Ok(())
+    }
+
+    /**
+    Get the projects of the user of `user_id`
 
     ```rust
     # #[tokio::main]
@@ -125,7 +143,7 @@ impl Ferinth {
     }
 
     /**
-    Get the user's notifications
+    Get the notifications of the user of `user_id`
 
     REQUIRES AUTHENTICATION!
 
@@ -152,7 +170,7 @@ impl Ferinth {
     }
 
     /**
-    Get a list of the projects the user has followed
+    Get the projects that the user of `user_id` has followed
 
     REQUIRES AUTHENTICATION!
 
