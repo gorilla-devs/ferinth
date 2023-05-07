@@ -25,20 +25,28 @@ pub trait UrlWithQuery
 where
     Self: Sized,
 {
-    /// Add the provided `query` to `self` and return `self`
+    type SerialiseResult<T>;
+
+    /// Add the `name` and `value` query to `self` and return it
     fn with_query<V: ToString>(self, name: &str, value: V) -> Self;
 
-    /// Add the provided `query` to `self` and return `self`
-    fn with_query_json<V: Serialize>(self, name: &str, value: V) -> serde_json::Result<Self>;
+    /// Serialise and add the `name` and `value` query to `self` and return it
+    fn with_query_json<V: Serialize>(self, name: &str, value: V) -> Self::SerialiseResult<Self>;
 }
 
 impl UrlWithQuery for Url {
+    type SerialiseResult<T> = serde_json::Result<T>;
+
     fn with_query<V: ToString>(mut self, name: &str, value: V) -> Self {
         self.query_pairs_mut().append_pair(name, &value.to_string());
         self
     }
 
-    fn with_query_json<V: Serialize>(mut self, name: &str, value: V) -> serde_json::Result<Self> {
+    fn with_query_json<V: Serialize>(
+        mut self,
+        name: &str,
+        value: V,
+    ) -> Self::SerialiseResult<Self> {
         self.query_pairs_mut()
             .append_pair(name, &serde_json::to_string(&value)?);
         Ok(self)

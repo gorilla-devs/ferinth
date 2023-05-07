@@ -5,10 +5,10 @@ use serde::de::DeserializeOwned;
 
 #[async_trait]
 pub(crate) trait RequestBuilderCustomSend {
-    /// Custom send method with error checking
+    /// Build and send `self`, and return the response
     async fn custom_send(self) -> Result<Response>;
 
-    /// Custom send method with error checking and JSON deserialisation
+    /// Build and send `self`, and deserialise and return the response
     async fn custom_send_json<T>(self) -> Result<T>
     where
         T: DeserializeOwned;

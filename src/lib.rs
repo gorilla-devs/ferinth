@@ -33,14 +33,7 @@ pub static BASE_URL: Lazy<Url> =
 /// The base URL for the current version of the Modrinth API
 pub static API_BASE_URL: Lazy<Url> = Lazy::new(|| {
     BASE_URL
-        .join(concat!(
-            'v',
-            env!(
-                "CARGO_PKG_VERSION_MAJOR",
-                "Make sure you're compiling with cargo!",
-            ),
-            '/'
-        ))
+        .join(concat!('v', env!("CARGO_PKG_VERSION_MAJOR"), '/'))
         .expect("Invalid API base URL")
 });
 

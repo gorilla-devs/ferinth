@@ -103,13 +103,27 @@ pub(crate) struct ReportSubmission {
     pub body: String,
 }
 
-// Undocumented struct pulled from the API source code
+// Undocumented struct pulled from the labrinth source code
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct NotificationAction {
     pub title: String,
     /// The route to call when this notification action is called.
     /// Contains the HTTP method and route respectively.
     pub action_route: (String, String),
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct PayoutHistory {
+    pub all_time: String,
+    pub last_month: String,
+    pub payouts: Vec<Payout>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct Payout {
+    pub created: UtcTime,
+    pub amount: Number,
+    pub status: String,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]

@@ -141,7 +141,7 @@ pub struct ProjectDependencies {
 
 /// Fields to edit on all projects specified
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct EditMultipleProjectsRequestBody {
+pub struct EditMultipleProjectsBody {
     /// Set all of the categories to the categories specified here
     pub categories: Vec<String>,
     /// Add all of the categories specified here
@@ -179,16 +179,24 @@ pub enum ProjectStatus {
     /// The project has been rejected by moderators.
     /// The moderator's message should be available on the project struct.
     Rejected,
-    /// The project is a draft
     Draft,
     /// The project has been approved but will not show up in search results
     Unlisted,
-    /// The project has been archived by the owner
     Archived,
     /// The project has been submitted for approval and is being reviewed
     Processing,
-    /// The status of the project is unknown
     Unknown,
+}
+
+/// The requested status of a project
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum RequestedProjectStatus {
+    Approved,
+    Archived,
+    Unlisted,
+    Private,
+    Draft,
 }
 
 /// The support range of a project
