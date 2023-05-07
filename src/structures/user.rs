@@ -77,32 +77,6 @@ pub struct Notification {
     pub actions: Vec<NotificationAction>,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct Report {
-    pub report_type: String,
-    /// The ID of the item being report
-    pub item_id: ID,
-    /// The type of item that is being reported
-    pub item_type: ReportItemType,
-    /// The extended explanation of the report
-    pub body: String,
-    /// The ID of the user who submitted the report
-    pub reporter: ID,
-    /// The time at which the report was created
-    pub created: UtcTime,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub(crate) struct ReportSubmission {
-    pub report_type: String,
-    /// The ID of the item being report
-    pub item_id: ID,
-    /// The type of item that is being reported
-    pub item_type: ReportItemType,
-    /// The extended explanation of the report
-    pub body: String,
-}
-
 // Undocumented struct pulled from the labrinth source code
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct NotificationAction {
@@ -124,13 +98,6 @@ pub struct Payout {
     pub created: UtcTime,
     pub amount: Number,
     pub status: String,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
-pub enum ReportItemType {
-    Project,
-    Version,
-    User,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]

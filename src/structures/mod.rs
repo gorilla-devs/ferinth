@@ -1,5 +1,6 @@
 //! Models specified in the [Modrinth documentation](https://docs.modrinth.com/api-spec/#tag/project_model)
 
+pub mod misc;
 pub mod project;
 pub mod tag;
 pub mod user;

@@ -222,47 +222,4 @@ impl Ferinth {
             .custom_send_json()
             .await
     }
-
-    /// Submit a report to the moderators
-    ///
-    /// `report_type`s can be found using the [`Ferinth::list_report_types`] route.
-    ///
-    /// REQUIRES AUTHENTICATION!
-    ///
-    /// ```no_run
-    /// # #[tokio::main]
-    /// # async fn main() -> ferinth::Result<()> {
-    /// # let modrinth = ferinth::Ferinth::new(
-    /// #     env!("CARGO_CRATE_NAME"),
-    /// #     Some(env!("CARGO_PKG_VERSION")),
-    /// #     None,
-    /// #     Some(env!("MODRINTH_TOKEN")),
-    /// # )?;
-    /// let current_user = modrinth.submit_report(
-    ///     "other".to_string(),
-    ///     "XXXXXXXX".to_string(),
-    ///     ferinth::structures::user::ReportItemType::User,
-    ///     "This is an example report".to_string(),
-    /// ).await?;
-    /// # Ok(()) }
-    /// ```
-    pub async fn submit_report(
-        &self,
-        report_type: String,
-        item_id: String,
-        item_type: ReportItemType,
-        body: String,
-    ) -> Result<Vec<Project>> {
-        check_id_slug(&[&item_id])?;
-        self.client
-            .post(API_BASE_URL.join_all(vec!["report"]))
-            .json(&ReportSubmission {
-                report_type,
-                item_id,
-                item_type,
-                body,
-            })
-            .custom_send_json()
-            .await
-    }
 }
