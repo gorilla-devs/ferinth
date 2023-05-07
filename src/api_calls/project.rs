@@ -307,8 +307,8 @@ impl Ferinth {
     pub async fn schedule_project(
         &self,
         project_id: &str,
-        time: UtcTime,
-        status: RequestedStatus,
+        time: &UtcTime,
+        status: &RequestedStatus,
     ) -> Result<()> {
         check_id_slug(&[project_id])?;
         self.client
