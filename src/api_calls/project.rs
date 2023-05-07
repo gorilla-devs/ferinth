@@ -286,14 +286,29 @@ impl Ferinth {
         Ok(())
     }
 
-    /// Schedule a change of `status` at `time` to the project of `project_id`
-    ///
-    /// REQUIRES AUTHENTICATION and appropriate permissions!
+    /**
+    Schedule a change of `status` at `time` to the project of `project_id`
+
+    REQUIRES AUTHENTICATION and appropriate permissions!
+
+    ```no_run
+    # #[tokio::main]
+    # async fn main() -> ferinth::Result<()> {
+    # let modrinth = ferinth::Ferinth::default();
+    // Release the project of ID `eZ2NOONn` in three hours to the public
+    modrinth.schedule_project(
+        "eZ2NOONn",
+        &(chrono::offset::Utc::now() + chrono::Duration::hours(3)),
+        &ferinth::structures::project::RequestedStatus::Approved
+    ).await
+    # }
+    ```
+    */
     pub async fn schedule_project(
         &self,
         project_id: &str,
         time: UtcTime,
-        status: RequestedProjectStatus,
+        status: RequestedStatus,
     ) -> Result<()> {
         check_id_slug(&[project_id])?;
         self.client

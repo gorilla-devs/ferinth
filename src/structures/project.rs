@@ -188,10 +188,9 @@ pub enum ProjectStatus {
     Unknown,
 }
 
-/// The requested status of a project
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
-pub enum RequestedProjectStatus {
+pub enum RequestedStatus {
     Approved,
     Archived,
     Unlisted,
