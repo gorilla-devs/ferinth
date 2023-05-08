@@ -31,10 +31,10 @@ pub struct User {
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct PayoutData {
-    balance: f32,
-    payout_wallet: PayoutWallet,
-    payout_wallet_type: PayoutWalletType,
-    payout_address: String,
+    balance: String,
+    payout_wallet: Option<PayoutWallet>,
+    payout_wallet_type: Option<PayoutWalletType>,
+    payout_address: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

@@ -52,4 +52,22 @@ impl Ferinth {
             .custom_send_json()
             .await
     }
+
+    /**
+    Get the Modrinth API welcome page.
+
+    ```rust
+    # #[tokio::main]
+    # async fn main() -> ferinth::Result<()> {
+    # let modrinth = ferinth::Ferinth::default();
+    modrinth.welcome().await?;
+    # Ok(()) }
+    ```
+    */
+    pub async fn welcome(&self) -> Result<Welcome> {
+        self.client
+            .get(crate::BASE_URL.as_ref())
+            .custom_send_json()
+            .await
+    }
 }
