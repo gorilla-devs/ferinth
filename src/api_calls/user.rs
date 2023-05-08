@@ -1,177 +1,225 @@
-use super::check_id_slug;
-use crate::{
-    request::API_URL_BASE,
-    structures::{project::Project, user::*},
-    url_join_ext::UrlJoinExt,
-    Ferinth, Result,
-};
+//! API calls related to users
+//!
+//! [documentation](https://docs.modrinth.com/api-spec/#tag/users)
+
+use super::*;
+use crate::structures::{project::Project, user::*};
+use reqwest::Body;
 
 impl Ferinth {
-    /// Get user with ID `user_id`
-    ///
-    /// Example:
-    /// ```rust
-    /// # use ferinth::structures::user::UserRole;
-    /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::default();
-    /// let jellysquid = modrinth.get_user("TEZXhE2U").await?;
-    /// assert!(jellysquid.role == UserRole::Developer);
-    /// # Ok(()) }
-    /// ```
+    /**
+    Get the user of `user_id`
+
+    ```rust
+    # #[tokio::main]
+    # async fn main() -> ferinth::Result<()> {
+    # let modrinth = ferinth::Ferinth::default();
+    let theRookieCoder = modrinth.get_user("7Azq6eD8").await?;
+    assert_eq!(
+        theRookieCoder.role,
+        ferinth::structures::user::UserRole::Developer,
+    );
+    # Ok(()) }
+    ```
+    */
     pub async fn get_user(&self, user_id: &str) -> Result<User> {
         check_id_slug(&[user_id])?;
-        self.get(API_URL_BASE.join_all(vec!["user", user_id])).await
+        self.client
+            .get(API_BASE_URL.join_all(vec!["user", user_id]))
+            .custom_send_json()
+            .await
     }
 
-    /// Get the user of the current authorisation header
-    ///
-    /// REQUIRES AUTHENTICATION!
-    ///
-    /// Example:
-    /// ```rust
-    /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::new(
-    /// #     env!("CARGO_CRATE_NAME"),
-    /// #     Some(env!("CARGO_PKG_VERSION")),
-    /// #     None,
-    /// #     Some(env!("MODRINTH_TOKEN")),
-    /// # )?;
-    /// let current_user = modrinth.get_current_user().await?;
-    /// // The email should be visible as we are authourised to view this user's email
-    /// assert!(current_user.email.is_some());
-    /// # Ok(()) }
-    /// ```
+    /**
+    Delete the user of `user_id`
+
+    REQUIRES AUTHENTICATION and appropriate permissions!
+
+    ```no_run
+    # #[tokio::main]
+    # async fn main() -> ferinth::Result<()> {
+    # let modrinth = ferinth::Ferinth::default();
+    modrinth.delete_user("XXXXXXXX").await
+    # }
+    ```
+    */
+    pub async fn delete_user(&self, user_id: &str) -> Result<()> {
+        check_id_slug(&[user_id])?;
+        self.client
+            .delete(API_BASE_URL.join_all(vec!["user", user_id]))
+            .custom_send()
+            .await?;
+        Ok(())
+    }
+
+    /**
+    Get the user from the current authorisation header
+
+    REQUIRES AUTHENTICATION!
+
+    ```rust
+    # #[tokio::main]
+    # async fn main() -> ferinth::Result<()> {
+    # let modrinth = ferinth::Ferinth::new(
+    #     env!("CARGO_CRATE_NAME"),
+    #     Some(env!("CARGO_PKG_VERSION")),
+    #     None,
+    #     Some(env!("MODRINTH_TOKEN")),
+    # )?;
+    let current_user = modrinth.get_current_user().await?;
+    // The email should be visible as we are authorised
+    assert!(current_user.email.is_some());
+    # Ok(()) }
+    ```
+    */
     pub async fn get_current_user(&self) -> Result<User> {
-        self.get(API_URL_BASE.join_all(vec!["user"])).await
+        self.client
+            .get(API_BASE_URL.join_all(vec!["user"]))
+            .custom_send_json()
+            .await
     }
 
-    /// Get multiple users with IDs `user_ids`
-    ///
-    /// Example:
-    /// ```rust
-    /// # use ferinth::structures::user::UserRole;
-    /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::default();
-    /// let users = modrinth.get_multiple_users(&["TEZXhE2U", "7Azq6eD8"]).await?;
-    /// assert!(users.len() == 2);
-    /// # Ok(()) }
-    /// ```
+    /**
+    Get the users of `user_ids`
+
+    ```rust
+    # use ferinth::structures::user::UserRole;
+    # #[tokio::main]
+    # async fn main() -> ferinth::Result<()> {
+    # let modrinth = ferinth::Ferinth::default();
+    let users = modrinth.get_multiple_users(&["TEZXhE2U", "7Azq6eD8"]).await?;
+    assert_eq!(users.len(), 2);
+    # Ok(()) }
+    ```
+    */
     pub async fn get_multiple_users(&self, user_ids: &[&str]) -> Result<Vec<User>> {
         check_id_slug(user_ids)?;
-        self.get_with_query(
-            API_URL_BASE.join_all(vec!["users"]),
-            &[("ids", &serde_json::to_string(user_ids)?)],
-        )
-        .await
+        self.client
+            .get(
+                API_BASE_URL
+                    .join_all(vec!["users"])
+                    .with_query_json("ids", user_ids)?,
+            )
+            .custom_send_json()
+            .await
     }
 
-    /// Get a list of projects that the user owns
-    ///
-    /// Example:
-    /// ```rust
-    /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::default();
-    /// let jellysquid_projects = modrinth.list_projects("TEZXhE2U").await?;
-    /// assert!(jellysquid_projects.len() == 4);
-    /// # Ok(()) }
-    /// ```
+    /**
+    Change the avatar of the user of `user_id` to `image`
+
+    REQUIRES AUTHENTICATION!
+
+    The image may be up to `2 Mib` large.
+    By default, the user's GitHub avatar is used.
+    */
+    pub async fn change_avatar<B: Into<Body>>(&self, user_id: &str, image: B) -> Result<()> {
+        check_id_slug(&[user_id])?;
+        self.client
+            .post(API_BASE_URL.join_all(vec!["user", user_id, "icon"]))
+            .body(image)
+            .custom_send()
+            .await?;
+        Ok(())
+    }
+
+    /**
+    Get the projects of the user of `user_id`
+
+    ```rust
+    # #[tokio::main]
+    # async fn main() -> ferinth::Result<()> {
+    # let modrinth = ferinth::Ferinth::default();
+    let jellysquid_projects = modrinth.list_projects("TEZXhE2U").await?;
+    assert_eq!(jellysquid_projects.len(), 4);
+    # Ok(()) }
+    ```
+    */
     pub async fn list_projects(&self, user_id: &str) -> Result<Vec<Project>> {
         check_id_slug(&[user_id])?;
-        self.get(API_URL_BASE.join_all(vec!["user", user_id, "projects"]))
+        self.client
+            .get(API_BASE_URL.join_all(vec!["user", user_id, "projects"]))
+            .custom_send_json()
             .await
     }
 
-    /// Get a list of notifications the user has received
-    ///
-    /// REQUIRES AUTHENTICATION!
-    ///
-    /// Example:
-    /// ```rust
-    /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::new(
-    /// #     env!("CARGO_CRATE_NAME"),
-    /// #     Some(env!("CARGO_PKG_VERSION")),
-    /// #     None,
-    /// #     Some(env!("MODRINTH_TOKEN")),
-    /// # )?;
-    /// let current_user = modrinth.get_current_user().await?;
-    /// modrinth.get_notifications(&current_user.id).await?;
-    /// # Ok(()) }
-    /// ```
+    /**
+    Get the notifications of the user of `user_id`
+
+    REQUIRES AUTHENTICATION!
+
+    ```rust
+    # #[tokio::main]
+    # async fn main() -> ferinth::Result<()> {
+    # let modrinth = ferinth::Ferinth::new(
+    #     env!("CARGO_CRATE_NAME"),
+    #     Some(env!("CARGO_PKG_VERSION")),
+    #     None,
+    #     Some(env!("MODRINTH_TOKEN")),
+    # )?;
+    # let user_id = modrinth.get_current_user().await?.id;
+    let notifications = modrinth.get_notifications(&user_id).await?;
+    # Ok(()) }
+    ```
+    */
     pub async fn get_notifications(&self, user_id: &str) -> Result<Vec<Notification>> {
         check_id_slug(&[user_id])?;
-        self.get(API_URL_BASE.join_all(vec!["user", user_id, "notifications"]))
+        self.client
+            .get(API_BASE_URL.join_all(vec!["user", user_id, "notifications"]))
+            .custom_send_json()
             .await
     }
 
-    /// Get a list of the projects the user has followed
-    ///
-    /// REQUIRES AUTHENTICATION!
-    ///
-    /// Example:
-    /// ```rust
-    /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::new(
-    /// #     env!("CARGO_CRATE_NAME"),
-    /// #     Some(env!("CARGO_PKG_VERSION")),
-    /// #     None,
-    /// #     Some(env!("MODRINTH_TOKEN")),
-    /// # )?;
-    /// let current_user = modrinth.get_current_user().await?;
-    /// modrinth.followed_projects(&current_user.id).await?;
-    /// # Ok(()) }
-    /// ```
+    /**
+    Get the projects that the user of `user_id` has followed
+
+    REQUIRES AUTHENTICATION!
+
+    ```rust
+    # #[tokio::main]
+    # async fn main() -> ferinth::Result<()> {
+    # let modrinth = ferinth::Ferinth::new(
+    #     env!("CARGO_CRATE_NAME"),
+    #     Some(env!("CARGO_PKG_VERSION")),
+    #     None,
+    #     Some(env!("MODRINTH_TOKEN")),
+    # )?;
+    # let user_id = modrinth.get_current_user().await?.id;
+    let projects = modrinth.followed_projects(&user_id).await?;
+    # Ok(()) }
+    ```
+    */
     pub async fn followed_projects(&self, user_id: &str) -> Result<Vec<Project>> {
         check_id_slug(&[user_id])?;
-        self.get(API_URL_BASE.join_all(vec!["user", user_id, "follows"]))
+        self.client
+            .get(API_BASE_URL.join_all(vec!["user", user_id, "follows"]))
+            .custom_send_json()
             .await
     }
 
-    /// Submit a report to the moderators
-    ///
-    /// REQUIRES AUTHENTICATION!
-    ///
-    /// Example:
-    /// ```ignore
-    /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::new(
-    /// #     env!("CARGO_CRATE_NAME"),
-    /// #     Some(env!("CARGO_PKG_VERSION")),
-    /// #     None,
-    /// #     Some(env!("MODRINTH_TOKEN")),
-    /// # )?;
-    /// let current_user = modrinth.submit_report(
-    ///     ???,
-    ///     "XXXXXXXX",
-    ///     ferinth::structures::user::ReportItemType::User,
-    ///     "This is an example report",
-    /// ).await?
-    /// # Ok(()) }
-    /// ```
-    pub async fn submit_report(
-        &self,
-        report_type: String,
-        item_id: String,
-        item_type: ReportItemType,
-        body: String,
-    ) -> Result<Vec<Project>> {
-        check_id_slug(&[&item_id])?;
-        self.post(
-            API_URL_BASE.join_all(vec!["report"]),
-            &ReportSubmission {
-                report_type,
-                item_id,
-                item_type,
-                body,
-            },
-        )
-        .await
+    /**
+    Get the payout history of the user of `user_id`
+
+    REQUIRES AUTHENTICATION!
+
+    ```rust
+    # #[tokio::main]
+    # async fn main() -> ferinth::Result<()> {
+    # let modrinth = ferinth::Ferinth::new(
+    #     env!("CARGO_CRATE_NAME"),
+    #     Some(env!("CARGO_PKG_VERSION")),
+    #     None,
+    #     Some(env!("MODRINTH_TOKEN")),
+    # )?;
+    # let user_id = modrinth.get_current_user().await?.id;
+    let payout_history = modrinth.payout_history(&user_id).await?;
+    # Ok(()) }
+    ```
+    */
+    pub async fn payout_history(&self, user_id: &str) -> Result<PayoutHistory> {
+        check_id_slug(&[user_id])?;
+        self.client
+            .get(API_BASE_URL.join_all(vec!["user", user_id, "payouts"]))
+            .custom_send_json()
+            .await
     }
 }
