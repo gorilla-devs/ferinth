@@ -13,11 +13,13 @@ pub struct User {
     pub email: Option<String>,
     /// A description of the user
     pub bio: Option<String>,
+    /// Various data relating to the user's payouts status,
+    /// only visible to the user itself when authenticated
+    pub payout_data: Option<PayoutData>,
     pub id: ID,
     /// The user's GitHub ID
     pub github_id: Option<Number>,
     pub avatar_url: Url,
-    /// When the user was created
     pub created: UtcTime,
     pub role: UserRole,
     /// Any badges applicable to this user.
@@ -25,6 +27,14 @@ pub struct User {
     ///
     /// [documentation](https://docs.modrinth.com/api-spec/#tag/user_model)
     pub badges: Number,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct PayoutData {
+    balance: f32,
+    payout_wallet: PayoutWallet,
+    payout_wallet_type: PayoutWalletType,
+    payout_address: String,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -36,7 +46,7 @@ pub struct TeamMember {
     /// The user's permissions in bitflag format
     /// (requires authorisation to view)
     ///
-    /// In order from first to tenth bit, they indicate:
+    /// In order from first to tenth bit, they indicate the ability to:
     /// - UPLOAD_VERSION
     /// - DELETE_VERSION
     /// - EDIT_DETAILS
@@ -65,13 +75,10 @@ pub struct Notification {
     #[serde(rename = "type")]
     pub notification_type: Option<NotificationType>,
     pub title: String,
-    /// The body text of the notification
     pub text: String,
     /// A _relative_ link to the related project/version
     pub link: String,
-    /// Whether the notification has been read
     pub read: bool,
-    /// When the notification was created
     pub created: UtcTime,
     /// A list of actions that can be performed
     pub actions: Vec<NotificationAction>,
@@ -89,6 +96,7 @@ pub struct NotificationAction {
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct PayoutHistory {
     pub all_time: String,
+    /// The amount made by the user in the previous 30 days
     pub last_month: String,
     pub payouts: Vec<Payout>,
 }
@@ -98,6 +106,21 @@ pub struct Payout {
     pub created: UtcTime,
     pub amount: Number,
     pub status: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum PayoutWallet {
+    PayPal,
+    Venmo,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum PayoutWalletType {
+    Email,
+    Phone,
+    UserHandle,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]

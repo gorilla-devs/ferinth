@@ -5,20 +5,15 @@
 use super::*;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-#[allow(missing_docs)]
 pub struct Project {
     /// The project's slug, used for vanity URLs.
-    /// This can change at any time, so use the `id` for long term storage.
+    /// This can change at any time, so use the [`Project::id`] for long term storage.
     pub slug: String,
-    /// The project's title or name
     pub title: String,
     /// A short description of the project
     pub description: String,
-    /// A list of categories the project has
     pub categories: Vec<String>,
-    /// The project's client side support
     pub client_side: ProjectSupportRange,
-    /// The project's server side support
     pub server_side: ProjectSupportRange,
     /// A long form description of the project
     pub body: String,
@@ -36,18 +31,13 @@ pub struct Project {
     /// The project's Discord server invite
     #[serde(deserialize_with = "deserialise_optional_url")]
     pub discord_url: Option<Url>,
-    /// A list of donation links for the project
     pub donation_urls: Vec<DonationLink>,
-    /// The project type of the project
     pub project_type: ProjectType,
-    /// The total number of downloads the project has
     pub downloads: Number,
-    /// The URL of the project's icon
     #[serde(deserialize_with = "deserialise_optional_url")]
     pub icon_url: Option<Url>,
     /// The RGB color of the project, automatically generated from the project icon
     pub color: Option<Number>,
-    /// The project's ID
     pub id: ID,
     /// The ID of the team that has ownership of this project
     pub team: ID,
@@ -55,19 +45,13 @@ pub struct Project {
     #[deprecated = "Read from `body` instead"]
     #[serde(deserialize_with = "deserialise_optional_url")]
     pub body_url: Option<Url>,
-    /// A message that a moderator sent regarding the project
     pub moderator_message: Option<ModeratorMessage>,
-    /// When the project was first published
     pub published: UtcTime,
-    /// When the project was last updated
     pub updated: UtcTime,
     /// The date the project's status was set to approved or unlisted
     pub approved: Option<UtcTime>,
-    /// The total number of users following the project
     pub followers: Number,
-    /// The project's status
     pub status: ProjectStatus,
-    /// The project's license
     pub license: License,
     /// A list of the version IDs of the project.
     /// This will only ever be empty if the project is a draft.
@@ -80,16 +64,13 @@ pub struct Project {
     pub gallery: Vec<GalleryItem>,
 }
 
-/// A message that a moderator sent regarding a project
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct ModeratorMessage {
-    /// The message that a moderator has left for the project
     pub message: String,
-    /// The longer body of the message that a moderator has left for the project
+    /// The longer body of the message
     pub body: Option<String>,
 }
 
-/// The license of a project
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct License {
     /// The SPDX license ID of a project
@@ -101,12 +82,10 @@ pub struct License {
     pub url: Option<Url>,
 }
 
-/// A donation link for a project
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct DonationLink {
     /// The donation platform's ID
     pub id: String,
-    /// The donation platform this link is for
     pub platform: String,
     /// A link to the donation platform and user
     pub url: Url,
@@ -115,31 +94,23 @@ pub struct DonationLink {
 /// An image that have been uploaded to a project's gallery
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct GalleryItem {
-    /// The URL of the gallery image
     pub url: Url,
-    /// Whether the image is featured in the gallery.
     pub featured: bool,
-    /// The title of the gallery image
     pub title: Option<String>,
-    /// The description of the gallery image
     pub description: Option<String>,
-    /// When the gallery image was created
     pub created: UtcTime,
     /// The order of the gallery image.
     /// Gallery images are sorted by this field and then alphabetically by title.
-    pub ordering: Number,
+    pub ordering: isize,
 }
 
-/// The dependencies of a project
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ProjectDependencies {
-    /// The projects it depends on
     pub projects: Vec<Project>,
-    /// The specific versions it depends on
     pub versions: Vec<version::Version>,
 }
 
-/// Fields to edit on all projects specified
+/// Fields to edit on the projects specified
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct EditMultipleProjectsBody {
     /// Set all of the categories to the categories specified here
@@ -170,17 +141,14 @@ pub struct EditMultipleProjectsBody {
     pub discord_url: Option<String>,
 }
 
-/// The status of a project
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum ProjectStatus {
-    /// The project has been approved by moderators
     Approved,
-    /// The project has been rejected by moderators.
-    /// The moderator's message should be available on the project struct.
+    /// A moderator's message should be available on the project struct
     Rejected,
     Draft,
-    /// The project has been approved but will not show up in search results
+    /// The project has been approved and is publicly accessible, but will not show up in search results
     Unlisted,
     Archived,
     /// The project has been submitted for approval and is being reviewed
@@ -198,7 +166,6 @@ pub enum RequestedStatus {
     Draft,
 }
 
-/// The support range of a project
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum ProjectSupportRange {
@@ -213,13 +180,11 @@ pub enum ProjectSupportRange {
     Unknown,
 }
 
-/// The type of a project
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
-#[allow(missing_docs)]
-#[non_exhaustive] // More project types may be added in the future
 pub enum ProjectType {
-    /// WARNING: Can also be a plugin or data pack
+    /// WARNING: Can also be a plugin or data pack.
+    /// You will have to read the loaders to get more specific information.
     Mod,
     Shader,
     Modpack,

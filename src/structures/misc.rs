@@ -36,8 +36,12 @@ pub enum ReportItemType {
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Statistics {
+    /// The number of project on Modrinth
     pub projects: Number,
+    /// The number of versions on Modrinth
     pub versions: Number,
-    pub authors: Number,
+    /// The number of version files on Modrinth
     pub files: Number,
+    /// The number of authors (users with projects) on Modrinth
+    pub authors: Number,
 }
