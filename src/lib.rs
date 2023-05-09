@@ -1,58 +1,84 @@
-//! # Ferinth
-//!
-//! Ferinth is a simple library for using the [Modrinth API](https://github.com/modrinth/labrinth/wiki/API-Documentation) in Rust.
-//! It uses [Reqwest](https://docs.rs/reqwest/) as its HTTPS client and deserialises responses to strongly typed structs using [SerDe](https://serde.rs/).
-//!
-//! ## Features
-//!
-//! This crate includes the following:
-//!
-//! - All structure definitions based on <https://docs.modrinth.com/api-spec/>
-//! - All of the GET and POST calls that don't require authentication
-//!
-//! This crate uses [Rustls](https://docs.rs/rustls/) rather than OpenSSL, because OpenSSL is outdated and slower.
-//!
-//! The following features still need to be implemented
-//! - Search projects
-//! - Some types of requests
+/*!
+# Ferinth
+
+Ferinth provides Rust API bindings for the [Modrinth API](https://docs.modrinth.com)
+
+## Missing Features
+
+- Search functionality
+- Requests that require large body data
+- Better organisation of API calls
+
+## Versioning
+
+The major version of this crate's version directly corresponds to the Modrinth API version it uses.
+If you want to use the Modrinth API version 2, which is the latest one currently, specify this crate's major version as `2`.
+
+Due to this feature, there will be breaking changes in minor version bumps too!
+*/
+
+#![deny(clippy::unwrap_used)]
 
 mod api_calls;
 mod request;
 pub mod structures;
-mod url_join_ext;
+mod url_ext;
 
+use once_cell::sync::Lazy;
 use reqwest::{header, Client};
+use url::Url;
+
+/// The base URL for the Modrinth API
+pub static BASE_URL: Lazy<Url> =
+    Lazy::new(|| Url::parse("https://api.modrinth.com/").expect("Invalid base URL"));
+
+/// The base URL for the current version of the Modrinth API
+pub static API_BASE_URL: Lazy<Url> = Lazy::new(|| {
+    BASE_URL
+        .join(concat!('v', env!("CARGO_PKG_VERSION_MAJOR"), '/'))
+        .expect("Invalid API base URL")
+});
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
-    #[error("A given string was not base62 compliant")]
-    NotBase62,
-    #[error("A given string was not SHA1 compliant")]
-    NotSHA1,
+    #[error("Invalid Modrinth ID or slug")]
+    InvalidIDorSlug,
+    #[error("Invalid SHA1 hash")]
+    InvalidSHA1,
     #[error("You have been rate limited, please wait for {} seconds", .0)]
     RateLimitExceeded(usize),
     #[error("{}", .0)]
     ReqwestError(#[from] reqwest::Error),
     #[error("{}", .0)]
     JSONError(#[from] serde_json::Error),
-    #[error("The GitHub token provided is invalid")]
-    InvalidGitHubToken(#[from] header::InvalidHeaderValue),
+    #[error("{}", .0)]
+    InvalidHeaderValue(#[from] header::InvalidHeaderValue),
 }
+pub type Result<T> = std::result::Result<T, Error>;
 
-pub(crate) type Result<T> = std::result::Result<T, Error>;
+/**
+An instance of the API to invoke API calls on
 
-/// An instance of the API to invoke API calls on.
-///
-/// To initialise this container,
-/// ```rust
-/// # use ferinth::Ferinth;
-/// # #[tokio::main]
-/// # async fn main() -> Result<(), ferinth::Error> {
-/// let modrinth = Ferinth::default();
-/// // Use the instance to call the API
-/// let sodium_mod = modrinth.get_project("sodium").await?;
-/// # Ok(()) }
-/// ```
+There are two methods initialise this container:
+
+Use the `Default` implementation to set the user agent based on the crate name and version.
+This container will not have authentication.
+
+```ignore
+let modrinth = ferinth::Ferinth::default();
+```
+
+Use the `new()` function to set a custom user agent and authentication token.
+
+```ignore
+let modrinth = ferinth::Ferinth::new(
+    env!("CARGO_CRATE_NAME"),
+    Some(env!("CARGO_PKG_VERSION")),
+    Some("contact@program.com"),
+    args.modrinth_token.as_ref(),
+)?;
+```
+*/
 #[derive(Debug, Clone)]
 pub struct Ferinth {
     client: Client,
@@ -68,42 +94,46 @@ impl Default for Ferinth {
                     env!("CARGO_PKG_VERSION")
                 ))
                 .build()
-                .expect("TLS backend failed to initialise"),
+                .expect("Failed to initialise TLS backend"),
         }
     }
 }
 
 impl Ferinth {
-    /// Instantiate the container with the provided [user agent](https://docs.modrinth.com/api-spec/#section/User-Agents) information,
-    /// and an optional GitHub token for authorisation.
-    ///
-    /// `program_name` is required, and the `version` and `contact` are optional, but recommended.
-    ///
-    /// This function fails if the GitHub token provided is invalid.
+    /**
+    Instantiate the container with the provided [user agent](https://docs.modrinth.com/api-spec/#section/User-Agents) details,
+    and an optional GitHub token for `authorisation`.
+
+    The program `name` is required, while `version` and `contact` are optional but recommended.
+
+    This function fails if the GitHub `authorisation` token provided is invalid header data.
+    */
     pub fn new(
-        program_name: &str,
+        name: &str,
         version: Option<&str>,
         contact: Option<&str>,
         authorisation: Option<&str>,
     ) -> Result<Self> {
+        use header::{HeaderMap, HeaderValue};
+
         Ok(Self {
             client: Client::builder()
                 .user_agent(format!(
                     "{}{}{}",
-                    program_name,
+                    name,
                     version.map_or("".into(), |version| format!("/{}", version)),
                     contact.map_or("".into(), |contact| format!(" ({})", contact))
                 ))
                 .default_headers(if let Some(authorisation) = authorisation {
-                    header::HeaderMap::from_iter(vec![(
+                    HeaderMap::from_iter(vec![(
                         header::AUTHORIZATION,
-                        header::HeaderValue::from_str(authorisation)?,
+                        HeaderValue::from_str(authorisation)?,
                     )])
                 } else {
-                    header::HeaderMap::new()
+                    HeaderMap::new()
                 })
                 .build()
-                .unwrap(),
+                .expect("Failed to initialise TLS backend"),
         })
     }
 }

@@ -1,53 +1,59 @@
-use super::{project::ProjectType, *};
+//! Models related to tags
 
+use super::*;
+
+/// A category that projects of `project_type` specify
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Category {
-    /// The category's SVG icon
+    /// An SVG icon for the category
     pub icon: String,
     pub name: String,
     /// The project type this category is applicable to
-    pub project_type: ProjectType,
+    pub project_type: project::ProjectType,
     /// The header under which the category should go
     pub header: String,
 }
 
+/// A loader that can load projects of `project_type`
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Loader {
-    /// The loader's SVG icon
+    /// An SVG icon for the loader
     pub icon: String,
     pub name: String,
-    /// The project types that this loader is applicable to
-    pub supported_project_types: Vec<ProjectType>,
+    /// The project types that this loader can load
+    pub supported_project_types: Vec<project::ProjectType>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct GameVersion {
-    /// The name/number of the game version
     pub version: String,
     /// The type of the game version
     pub version_type: GameVersionType,
-    /// The date of the game version release
+    /// When the game version released
     pub date: UtcTime,
-    /// Whether this is a major version
+    /// Whether this game version was considered a major version
+    ///
+    /// This is set to true if this version introduced many breaking changes to internal APIs
+    /// that causes most mods made for previous versions of the game to break on this version.
     pub major: bool,
 }
 
+/// The licenses that projects can be searched with
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct License {
-    /// The short identifier of the license
+    /// The SPDX license ID of a project
     pub short: String,
-    /// The full name of the license
     pub name: String,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct DonationPlatform {
-    /// The short identifier of the donation platform
+    /// A short identifier for the donation platform
     pub short: String,
-    /// The full name of the donation platform
     pub name: String,
 }
 
+/// The type of a game version
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum GameVersionType {

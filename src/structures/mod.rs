@@ -1,9 +1,13 @@
+//! Models specified in the Modrinth documentation
+
+pub mod misc;
 pub mod project;
 pub mod search;
 pub mod tag;
 pub mod user;
 pub mod version;
 
+/// ISO 8601 UTC datetime
 pub type UtcTime = chrono::DateTime<chrono::Utc>;
 pub type Number = usize;
 /// A base 62 number stored as a string

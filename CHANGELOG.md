@@ -1,5 +1,10 @@
 # Changelog
 
+## `2.8.0`
+### 08.05.2023
+
+This was a large rewrite, check the [PR](https://github.com/gorilla-devs/ferinth/pull/10) for a full diff.
+
 ## `2.7.1`
 ### 12.11.2022
 
