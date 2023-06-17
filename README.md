@@ -4,7 +4,6 @@ Ferinth provides Rust API bindings for the [Modrinth API](https://docs.modrinth.
 
 ## Missing Features
 
-- Search functionality
 - Requests that require large body data
 - Better organisation of API calls
 
