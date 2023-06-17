@@ -54,11 +54,12 @@ impl Ferinth {
     # #[tokio::main]
     # async fn main() -> ferinth::Result<()> {
     # let modrinth = ferinth::Ferinth::default();
+    // You can use both IDs and slugs
     let projects = modrinth.get_multiple_projects(&[
-        "AANobbMI",
+        "sodium",
         "P7dR8mSH",
+        "iris",
         "gvQqBUqZ",
-        "YL57xq9U",
     ]).await?;
     assert_eq!(projects.len(), 4);
     # Ok(()) }

@@ -1,56 +1,75 @@
 use super::*;
-use crate::structures::{search::*, Number};
+use structures::{search::*, Number};
 
 impl Ferinth {
-    /// Search for projects using `query` string, with pagination
-    ///
-    /// Limit the number of responses to `limit` projects, and offset the output by `offset` projects.
-    /// Sort mods by `sort`, and filter mods using the given `facets`.
+    /**
+    Search for projects using `query` string, with pagination
+
+    Limit the number of responses to `limit` projects, and offset the output by `offset` projects.
+    Sort projects by `sort`, and filter projects using the given `facets`.
+    In `facets`, only non-empty vectors will be added to the query paramater.
+    */
     pub async fn search_paged(
         &self,
         query: &str,
         sort: &Sort,
-        limit: &Number,
-        offset: &Number,
-        facets: &[&[Facet]],
+        limit: Number,
+        offset: Number,
+        mut facets: Vec<Vec<Facet>>,
     ) -> Result<Response> {
-        self.get_with_query(
-            API_URL_BASE.join("search").unwrap(),
-            &[
-                ("query", query),
-                ("index", &sort.to_string()),
-                ("limit", &limit.to_string()),
-                ("offset", &offset.to_string()),
-                ("facets", &serde_json::to_string(facets)?),
-            ],
-        )
-        .await
+        let mut url = API_BASE_URL
+            .join_all(vec!["search"])
+            .with_query("query", query)
+            .with_query("index", sort)
+            .with_query("limit", limit)
+            .with_query("offset", offset);
+
+        facets.retain(|e| !e.is_empty());
+        if !facets.is_empty() {
+            url = url.with_query_json("facets", facets)?
+        }
+
+        self.client.get(url).custom_send_json().await
     }
 
-    /// Search for projects using `query` string
-    ///
-    /// Sort mods by `sort`, and filter mods using the given `facets`.
-    ///
-    /// Example:
-    /// ```rust
-    /// # use ferinth::structures::search::Sort;
-    /// # #[tokio::main]
-    /// # async fn main() -> Result<(), ferinth::Error> {
-    /// # let modrinth = ferinth::Ferinth::default();
-    /// let results = modrinth.search("sodium", &Sort::Relevance, &[]).await?;
-    /// // The Sodium mod should be the most relevant response when `"sodium"` is searched
-    /// assert_eq!(&results.hits[0].id, "AANobbMI");
-    /// # Ok(()) }
-    /// ```
-    pub async fn search(&self, query: &str, sort: &Sort, facets: &[&[Facet]]) -> Result<Response> {
-        self.get_with_query(
-            API_URL_BASE.join("search").unwrap(),
-            &[
-                ("query", query),
-                ("sort", &sort.to_string()),
-                ("facets", &serde_json::to_string(facets)?),
-            ],
-        )
-        .await
+    /**
+    Search for projects using `query` string
+
+    Sort the hits by `sort`, and filter projects using the given `facets`.
+    In `facets`, only non-empty lists will be added to the query paramater.
+
+    ```rust
+    # use ferinth::structures::search::{Sort, Facet};
+    # #[tokio::main]
+    # async fn main() -> Result<(), ferinth::Error> {
+    # let modrinth = ferinth::Ferinth::default();
+    // When searching for 'sodium' and filtering by Forge mods
+    let results = modrinth.search(
+        "sodium",
+        &Sort::Downloads,
+        vec![vec![ Facet::Categories("forge".into()) ]]
+    ).await?;
+    // Rubidium should be the result with the most downloads
+    assert_eq!(&results.hits[0].slug, "rubidium");
+    # Ok(()) }
+    ```
+    */
+    pub async fn search(
+        &self,
+        query: &str,
+        sort: &Sort,
+        mut facets: Vec<Vec<Facet>>,
+    ) -> Result<Response> {
+        let mut url = API_BASE_URL
+            .join_all(vec!["search"])
+            .with_query("query", query)
+            .with_query("index", sort);
+
+        facets.retain(|e| !e.is_empty());
+        if !facets.is_empty() {
+            url = url.with_query_json("facets", facets)?
+        }
+
+        self.client.get(url).custom_send_json().await
     }
 }
