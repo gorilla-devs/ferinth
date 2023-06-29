@@ -7,7 +7,25 @@ impl Ferinth {
 
     Limit the number of responses to `limit` projects, and offset the output by `offset` projects.
     Sort projects by `sort`, and filter projects using the given `facets`.
-    In `facets`, only non-empty vectors will be added to the query paramater.
+    In `facets`, only non-empty vectors will be used.
+
+    ```rust
+    # use ferinth::structures::search::{Sort, Facet};
+    # #[tokio::main]
+    # async fn main() -> Result<(), ferinth::Error> {
+    # let modrinth = ferinth::Ferinth::default();
+    let results = modrinth.search_paged(
+        "sodium",
+        &Sort::Relevance,
+        // Limit the number of hits to 12
+        12,
+        0,
+        vec![],
+    ).await?;
+    // The amount of hits returned should equal the limit provided
+    assert_eq!(results.hits.len(), 12);
+    # Ok(()) }
+    ```
     */
     pub async fn search_paged(
         &self,
@@ -36,7 +54,7 @@ impl Ferinth {
     Search for projects using `query` string
 
     Sort the hits by `sort`, and filter projects using the given `facets`.
-    In `facets`, only non-empty lists will be added to the query paramater.
+    In `facets`, only non-empty vectors will be used.
 
     ```rust
     # use ferinth::structures::search::{Sort, Facet};
@@ -47,7 +65,7 @@ impl Ferinth {
     let results = modrinth.search(
         "sodium",
         &Sort::Downloads,
-        vec![vec![ Facet::Categories("forge".into()) ]]
+        vec![vec![ Facet::Categories("forge".into()) ]],
     ).await?;
     // Rubidium should be the result with the most downloads
     assert_eq!(&results.hits[0].slug, "rubidium");
