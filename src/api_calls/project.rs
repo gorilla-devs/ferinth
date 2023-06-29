@@ -54,11 +54,12 @@ impl Ferinth {
     # #[tokio::main]
     # async fn main() -> ferinth::Result<()> {
     # let modrinth = ferinth::Ferinth::default();
+    // You can use both IDs and slugs
     let projects = modrinth.get_multiple_projects(&[
-        "AANobbMI",
+        "sodium",
         "P7dR8mSH",
+        "iris",
         "gvQqBUqZ",
-        "YL57xq9U",
     ]).await?;
     assert_eq!(projects.len(), 4);
     # Ok(()) }
@@ -97,16 +98,16 @@ impl Ferinth {
     Get `count` number of random projects
 
     Due to [an issue with labrinth](https://github.com/modrinth/labrinth/issues/548),
-    the amount of mods returned will most likely be less than `count`.
+    the amount of projects returned will most likely be less than `count`.
 
     ```rust
     # #[tokio::main]
     # async fn main() -> ferinth::Result<()> {
     # let modrinth = ferinth::Ferinth::default();
-    let random_mods = modrinth.get_random_projects(5).await?;
+    let random_projects = modrinth.get_random_projects(5).await?;
     // The proper check has been disabled due to the reason mentioned above
-    // assert_eq!(random_mods.len(), 5);
-    assert!(random_mods.len() <= 5);
+    // assert_eq!(random_projects.len(), 5);
+    assert!(random_projects.len() <= 5);
     # Ok(()) }
     ```
     */

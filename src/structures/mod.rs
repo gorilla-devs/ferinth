@@ -2,6 +2,7 @@
 
 pub mod misc;
 pub mod project;
+pub mod search;
 pub mod tag;
 pub mod user;
 pub mod version;
