@@ -1,5 +1,10 @@
 # Changelog
 
+## `2.9.1`
+### 29.06.2023
+
+Properly allow public use of the check functions.
+
 ## `2.9.0`
 ### 29.06.2023
 

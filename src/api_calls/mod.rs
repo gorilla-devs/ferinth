@@ -28,7 +28,7 @@ pub fn check_id_slug<S: AsRef<str>>(inputs: &[S]) -> Result<()> {
 }
 
 /// Verify that the given `inputs` are SHA1 compliant
-pub(crate) fn check_sha1_hash<S: AsRef<str>>(inputs: &[S]) -> Result<()> {
+pub fn check_sha1_hash<S: AsRef<str>>(inputs: &[S]) -> Result<()> {
     for input in inputs {
         if !lazy_regex::regex_is_match!("^[a-f0-9]{40}$", input.as_ref()) {
             return Err(Error::InvalidSHA1);

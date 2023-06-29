@@ -24,6 +24,8 @@ mod request;
 pub mod structures;
 mod url_ext;
 
+pub use api_calls::{check_id_slug, check_sha1_hash};
+
 use once_cell::sync::Lazy;
 use reqwest::{header, Client};
 use url::Url;
