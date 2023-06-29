@@ -1,7 +1,7 @@
 # Changelog
 
 ## `2.9.0`
-### 17.06.2023
+### 29.06.2023
 
 Added structs and calls for the [search API](https://docs.modrinth.com/docs/tutorials/api_search).
 
