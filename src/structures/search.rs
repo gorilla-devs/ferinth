@@ -44,7 +44,7 @@ impl Serialize for Facet {
             Facet::ProjectType(project_type) => {
                 format!(
                     "project_type:{}",
-                    serde_json::to_string(project_type).unwrap()
+                    serde_json::to_string(project_type).unwrap(),
                 )
             }
         };

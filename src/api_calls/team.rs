@@ -14,7 +14,7 @@ impl Ferinth {
     # async fn main() -> ferinth::Result<()> {
     # let modrinth = ferinth::Ferinth::default();
     let mod_menu_team = modrinth.list_project_team_members("modmenu").await?;
-    assert_eq!(mod_menu_team.len(), 4);
+    assert_eq!(mod_menu_team.len(), 5);
     # Ok(()) }
     ```
     */
@@ -34,7 +34,7 @@ impl Ferinth {
     # async fn main() -> ferinth::Result<()> {
     # let modrinth = ferinth::Ferinth::default();
     let mod_menu_team = modrinth.list_team_members("VMz4FpgB").await?;
-    assert_eq!(mod_menu_team.len(), 4);
+    assert_eq!(mod_menu_team.len(), 5);
     # Ok(()) }
     ```
     */

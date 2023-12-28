@@ -17,8 +17,6 @@ If you want to use the Modrinth API version 2, which is the latest one currently
 Due to this feature, there will be breaking changes in minor version bumps too!
 */
 
-#![deny(clippy::unwrap_used)]
-
 mod api_calls;
 mod request;
 pub mod structures;
@@ -82,9 +80,7 @@ let modrinth = ferinth::Ferinth::new(
 ```
 */
 #[derive(Debug, Clone)]
-pub struct Ferinth {
-    client: Client,
-}
+pub struct Ferinth { client: Client }
 
 impl Default for Ferinth {
     fn default() -> Self {
