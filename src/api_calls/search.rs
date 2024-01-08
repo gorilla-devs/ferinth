@@ -1,11 +1,11 @@
 use super::*;
-use structures::{search::*, Number};
+use structures::{search::*, Int};
 
 impl Ferinth {
     /**
     Search for projects using `query` string, with pagination
 
-    Limit the number of responses to `limit` projects, and offset the output by `offset` projects.
+    Limit the number of responses to `limit` projects (valid 0-100), and offset the output by `offset` projects.
     Sort projects by `sort`, and filter projects using the given `facets`.
     In `facets`, only non-empty vectors will be used.
 
@@ -31,8 +31,8 @@ impl Ferinth {
         &self,
         query: &str,
         sort: &Sort,
-        limit: Number,
-        offset: Number,
+        limit: Int,
+        offset: Int,
         mut facets: Vec<Vec<Facet>>,
     ) -> Result<Response> {
         let mut url = API_BASE_URL

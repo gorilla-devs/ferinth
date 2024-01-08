@@ -33,11 +33,11 @@ pub struct Project {
     pub discord_url: Option<Url>,
     pub donation_urls: Vec<DonationLink>,
     pub project_type: ProjectType,
-    pub downloads: Number,
+    pub downloads: Int,
     #[serde(deserialize_with = "deserialise_optional_url")]
     pub icon_url: Option<Url>,
     /// The RGB color of the project, automatically generated from the project icon
-    pub color: Option<Number>,
+    pub color: Option<Int>,
     pub id: ID,
     /// The ID of the team that has ownership of this project
     pub team: ID,
@@ -50,7 +50,7 @@ pub struct Project {
     pub updated: UtcTime,
     /// The date the project's status was set to approved or unlisted
     pub approved: Option<UtcTime>,
-    pub followers: Number,
+    pub followers: Int,
     pub status: ProjectStatus,
     pub license: License,
     /// A list of the version IDs of the project.
@@ -183,11 +183,15 @@ pub enum ProjectSupportRange {
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum ProjectType {
-    /// WARNING: Can also be a plugin or data pack.
+    /// WARNING: Can be a mod, plugin, or data pack
+    ///
     /// You will have to read the loaders to get more specific information.
+    Project,
     Mod,
     Shader,
+    Plugin,
     Modpack,
+    Datapack,
     ResourcePack,
 }
 

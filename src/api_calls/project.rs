@@ -7,7 +7,7 @@ use reqwest::{
     header::{HeaderValue, CONTENT_TYPE},
     Body,
 };
-use structures::{project::*, Number, UtcTime};
+use structures::{project::*, Int, UtcTime};
 
 impl Ferinth {
     /**
@@ -111,7 +111,7 @@ impl Ferinth {
     # Ok(()) }
     ```
     */
-    pub async fn get_random_projects(&self, count: Number) -> Result<Vec<Project>> {
+    pub async fn get_random_projects(&self, count: Int) -> Result<Vec<Project>> {
         self.client
             .get(
                 API_BASE_URL

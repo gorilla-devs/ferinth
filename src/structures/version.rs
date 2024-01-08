@@ -26,7 +26,7 @@ pub struct Version {
     /// The ID of the author who published this version
     pub author_id: ID,
     pub date_published: UtcTime,
-    pub downloads: Number,
+    pub downloads: Int,
     /// A link to the version's changelog (only present for old versions)
     #[deprecated = "Read from `changelog` instead"]
     #[serde(deserialize_with = "deserialise_optional_url")]
@@ -46,7 +46,7 @@ pub struct VersionFile {
     /// If there are no primary files specified, the first file can be taken as the primary file.
     pub primary: bool,
     /// The size of the file in bytes
-    pub size: Number,
+    pub size: Int,
     /// The type of the additional file, used mainly for adding resource packs to datapacks
     pub file_type: Option<AdditionalFileType>,
 }

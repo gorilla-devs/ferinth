@@ -9,7 +9,7 @@ pub mod version;
 
 /// ISO 8601 UTC datetime
 pub type UtcTime = chrono::DateTime<chrono::Utc>;
-pub type Number = usize;
+pub type Int = usize;
 /// A base 62 number stored as a string
 pub type ID = String;
 

@@ -18,7 +18,7 @@ pub struct User {
     pub payout_data: Option<PayoutData>,
     pub id: ID,
     /// The user's GitHub ID
-    pub github_id: Option<Number>,
+    pub github_id: Option<Int>,
     pub avatar_url: Url,
     pub created: UtcTime,
     pub role: UserRole,
@@ -26,12 +26,12 @@ pub struct User {
     /// These are currently unused and not displayed, and as such are subject to change.
     ///
     /// [documentation](https://docs.modrinth.com/api-spec/#tag/user_model)
-    pub badges: Number,
+    pub badges: Int,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct PayoutData {
-    balance: String,
+    balance: f64,
     payout_wallet: Option<PayoutWallet>,
     payout_wallet_type: Option<PayoutWalletType>,
     payout_address: Option<String>,
@@ -57,14 +57,14 @@ pub struct TeamMember {
     /// - DELETE_PROJECT
     /// - VIEW_ANALYTICS
     /// - VIEW_PAYOUTS
-    pub permissions: Option<Number>,
+    pub permissions: Option<Int>,
     /// Whether the user has accepted membership of the team
     /// (requires authorisation to view)
     pub accepted: bool,
     /// The split of payouts going to this user.
     /// The proportion of payouts they get is their split divided by the sum of the splits of all members.
-    pub payouts_split: Option<Number>,
-    pub ordering: Option<Number>,
+    pub payouts_split: Option<Int>,
+    pub ordering: Option<Int>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -104,7 +104,7 @@ pub struct PayoutHistory {
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Payout {
     pub created: UtcTime,
-    pub amount: Number,
+    pub amount: Int,
     pub status: String,
 }
 
