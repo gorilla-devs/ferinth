@@ -1,5 +1,5 @@
 use super::{
-    project::{ProjectSupportRange, ProjectType},
+    project::{ProjectSupportRange, ProjectType, MonetizationStatus},
     *,
 };
 
@@ -117,12 +117,4 @@ pub struct SearchHit {
     pub license: String,
     pub gallery: Vec<Url>,
     pub featured_gallery: Option<Url>,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
-#[serde(rename_all = "kebab-case")]
-pub enum MonetizationStatus {
-    Monetized,
-    Demonetized,
-    ForceDemonetized,
 }

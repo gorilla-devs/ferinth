@@ -5,7 +5,7 @@
 use super::*;
 use reqwest::{
     header::{HeaderValue, CONTENT_TYPE},
-    Body,
+    Body, IntoUrl,
 };
 use structures::{project::*, Int, UtcTime};
 
@@ -77,7 +77,7 @@ impl Ferinth {
             .await
     }
 
-    /// Edit the projects of `project_ids` with the given `edits`
+    /// Bulk edit the projects of `project_ids` with the given `edits`
     ///
     /// REQUIRES AUTHENTICATION and appropriate permissions!
     pub async fn edit_multiple_projects(
@@ -158,8 +158,8 @@ impl Ferinth {
     }
 
     /**
-    Check if the given ID or slug refers to an existing project.
-    If so, the ID of the project will be returned.
+    Check if the given ID or slug refers to an existing project,
+    if so the ID of the project will be returned
 
     ```rust
     # #[tokio::main]
@@ -185,7 +185,7 @@ impl Ferinth {
     }
 
     /**
-    Add the given gallery `image` of file `ext`ention, and an optional `title`, to `project_id`.
+    Add `image` of file `ext`ention and optional `title` to the gallery of the project of `project_id`.
     State whether the image should be `featured` or not, and optionally provide a `description`.
 
     The image data can have a maximum size of `5 MiB`.
@@ -202,8 +202,10 @@ impl Ferinth {
         description: Option<String>,
     ) -> Result<()> {
         check_id_slug(&[project_id])?;
-        let mut url = API_BASE_URL.join_all(vec!["project", project_id, "gallery"]);
-        url = url.with_query("ext", ext).with_query("featured", featured);
+        let mut url = API_BASE_URL
+            .join_all(vec!["project", project_id, "gallery"])
+            .with_query("ext", ext)
+            .with_query("featured", featured);
         if let Some(title) = title {
             url = url.with_query("title", title);
         }
@@ -222,20 +224,54 @@ impl Ferinth {
         Ok(())
     }
 
+    /**
+    Modify the gallery image of `url` of the project of `project_id`
+
+    REQUIRES AUTHENTICATION and appropriate permissions!
+    */
+    pub async fn modify_gallery_image<U: IntoUrl>(
+        &self,
+        project_id: &str,
+        url: U,
+        featured: Option<bool>,
+        title: Option<&str>,
+        description: Option<&str>,
+        ordering: Option<Int>,
+    ) -> Result<()> {
+        check_id_slug(&[project_id])?;
+        let mut url = API_BASE_URL
+            .join_all(vec!["project", project_id, "gallery"])
+            .with_query("url", url.into_url()?);
+        if let Some(featured) = featured {
+            url = url.with_query("featured", featured);
+        }
+        if let Some(title) = title {
+            url = url.with_query("title", title);
+        }
+        if let Some(description) = description {
+            url = url.with_query("description", description);
+        }
+        if let Some(ordering) = ordering {
+            url = url.with_query("ordering", ordering);
+        }
+        self.client.patch(url).custom_send().await?;
+        Ok(())
+    }
+
     /// Delete the gallery image of `image_url` from the project of `project_id`
     ///
     /// REQUIRES AUTHENTICATION and appropriate permissions!
-    pub async fn delete_gallery_image<S: ToString>(
+    pub async fn delete_gallery_image<U: IntoUrl>(
         &self,
         project_id: &str,
-        image_url: S,
+        image_url: U,
     ) -> Result<()> {
         check_id_slug(&[project_id])?;
         self.client
             .delete(
                 API_BASE_URL
                     .join_all(vec!["project", project_id, "gallery"])
-                    .with_query("url", image_url),
+                    .with_query("url", image_url.into_url()?),
             )
             .custom_send()
             .await?;
@@ -296,9 +332,9 @@ impl Ferinth {
     # #[tokio::main]
     # async fn main() -> ferinth::Result<()> {
     # let modrinth = ferinth::Ferinth::default();
-    // Release the project of ID `eZ2NOONn` in three hours to the public
+    // Release the project of ID `XXXXXXXX` in three hours to the public
     modrinth.schedule_project(
-        "eZ2NOONn",
+        "XXXXXXXX",
         &(chrono::offset::Utc::now() + chrono::Duration::hours(3)),
         &ferinth::structures::project::RequestedStatus::Approved
     ).await
@@ -327,7 +363,7 @@ impl Ferinth {
 
 #[cfg(test)]
 mod tests {
-    use crate::{structures::project, Ferinth, Result};
+    use crate::{structures::project, Error, Ferinth, Result};
 
     #[tokio::test]
     async fn follow() -> Result<()> {
@@ -338,9 +374,31 @@ mod tests {
             Some(env!("MODRINTH_TOKEN")),
         )?;
         let project_id = env!("TEST_PROJECT_ID");
+        let user_id = modrinth.get_current_user().await?.id;
 
-        modrinth.follow(project_id).await?;
-        modrinth.unfollow(project_id).await
+        match modrinth.follow(project_id).await {
+            Ok(_) => {}
+            Err(Error::ReqwestError(e)) => {
+                if !(e.is_status() && e.status().unwrap() == 400) {
+                    return Err(Error::ReqwestError(e));
+                }
+            }
+            Err(e) => return Err(e),
+        }
+        let followed_projects = modrinth.followed_projects(&user_id).await?;
+        assert!(followed_projects
+            .iter()
+            .map(|p| &p.id)
+            .any(|id| id == project_id));
+
+        modrinth.unfollow(project_id).await?;
+        let followed_projects = modrinth.followed_projects(&user_id).await?;
+        assert!(followed_projects
+            .iter()
+            .map(|p| &p.id)
+            .all(|id| id != project_id));
+
+        Ok(())
     }
 
     #[tokio::test]
@@ -354,9 +412,29 @@ mod tests {
         let project_id = env!("TEST_PROJECT_ID");
 
         let project = modrinth.get_project(project_id).await?;
-        modrinth
-            .delete_gallery_image(project_id, project.gallery[0].url.clone())
-            .await?;
+        if !project.gallery.is_empty() {
+            assert_ne!(project.gallery[0].title, Some("Modified test image".into()));
+            modrinth
+                .modify_gallery_image(
+                    project_id,
+                    project.gallery[0].url.clone(),
+                    Some(false),
+                    Some("Modified test image"),
+                    None,
+                    None,
+                )
+                .await?;
+            let project = modrinth.get_project(project_id).await?;
+            assert_eq!(project.gallery[0].title, Some("Modified test image".into()));
+            assert!(!project.gallery[0].featured);
+
+            modrinth
+                .delete_gallery_image(project_id, project.gallery[0].url.clone())
+                .await?;
+            let project = modrinth.get_project(project_id).await?;
+            assert!(project.gallery.is_empty());
+        }
+
         let image_data = std::fs::read("test_image.png").expect("Failed to read test image");
         modrinth
             .add_gallery_image(
@@ -367,7 +445,14 @@ mod tests {
                 Some("Test image, do not delete".to_string()),
                 Some(chrono::offset::Local::now().to_string()),
             )
-            .await
+            .await?;
+        let project = modrinth.get_project(project_id).await?;
+        assert_eq!(
+            project.gallery[0].title,
+            Some("Test image, do not delete".into())
+        );
+
+        Ok(())
     }
 
     #[tokio::test]
@@ -381,9 +466,16 @@ mod tests {
         let project_id = env!("TEST_PROJECT_ID");
 
         modrinth.delete_project_icon(project_id).await?;
+        let project = modrinth.get_project(project_id).await?;
+        assert!(project.icon_url.is_none());
+
         let image = std::fs::read("test_image.png").expect("Cannot read test image");
         modrinth
             .change_project_icon(project_id, image, &project::ImageFileExt::PNG)
-            .await
+            .await?;
+        let project = modrinth.get_project(project_id).await?;
+        assert!(project.icon_url.is_some());
+
+        Ok(())
     }
 }

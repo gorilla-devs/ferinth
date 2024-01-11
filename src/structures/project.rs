@@ -17,6 +17,9 @@ pub struct Project {
     pub server_side: ProjectSupportRange,
     /// A long form description of the project
     pub body: String,
+    pub status: ProjectStatus,
+    /// The status requested. Only visible to those with appropriate permissions
+    pub requested_status: Option<RequestedStatus>,
     /// A list of categories which are searchable but non-primary
     pub additional_categories: Vec<String>,
     /// A link to submit bugs or issues with the project
@@ -38,20 +41,19 @@ pub struct Project {
     pub icon_url: Option<Url>,
     /// The RGB color of the project, automatically generated from the project icon
     pub color: Option<Int>,
+    /// The ID of the moderation thread associated with this project
+    pub thread_id: Option<ID>,
+    pub monetization_status: Option<MonetizationStatus>,
     pub id: ID,
     /// The ID of the team that has ownership of this project
     pub team: ID,
-    /// A link to the long description of the project (only present for old projects)
-    #[deprecated = "Read from `body` instead"]
-    #[serde(deserialize_with = "deserialise_optional_url")]
-    pub body_url: Option<Url>,
+    #[deprecated(note = "Use moderator threads and `thread_id` instead")]
     pub moderator_message: Option<ModeratorMessage>,
     pub published: UtcTime,
     pub updated: UtcTime,
-    /// The date the project's status was set to approved or unlisted
+    /// The date the project's status was approved
     pub approved: Option<UtcTime>,
     pub followers: Int,
-    pub status: ProjectStatus,
     pub license: License,
     /// A list of the version IDs of the project.
     /// This will only ever be empty if the project is a draft.
@@ -75,7 +77,6 @@ pub struct ModeratorMessage {
 pub struct License {
     /// The SPDX license ID of a project
     pub id: String,
-    /// The license's long name
     pub name: String,
     /// The URL to this license
     #[serde(deserialize_with = "deserialise_optional_url")]
@@ -145,14 +146,19 @@ pub struct EditMultipleProjectsBody {
 #[serde(rename_all = "lowercase")]
 pub enum ProjectStatus {
     Approved,
-    /// A moderator's message should be available on the project struct
+    Archived,
+    /// A moderator's message should be available in the project struct
     Rejected,
     Draft,
     /// The project has been approved and is publicly accessible, but will not show up in search results
     Unlisted,
-    Archived,
     /// The project has been submitted for approval and is being reviewed
     Processing,
+    Withheld,
+    /// The project's status has been scheduled to change.
+    /// Check the project's `requested_status` for more information.
+    Scheduled,
+    Private,
     Unknown,
 }
 
@@ -164,6 +170,14 @@ pub enum RequestedStatus {
     Unlisted,
     Private,
     Draft,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum MonetizationStatus {
+    Monetized,
+    Demonetized,
+    ForceDemonetized,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
