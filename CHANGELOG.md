@@ -3,6 +3,8 @@
 ## `2.10.0`
 ### 26.01.2024
 
+Known Issues: the payout history route is missing on the labrinth server
+
 - Add method to modify gallery image
 - Update documentation
 - Use `IntoUrl` instead of `ToString` for URLs
