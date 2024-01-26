@@ -1,5 +1,14 @@
 # Changelog
 
+## `2.10.0`
+### 26.01.2024
+
+- Add method to modify gallery image
+- Update documentation
+- Use `IntoUrl` instead of `ToString` for URLs
+- Make tests more robust
+- Update search and project structs
+
 ## `2.9.1`
 ### 29.06.2023
 
