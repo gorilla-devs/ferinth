@@ -5,11 +5,11 @@ use url::Url;
 
 pub trait UrlJoinAll {
     /// [Url::join] all the provided `segments`
-    fn join_all<S: Into<String>>(&self, segments: Vec<S>) -> Self;
+    fn join_all(&self, segments: Vec<impl Into<String>>) -> Self;
 }
 
 impl UrlJoinAll for Url {
-    fn join_all<S: Into<String>>(&self, mut segments: Vec<S>) -> Self {
+    fn join_all(&self, mut segments: Vec<impl Into<String>>) -> Self {
         let mut url = self.clone();
         let last = segments.pop().expect("`segments` is empty");
         for segment in segments {
@@ -21,34 +21,36 @@ impl UrlJoinAll for Url {
     }
 }
 
-pub trait UrlWithQuery
-where
-    Self: Sized,
-{
+pub trait UrlWithQuery: Sized {
     type SerialiseResult<T>;
 
     /// Add the `name` and `value` query to `self` and return it
-    fn with_query<V: ToString>(self, name: &str, value: V) -> Self;
+    fn with_query(self, name: impl AsRef<str>, value: impl ToString) -> Self;
 
     /// Serialise and add the `name` and `value` query to `self` and return it
-    fn with_query_json<V: Serialize>(self, name: &str, value: V) -> Self::SerialiseResult<Self>;
+    fn with_query_json(
+        self,
+        name: impl AsRef<str>,
+        value: impl Serialize,
+    ) -> Self::SerialiseResult<Self>;
 }
 
 impl UrlWithQuery for Url {
     type SerialiseResult<T> = serde_json::Result<T>;
 
-    fn with_query<V: ToString>(mut self, name: &str, value: V) -> Self {
-        self.query_pairs_mut().append_pair(name, &value.to_string());
+    fn with_query(mut self, name: impl AsRef<str>, value: impl ToString) -> Self {
+        self.query_pairs_mut()
+            .append_pair(name.as_ref(), &value.to_string());
         self
     }
 
-    fn with_query_json<V: Serialize>(
+    fn with_query_json(
         mut self,
-        name: &str,
-        value: V,
+        name: impl AsRef<str>,
+        value: impl Serialize,
     ) -> Self::SerialiseResult<Self> {
         self.query_pairs_mut()
-            .append_pair(name, &serde_json::to_string(&value)?);
+            .append_pair(name.as_ref(), &serde_json::to_string(&value)?);
         Ok(self)
     }
 }

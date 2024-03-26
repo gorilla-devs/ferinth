@@ -5,14 +5,14 @@ use std::collections::HashMap;
 
 impl Ferinth {
     /**
-    Get the version of a version file with `hash`.
+    Get the version of the version file with `hash`.
     Only supports SHA1 hashes for now.
 
     ```rust
     # #[tokio::main]
     # async fn main() -> ferinth::Result<()> {
     # let modrinth = ferinth::Ferinth::default();
-    // A mod file has the hash `795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf`, so we can get the version it belongs to
+    // If a mod file has the hash `795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf`, we can get the version it belongs to
     let sodium_version = modrinth.get_version_from_hash("795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf").await?;
     assert_eq!(sodium_version.project_id, "AANobbMI");
     # Ok(()) }
@@ -57,8 +57,9 @@ impl Ferinth {
     }
 
     /**
-    Get the versions of version files with `hashes`.
-    Only supports SHA1 hashes for now.
+    Get the versions of the version files with `hashes`, only supports SHA1 hashes for now
+
+    Returns a map where the keys are the hashes given.
 
     ```rust
     # #[tokio::main]
@@ -96,7 +97,7 @@ impl Ferinth {
             .await
     }
 
-    /// Get the latest version of the project of the version file with `hash` based on some `filters`.
+    /// Get the latest version for the project of the version file with `hash` based on some `filters`.
     /// Only supports SHA1 hashes for now.
     pub async fn latest_version_from_hash(
         &self,

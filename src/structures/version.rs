@@ -8,8 +8,7 @@ use std::collections::HashMap;
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Version {
     pub name: String,
-    /// The version number.
-    /// Ideally, this will follow semantic versioning.
+    /// Ideally will follow semantic versioning
     pub version_number: String,
     pub changelog: Option<String>,
     pub dependencies: Vec<Dependency>,
@@ -21,29 +20,24 @@ pub struct Version {
     pub status: Option<Status>,
     pub requested_status: Option<RequestedStatus>,
     pub id: ID,
-    /// The ID of the project this version is for
     pub project_id: ID,
-    /// The ID of the author who published this version
+    /// The user ID of the author who published this version
     pub author_id: ID,
     pub date_published: UtcTime,
     pub downloads: Int,
-    /// A link to the version's changelog (only present for old versions)
-    #[deprecated = "Read from `changelog` instead"]
-    #[serde(deserialize_with = "deserialise_optional_url")]
-    pub changelog_url: Option<Url>,
     /// A list of files available for download
     pub files: Vec<VersionFile>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct VersionFile {
-    pub hashes: Hashes,
+    pub hashes: Hash,
     pub url: Url,
     pub filename: String,
-    /// Whether the file is the primary file of its version.
+    /// Whether the file is the primary file of its version
     ///
     /// There can only be a maximum of one primary file per version.
-    /// If there are no primary files specified, the first file can be taken as the primary file.
+    /// If there are no primary files specified, the first file can be taken as the primary one.
     pub primary: bool,
     /// The size of the file in bytes
     pub size: Int,
@@ -52,10 +46,10 @@ pub struct VersionFile {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct Hashes {
+pub struct Hash {
     pub sha512: String,
     pub sha1: String,
-    /// A map of other hashes that may have been provided
+    /// Other hashes that may have been provided
     #[serde(flatten)]
     pub others: HashMap<String, String>,
 }
