@@ -1,5 +1,16 @@
 # Changelog
 
+## `2.11.0`
+### 18.04.2024
+
+- Update dependencies
+- Use the compiler implementation of async traits, and remove the `async-trait` dependency
+- Add `get_version_from_number()` method (https://docs.modrinth.com/#tag/versions/operation/getVersionFromIdOrNumber)
+- Edit documentation
+- Remove 2 deprecated methods, `Project::moderator_message` and `Version::changelog_url`
+- Rename `version.rs/Hashes` to `Hash`
+- Improve the ergonomics of some internal functions
+
 ## `2.10.0`
 ### 26.01.2024
 

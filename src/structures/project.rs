@@ -47,8 +47,6 @@ pub struct Project {
     pub id: ID,
     /// The ID of the team that has ownership of this project
     pub team: ID,
-    #[deprecated(note = "Use moderator threads and `thread_id` instead")]
-    pub moderator_message: Option<ModeratorMessage>,
     pub published: UtcTime,
     pub updated: UtcTime,
     /// The date the project's status was approved

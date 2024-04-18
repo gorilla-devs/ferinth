@@ -40,6 +40,7 @@ pub static API_BASE_URL: Lazy<Url> = Lazy::new(|| {
 });
 
 #[derive(thiserror::Error, Debug)]
+#[error("{}", .0)]
 pub enum Error {
     #[error("Invalid Modrinth ID or slug")]
     InvalidIDorSlug,
@@ -47,11 +48,8 @@ pub enum Error {
     InvalidSHA1,
     #[error("You have been rate limited, please wait for {} seconds", .0)]
     RateLimitExceeded(usize),
-    #[error("{}", .0)]
     ReqwestError(#[from] reqwest::Error),
-    #[error("{}", .0)]
     JSONError(#[from] serde_json::Error),
-    #[error("{}", .0)]
     InvalidHeaderValue(#[from] header::InvalidHeaderValue),
 }
 pub type Result<T> = std::result::Result<T, Error>;

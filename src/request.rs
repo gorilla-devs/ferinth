@@ -7,9 +7,7 @@ pub(crate) trait RequestBuilderCustomSend {
     async fn custom_send(self) -> Result<Response>;
 
     /// Build and send `self`, and deserialise the response to `T` and return it
-    async fn custom_send_json<T>(self) -> Result<T>
-    where
-        T: DeserializeOwned;
+    async fn custom_send_json<T: DeserializeOwned>(self) -> Result<T>;
 }
 
 impl RequestBuilderCustomSend for RequestBuilder {
@@ -17,10 +15,7 @@ impl RequestBuilderCustomSend for RequestBuilder {
         Ok(check_rate_limit(self.send().await?)?.error_for_status()?)
     }
 
-    async fn custom_send_json<T>(self) -> Result<T>
-    where
-        T: DeserializeOwned,
-    {
+    async fn custom_send_json<T: DeserializeOwned>(self) -> Result<T> {
         Ok(self.custom_send().await?.json().await?)
     }
 }
