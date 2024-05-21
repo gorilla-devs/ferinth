@@ -27,13 +27,8 @@ impl Ferinth {
     }
 
     /**
-    Get the versions of the project of `project_id`, filtered using the following:
-
-    |||
-    |-|-|
-    | `loaders` | The loaders to filter for |
-    | `game_versions` | The game versions to filter for |
-    | `featured` | Filter for featured or non-featured versions only |
+    Get the versions of the project of `project_id`, filtered based on
+    mod `loaders`, `game_versions`, and whether the version is `featured`
 
     ```rust
     # #[tokio::main]
@@ -114,19 +109,41 @@ impl Ferinth {
     }
 
     /**
-    Schedule a change in the `status` of the version of `version_id` at `time`
+    Get the version of the version `number` from the project of `project_id`
+
+    ```rust
+    # #[tokio::main]
+    # async fn main() -> ferinth::Result<()> {
+    # let modrinth = ferinth::Ferinth::default();
+    let version = modrinth.get_version_from_number("sodium", "mc1.17.1-0.3.2").await?;
+    assert_eq!(version.id, "xuWxRZPd");
+    # Ok(()) }
+    ```
+    */
+    pub async fn get_version_from_number(&self, project_id: &str, number: &str) -> Result<Version> {
+        check_id_slug(&[project_id])?;
+        self.client
+            .get(API_BASE_URL.join_all(vec!["project", project_id, "version", number]))
+            .custom_send_json()
+            .await
+    }
+
+    /**
+    Schedule changing the status of version of `version_id` to `requested_status` at `time`
 
     REQUIRES AUTHENTICATION and appropriate permissions!
 
     ```no_run
+    # use ferinth::structures::version::RequestedStatus;
+    # use chrono::{Duration, offset::Utc};
     # #[tokio::main]
     # async fn main() -> ferinth::Result<()> {
     # let modrinth = ferinth::Ferinth::default();
-    // Release the version of ID `xuWxRZPd` in three hours to the public
+    // Release the version of ID `xuWxRZPd` to the public in three hours
     modrinth.schedule_version(
         "xuWxRZPd",
-        &(chrono::offset::Utc::now() + chrono::Duration::hours(3)),
-        &ferinth::structures::version::RequestedStatus::Listed
+        &(Utc::now() + Duration::hours(3)),
+        &RequestedStatus::Listed
     ).await
     # }
     ```
