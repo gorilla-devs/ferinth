@@ -83,12 +83,12 @@ pub enum HashAlgorithm {
     SHA1,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "lowercase")]
 pub enum VersionType {
-    Alpha,
-    Beta,
     Release,
+    Beta,
+    Alpha,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]

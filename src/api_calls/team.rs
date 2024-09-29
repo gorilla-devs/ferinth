@@ -13,8 +13,8 @@ impl Ferinth {
     # #[tokio::main]
     # async fn main() -> ferinth::Result<()> {
     # let modrinth = ferinth::Ferinth::default();
-    let mod_menu_team = modrinth.list_project_team_members("modmenu").await?;
-    assert_eq!(mod_menu_team.len(), 3);
+    let saj_team = modrinth.list_project_team_members("stairautojump").await?;
+    assert_eq!(saj_team.len(), 2);
     # Ok(()) }
     ```
     */
@@ -33,8 +33,8 @@ impl Ferinth {
     # #[tokio::main]
     # async fn main() -> ferinth::Result<()> {
     # let modrinth = ferinth::Ferinth::default();
-    let mod_menu_team = modrinth.list_team_members("VMz4FpgB").await?;
-    assert_eq!(mod_menu_team.len(), 3);
+    let saj_team = modrinth.list_team_members("zftNHDXi").await?;
+    assert_eq!(saj_team.len(), 2);
     # Ok(()) }
     ```
     */

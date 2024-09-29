@@ -1,5 +1,10 @@
 # Changelog
 
+## `2.11.1`
+### 29.09.2024
+
+Implement `PartialOrd` and `Ord` for `tag::GameVersionType` and `version::VersionType`.
+
 ## `2.11.0`
 ### 18.04.2024
 

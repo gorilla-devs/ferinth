@@ -130,7 +130,7 @@ impl Ferinth {
     # async fn main() -> ferinth::Result<()> {
     # let modrinth = ferinth::Ferinth::default();
     let jellysquid_projects = modrinth.list_projects("TEZXhE2U").await?;
-    assert_eq!(jellysquid_projects.len(), 5);
+    assert_eq!(jellysquid_projects.len(), 4);
     # Ok(()) }
     ```
     */
