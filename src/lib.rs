@@ -24,16 +24,16 @@ mod url_ext;
 
 pub use api_calls::{check_id_slug, check_sha1_hash};
 
-use once_cell::sync::Lazy;
 use reqwest::{header, Client};
+use std::sync::LazyLock;
 use url::Url;
 
 /// The base URL for the Modrinth API
-pub static BASE_URL: Lazy<Url> =
-    Lazy::new(|| Url::parse("https://api.modrinth.com/").expect("Invalid base URL"));
+pub static BASE_URL: LazyLock<Url> =
+    LazyLock::new(|| Url::parse("https://api.modrinth.com/").expect("Invalid base URL"));
 
 /// The base URL for the current version of the Modrinth API
-pub static API_BASE_URL: Lazy<Url> = Lazy::new(|| {
+pub static API_BASE_URL: LazyLock<Url> = LazyLock::new(|| {
     BASE_URL
         .join(concat!('v', env!("CARGO_PKG_VERSION_MAJOR"), '/'))
         .expect("Invalid API base URL")
@@ -78,7 +78,9 @@ let modrinth = ferinth::Ferinth::new(
 ```
 */
 #[derive(Debug, Clone)]
-pub struct Ferinth { client: Client }
+pub struct Ferinth {
+    client: Client,
+}
 
 impl Default for Ferinth {
     fn default() -> Self {
