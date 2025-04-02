@@ -9,13 +9,12 @@ impl Ferinth {
     Only supports SHA1 hashes for now.
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     // If a mod file has the hash `795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf`, we can get the version it belongs to
     let sodium_version = modrinth.get_version_from_hash("795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf").await?;
     assert_eq!(sodium_version.project_id, "AANobbMI");
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn get_version_from_hash(&self, hash: &str) -> Result<Version> {
@@ -34,11 +33,10 @@ impl Ferinth {
     REQUIRES AUTHENTICATION and appropriate permissions!
 
     ```no_run
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     modrinth.delete_version_file_from_hash("795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf", None).await?;
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn delete_version_file_from_hash(
@@ -62,8 +60,7 @@ impl Ferinth {
     Returns a map where the keys are the hashes given.
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     let sodium_hash = "795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf";
     let snwylvspls_hash = "994ee99d172a5950a51ec2d08c158d270722d871";
@@ -73,7 +70,7 @@ impl Ferinth {
     ]).await?;
     assert_eq!(versions[sodium_hash].project_id, "AANobbMI");
     assert_eq!(versions[snwylvspls_hash].project_id, "of7wIinq");
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn get_versions_from_hashes(

@@ -10,12 +10,11 @@ impl Ferinth {
     List the members of the team of the project of `project_id`
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     let saj_team = modrinth.list_project_team_members("stairautojump").await?;
     assert_eq!(saj_team.len(), 2);
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn list_project_team_members(&self, project_id: &str) -> Result<Vec<TeamMember>> {
@@ -30,12 +29,11 @@ impl Ferinth {
     List the members of the team of `team_id`
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     let saj_team = modrinth.list_team_members("zftNHDXi").await?;
     assert_eq!(saj_team.len(), 2);
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn list_team_members(&self, team_id: &str) -> Result<Vec<TeamMember>> {
@@ -52,11 +50,10 @@ impl Ferinth {
     REQUIRES AUTHENTICATION and appropriate permissions!
 
     ```no_run
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    modrinth.add_user("XXXXXXXX", "YYYYYYYY").await
-    # }
+    modrinth.add_user("XXXXXXXX", "YYYYYYYY").await?;
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn add_user(&self, team_id: &str, user_id: &str) -> Result<()> {
@@ -77,8 +74,7 @@ impl Ferinth {
     List the members of the teams of `team_ids`
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     let teams = modrinth.list_multiple_teams_members(&[
         "4reLOAKe",
@@ -87,7 +83,7 @@ impl Ferinth {
         "peSx5UYg",
     ]).await?;
     assert_eq!(teams.len(), 4);
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn list_multiple_teams_members(
@@ -111,11 +107,10 @@ impl Ferinth {
     REQUIRES AUTHENTICATION!
 
     ```no_run
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    modrinth.join_team("XXXXXXXX").await
-    # }
+    modrinth.join_team("XXXXXXXX").await?;
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn join_team(&self, team_id: &str) -> Result<()> {
@@ -132,11 +127,10 @@ impl Ferinth {
     REQUIRES AUTHENTICATION and appropriate permissions!
 
     ```no_run
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    modrinth.remove_member("XXXXXXXX", "YYYYYYYY").await
-    # }
+    modrinth.remove_member("XXXXXXXX", "YYYYYYYY").await?;
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn remove_member(&self, team_id: &str, user_id: &str) -> Result<()> {
@@ -153,11 +147,10 @@ impl Ferinth {
     REQUIRES AUTHENTICATION and appropriate permissions!
 
     ```no_run
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    modrinth.transfer_ownership("XXXXXXXX", "YYYYYYYY").await
-    # }
+    modrinth.transfer_ownership("XXXXXXXX", "YYYYYYYY").await?;
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn transfer_ownership(&self, team_id: &str, user_id: &str) -> Result<()> {

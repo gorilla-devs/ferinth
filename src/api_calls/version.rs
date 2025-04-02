@@ -10,12 +10,11 @@ impl Ferinth {
     Get the versions of the project of `project_id`
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     let sodium_versions = modrinth.list_versions("AANobbMI").await?;
     sodium_versions.iter().for_each(|v| assert_eq!(v.project_id, "AANobbMI"));
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn list_versions(&self, project_id: &str) -> Result<Vec<Version>> {
@@ -31,8 +30,7 @@ impl Ferinth {
     mod `loaders`, `game_versions`, and whether the version is `featured`
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     let sodium_forge_versions = modrinth.list_versions_filtered(
         "AANobbMI",
@@ -42,7 +40,7 @@ impl Ferinth {
     ).await?;
     // Sodium is not made for Forge
     assert!(sodium_forge_versions.is_empty());
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn list_versions_filtered(
@@ -70,12 +68,11 @@ impl Ferinth {
     Get the version of `version_id`
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     let sodium_version = modrinth.get_version("xuWxRZPd").await?;
     assert_eq!(sodium_version.project_id, "AANobbMI");
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn get_version(&self, version_id: &str) -> Result<Version> {
@@ -92,11 +89,10 @@ impl Ferinth {
     REQUIRES AUTHENTICATION and appropriate permissions!
 
     ```no_run
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     modrinth.delete_version("XXXXXXXX").await?;
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn delete_version(&self, version_id: &str) -> Result<()> {
@@ -112,12 +108,11 @@ impl Ferinth {
     Get the version of the version `number` from the project of `project_id`
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     let version = modrinth.get_version_from_number("sodium", "mc1.17.1-0.3.2").await?;
     assert_eq!(version.id, "xuWxRZPd");
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn get_version_from_number(&self, project_id: &str, number: &str) -> Result<Version> {
@@ -136,16 +131,15 @@ impl Ferinth {
     ```no_run
     # use ferinth::structures::version::RequestedStatus;
     # use chrono::{Duration, offset::Utc};
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     // Release the version of ID `xuWxRZPd` to the public in three hours
     modrinth.schedule_version(
         "xuWxRZPd",
         &(Utc::now() + Duration::hours(3)),
         &RequestedStatus::Listed
-    ).await
-    # }
+    ).await?;
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn schedule_version(
@@ -171,15 +165,14 @@ impl Ferinth {
     Get the versions of `version_ids`
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     let versions = modrinth.get_multiple_versions(&[
         "sxWTUZpD",
         "mgPpe4NY",
     ]).await?;
     versions.iter().for_each(|v| assert_eq!(v.project_id, "of7wIinq"));
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn get_multiple_versions(&self, version_ids: &[&str]) -> Result<Vec<Version>> {

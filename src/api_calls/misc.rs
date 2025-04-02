@@ -14,8 +14,7 @@ impl Ferinth {
     REQUIRES AUTHENTICATION!
 
     ```no_run
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     let report = modrinth.submit_report(&ferinth::structures::misc::ReportSubmission {
         report_type: "other".to_string(),
@@ -23,7 +22,7 @@ impl Ferinth {
         item_type: ferinth::structures::misc::ReportItemType::User,
         body: "This is an example report".to_string(),
     }).await?;
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn submit_report(&self, report: &ReportSubmission) -> Result<Report> {
@@ -39,11 +38,10 @@ impl Ferinth {
     Get various statistics about this Modrinth instance
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     let statistics = modrinth.get_statistics().await?;
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn get_statistics(&self) -> Result<Statistics> {
@@ -57,11 +55,10 @@ impl Ferinth {
     Get the Modrinth API welcome page.
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     modrinth.welcome().await?;
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn welcome(&self) -> Result<Welcome> {

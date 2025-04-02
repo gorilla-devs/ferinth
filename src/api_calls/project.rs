@@ -14,8 +14,7 @@ impl Ferinth {
     Get the project of `project_id`
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     // Get a mod using its project ID
     let sodium = modrinth.get_project("AANobbMI").await?;
@@ -24,7 +23,7 @@ impl Ferinth {
     // You can also use the project's slug, which is case-insensitive
     let ok_zoomer = modrinth.get_project("ok-zoomer").await?;
     assert_eq!(ok_zoomer.title, "Ok Zoomer");
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn get_project(&self, project_id: &str) -> Result<Project> {
@@ -51,8 +50,7 @@ impl Ferinth {
     Get the projects of `project_ids`
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     // You can use both IDs and slugs
     let projects = modrinth.get_multiple_projects(&[
@@ -62,7 +60,7 @@ impl Ferinth {
         "gvQqBUqZ",
     ]).await?;
     assert_eq!(projects.len(), 4);
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn get_multiple_projects(&self, project_ids: &[&str]) -> Result<Vec<Project>> {
@@ -101,14 +99,13 @@ impl Ferinth {
     the amount of projects returned will most likely be less than `count`.
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     let random_projects = modrinth.get_random_projects(5).await?;
     // The proper check has been disabled due to the reason mentioned above
     // assert_eq!(random_projects.len(), 5);
     assert!(random_projects.len() <= 5);
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn get_random_projects(&self, count: Int) -> Result<Vec<Project>> {
@@ -162,12 +159,11 @@ impl Ferinth {
     if so the ID of the project will be returned
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     let project_id = modrinth.check_validity("sodium").await?;
     assert_eq!(project_id, "AANobbMI");
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn check_validity(&self, project_id: &str) -> Result<String> {
@@ -282,13 +278,12 @@ impl Ferinth {
     Get the dependencies of the project of `project_id`
 
     ```rust
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     let fabric_api = modrinth.get_project_dependencies("fabric-api").await?;
     // Fabric API should not have any dependencies
     assert!(fabric_api.projects.is_empty());
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn get_project_dependencies(&self, project_id: &str) -> Result<ProjectDependencies> {
@@ -329,16 +324,15 @@ impl Ferinth {
     REQUIRES AUTHENTICATION and appropriate permissions!
 
     ```no_run
-    # #[tokio::main]
-    # async fn main() -> ferinth::Result<()> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     // Release the project of ID `XXXXXXXX` in three hours to the public
     modrinth.schedule_project(
         "XXXXXXXX",
         &(chrono::offset::Utc::now() + chrono::Duration::hours(3)),
         &ferinth::structures::project::RequestedStatus::Approved
-    ).await
-    # }
+    ).await?;
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn schedule_project(

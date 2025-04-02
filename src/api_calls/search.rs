@@ -11,8 +11,7 @@ impl Ferinth {
 
     ```rust
     # use ferinth::structures::search::{Sort, Facet};
-    # #[tokio::main]
-    # async fn main() -> Result<(), ferinth::Error> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     let results = modrinth.search_paged(
         "sodium",
@@ -24,7 +23,7 @@ impl Ferinth {
     ).await?;
     // The amount of hits returned should equal the limit provided
     assert_eq!(results.hits.len(), 12);
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn search_paged(
@@ -36,7 +35,7 @@ impl Ferinth {
         mut facets: Vec<Vec<Facet>>,
     ) -> Result<Response> {
         let mut url = API_BASE_URL
-            .join_all(vec!["search"])
+    .join_all(vec!["search"])
             .with_query("query", query)
             .with_query("index", sort)
             .with_query("limit", limit)
@@ -58,8 +57,7 @@ impl Ferinth {
 
     ```rust
     # use ferinth::structures::search::{Sort, Facet};
-    # #[tokio::main]
-    # async fn main() -> Result<(), ferinth::Error> {
+    # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     // When searching for 'sodium' and filtering by Forge mods
     let results = modrinth.search(
@@ -69,7 +67,7 @@ impl Ferinth {
     ).await?;
     // Rubidium should be the result with the most downloads
     assert_eq!(&results.hits[0].slug, "rubidium");
-    # Ok(()) }
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
     pub async fn search(

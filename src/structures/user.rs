@@ -94,14 +94,6 @@ pub struct NotificationAction {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct PayoutHistory {
-    pub all_time: String,
-    /// The amount made by the user in the previous 30 days
-    pub last_month: String,
-    pub payouts: Vec<Payout>,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Payout {
     pub created: UtcTime,
     pub amount: Int,
