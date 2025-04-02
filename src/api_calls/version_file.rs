@@ -8,6 +8,7 @@ impl Ferinth {
     Get the version of the version file with `hash`.
     Only supports SHA1 hashes for now.
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -59,6 +60,7 @@ impl Ferinth {
 
     Returns a map where the keys are the hashes given.
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();

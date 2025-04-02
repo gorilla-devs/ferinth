@@ -37,6 +37,7 @@ impl Ferinth {
     /**
     Get various statistics about this Modrinth instance
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -54,6 +55,7 @@ impl Ferinth {
     /**
     Get the Modrinth API welcome page.
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();

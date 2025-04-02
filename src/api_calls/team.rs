@@ -9,6 +9,7 @@ impl Ferinth {
     /**
     List the members of the team of the project of `project_id`
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -28,6 +29,7 @@ impl Ferinth {
     /**
     List the members of the team of `team_id`
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -73,6 +75,7 @@ impl Ferinth {
     /**
     List the members of the teams of `team_ids`
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();

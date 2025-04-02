@@ -9,6 +9,7 @@ impl Ferinth {
     /**
     Get the versions of the project of `project_id`
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -29,6 +30,7 @@ impl Ferinth {
     Get the versions of the project of `project_id`, filtered based on
     mod `loaders`, `game_versions`, and whether the version is `featured`
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -67,6 +69,7 @@ impl Ferinth {
     /**
     Get the version of `version_id`
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -107,6 +110,7 @@ impl Ferinth {
     /**
     Get the version of the version `number` from the project of `project_id`
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -164,6 +168,7 @@ impl Ferinth {
     /**
     Get the versions of `version_ids`
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();

@@ -9,6 +9,7 @@ impl Ferinth {
     Sort projects by `sort`, and filter projects using the given `facets`.
     In `facets`, only non-empty vectors will be used.
 
+    ## Example
     ```rust
     # use ferinth::structures::search::{Sort, Facet};
     # tokio_test::block_on(async {
@@ -55,6 +56,7 @@ impl Ferinth {
     Sort the hits by `sort`, and filter projects using the given `facets`.
     In `facets`, only non-empty vectors will be used.
 
+    ## Example
     ```rust
     # use ferinth::structures::search::{Sort, Facet};
     # tokio_test::block_on(async {

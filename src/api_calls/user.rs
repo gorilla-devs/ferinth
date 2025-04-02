@@ -10,6 +10,7 @@ impl Ferinth {
     /**
     Get the user of `user_id`
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -55,6 +56,7 @@ impl Ferinth {
 
     REQUIRES AUTHENTICATION!
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::new(
@@ -79,6 +81,7 @@ impl Ferinth {
     /**
     Get the users of `user_ids`
 
+    ## Example
     ```rust
     # use ferinth::structures::user::UserRole;
     # tokio_test::block_on(async {
@@ -121,6 +124,7 @@ impl Ferinth {
     /**
     Get the projects of the user of `user_id`
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -142,6 +146,7 @@ impl Ferinth {
 
     REQUIRES AUTHENTICATION!
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::new(
@@ -168,6 +173,7 @@ impl Ferinth {
 
     REQUIRES AUTHENTICATION!
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::new(

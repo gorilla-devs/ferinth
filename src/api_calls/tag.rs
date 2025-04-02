@@ -9,6 +9,7 @@ impl Ferinth {
     /**
     List the categories, their icons, and applicable project types
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -26,6 +27,7 @@ impl Ferinth {
     /**
     List the loaders, their icons, and supported project types
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -43,6 +45,7 @@ impl Ferinth {
     /**
     List the game versions and information about them
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -60,6 +63,7 @@ impl Ferinth {
     /**
     List licenses and information about them
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -77,6 +81,7 @@ impl Ferinth {
     /**
     List donation platforms and information about them
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -94,6 +99,7 @@ impl Ferinth {
     /**
     List valid report types
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();

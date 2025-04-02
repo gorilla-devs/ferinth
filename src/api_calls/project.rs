@@ -13,6 +13,7 @@ impl Ferinth {
     /**
     Get the project of `project_id`
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -49,6 +50,7 @@ impl Ferinth {
     /**
     Get the projects of `project_ids`
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -98,6 +100,7 @@ impl Ferinth {
     Due to [an issue with labrinth](https://github.com/modrinth/labrinth/issues/548),
     the amount of projects returned will most likely be less than `count`.
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -158,6 +161,7 @@ impl Ferinth {
     Check if the given ID or slug refers to an existing project,
     if so the ID of the project will be returned
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
@@ -277,6 +281,7 @@ impl Ferinth {
     /**
     Get the dependencies of the project of `project_id`
 
+    ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
