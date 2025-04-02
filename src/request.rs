@@ -21,7 +21,9 @@ impl RequestBuilderCustomSend for RequestBuilder {
 }
 
 fn check_rate_limit(response: Response) -> Result<Response> {
-    if response.status() == StatusCode::TOO_MANY_REQUESTS {
+    if response.status() == StatusCode::GONE {
+        Err(crate::Error::ApiDeprecated)
+    } else if response.status() == StatusCode::TOO_MANY_REQUESTS {
         Err(crate::Error::RateLimitExceeded(
             response
                 .headers()

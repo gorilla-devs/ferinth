@@ -40,14 +40,16 @@ pub static API_BASE_URL: LazyLock<Url> = LazyLock::new(|| {
 });
 
 #[derive(thiserror::Error, Debug)]
-#[error("{}", .0)]
+#[error(transparent)]
 pub enum Error {
     #[error("Invalid Modrinth ID or slug")]
     InvalidIDorSlug,
     #[error("Invalid SHA1 hash")]
     InvalidSHA1,
-    #[error("You have been rate limited, please wait for {} seconds", .0)]
+    #[error("You have been rate limited, please wait for {0} seconds")]
     RateLimitExceeded(usize),
+    #[error("The API at {} is deprecated", *API_BASE_URL)]
+    ApiDeprecated,
     ReqwestError(#[from] reqwest::Error),
     JSONError(#[from] serde_json::Error),
     InvalidHeaderValue(#[from] header::InvalidHeaderValue),
