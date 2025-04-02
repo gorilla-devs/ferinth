@@ -1,9 +1,9 @@
 use super::{
-    project::{ProjectSupportRange, ProjectType, MonetizationStatus},
+    project::{MonetizationStatus, ProjectSupportRange, ProjectType},
     *,
 };
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Sort {
     Relevance,
     /// Sorts matches by the number of downloads
@@ -33,18 +33,18 @@ pub enum Facet {
     /// License ID to filter
     License(String),
     /// A custom facet
-    /// 
+    ///
     /// [documentation](https://docs.modrinth.com/api-spec#tag/projects/operation/searchProjects)
-    Custom{
+    Custom {
         /// The type of metadata to filter
         _type: String,
         /// The comparison to use
-        /// 
+        ///
         /// Can be `=`/`:`, `!=`, `>`, `>=`, `<`, `<=`
         operation: String,
         /// The value to compare against
         value: String,
-    }
+    },
 }
 
 impl Serialize for Facet {
@@ -63,7 +63,11 @@ impl Serialize for Facet {
             Facet::Versions(version) => format!("versions: {}", version),
             Facet::OpenSource(bool) => format!("open_source: {}", bool),
             Facet::License(license_id) => format!("license: {}", license_id),
-            Facet::Custom { _type, operation, value } => format!("{} {} {}", _type, operation, value),
+            Facet::Custom {
+                _type,
+                operation,
+                value,
+            } => format!("{_type} {operation} {value}"),
         };
         serializer.collect_str(&output)
     }

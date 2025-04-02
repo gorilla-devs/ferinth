@@ -28,14 +28,14 @@ impl Ferinth {
     */
     pub async fn search_paged(
         &self,
-        query: &str,
-        sort: &Sort,
+        query: impl ToString,
+        sort: Sort,
         limit: Int,
         offset: Int,
         mut facets: Vec<Vec<Facet>>,
     ) -> Result<Response> {
         let mut url = API_BASE_URL
-    .join_all(vec!["search"])
+            .join_all(vec!["search"])
             .with_query("query", query)
             .with_query("index", sort)
             .with_query("limit", limit)
