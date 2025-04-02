@@ -27,14 +27,14 @@ pub struct ReportSubmission {
     pub body: String,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Deserialize, Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ReportItemType {
     Project,
     User,
     Version,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Copy)]
 pub struct Statistics {
     /// The number of project on Modrinth
     pub projects: Int,

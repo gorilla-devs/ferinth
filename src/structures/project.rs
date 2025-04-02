@@ -140,7 +140,7 @@ pub struct EditMultipleProjectsBody {
     pub discord_url: Option<String>,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Deserialize, Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum ProjectStatus {
     Approved,
@@ -160,7 +160,7 @@ pub enum ProjectStatus {
     Unknown,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Deserialize, Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum RequestedStatus {
     Approved,
@@ -170,7 +170,7 @@ pub enum RequestedStatus {
     Draft,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Deserialize, Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(rename_all = "kebab-case")]
 pub enum MonetizationStatus {
     Monetized,
@@ -178,7 +178,7 @@ pub enum MonetizationStatus {
     ForceDemonetized,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Deserialize, Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum ProjectSupportRange {
     /// The mod is required on this side to function
@@ -192,7 +192,7 @@ pub enum ProjectSupportRange {
     Unknown,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Deserialize, Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum ProjectType {
     /// WARNING: Can be a mod, plugin, or data pack
@@ -208,7 +208,7 @@ pub enum ProjectType {
 }
 
 /// File extensions for images
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ImageFileExt {
     /// [Portable Network Graphics](https://en.wikipedia.org/wiki/PNG)
     PNG,

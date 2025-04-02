@@ -54,7 +54,7 @@ pub struct DonationPlatform {
 }
 
 /// The type of a game version
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Deserialize, Serialize, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "lowercase")]
 pub enum GameVersionType {
     Release,
