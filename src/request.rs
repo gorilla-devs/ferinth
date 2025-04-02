@@ -16,7 +16,8 @@ impl RequestBuilderCustomSend for RequestBuilder {
     }
 
     async fn custom_send_json<T: DeserializeOwned>(self) -> Result<T> {
-        Ok(self.custom_send().await?.json().await?)
+        let bytes = self.custom_send().await?.bytes().await?;
+        Ok(serde_json::from_slice(&bytes)?)
     }
 }
 
