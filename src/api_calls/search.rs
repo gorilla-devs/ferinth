@@ -1,7 +1,7 @@
 use super::*;
 use structures::{search::*, Int};
 
-impl Ferinth {
+impl<T> Ferinth<T> {
     /**
     Search for projects using `query` string, with pagination
 
@@ -16,7 +16,7 @@ impl Ferinth {
     # let modrinth = ferinth::Ferinth::default();
     let results = modrinth.search_paged(
         "sodium",
-        &Sort::Relevance,
+        Sort::Relevance,
         // Limit the number of hits to 12
         12,
         0,

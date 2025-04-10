@@ -9,7 +9,7 @@ use reqwest::{
 };
 use structures::{project::*, Int, UtcTime};
 
-impl Ferinth {
+impl<T> Ferinth<T> {
     /**
     Get the project of `project_id`
 
@@ -33,18 +33,6 @@ impl Ferinth {
             .get(API_BASE_URL.join_all(vec!["project", project_id]))
             .custom_send_json()
             .await
-    }
-
-    /// Delete the project of `project_id`
-    ///
-    /// REQUIRES AUTHENTICATION and appropriate permissions!
-    pub async fn delete_project(&self, project_id: &str) -> Result<()> {
-        check_id_slug(&[project_id])?;
-        self.client
-            .delete(API_BASE_URL.join_all(vec!["project", project_id]))
-            .custom_send()
-            .await?;
-        Ok(())
     }
 
     /**
@@ -77,23 +65,6 @@ impl Ferinth {
             .await
     }
 
-    /// Bulk edit the projects of `project_ids` with the given `edits`
-    ///
-    /// REQUIRES AUTHENTICATION and appropriate permissions!
-    pub async fn edit_multiple_projects(
-        &self,
-        project_ids: &[&str],
-        edits: EditMultipleProjectsBody,
-    ) -> Result<()> {
-        check_id_slug(project_ids)?;
-        self.client
-            .patch(API_BASE_URL.join_all(vec!["projects"]))
-            .json(&edits)
-            .custom_send()
-            .await?;
-        Ok(())
-    }
-
     /**
     Get `count` number of random projects
 
@@ -120,41 +91,6 @@ impl Ferinth {
             )
             .custom_send_json()
             .await
-    }
-
-    /// Change the icon of the project of `project_id` to `image` with file `ext`ension
-    ///
-    /// REQUIRES AUTHENTICATION and appropriate permissions!
-    pub async fn change_project_icon<B: Into<Body>>(
-        &self,
-        project_id: &str,
-        image: B,
-        ext: &ImageFileExt,
-    ) -> Result<()> {
-        check_id_slug(&[project_id])?;
-        self.client
-            .patch(
-                API_BASE_URL
-                    .join_all(vec!["project", project_id, "icon"])
-                    .with_query("ext", ext),
-            )
-            .body(image)
-            .header(CONTENT_TYPE, format!("image/{}", ext))
-            .custom_send()
-            .await?;
-        Ok(())
-    }
-
-    /// Delete the icon of the project of `project_id`
-    ///
-    /// REQUIRES AUTHENTICATION and appropriate permissions!
-    pub async fn delete_project_icon(&self, project_id: &str) -> Result<()> {
-        check_id_slug(&[project_id])?;
-        self.client
-            .delete(API_BASE_URL.join_all(vec!["project", project_id, "icon"]))
-            .custom_send()
-            .await?;
-        Ok(())
     }
 
     /**
@@ -185,12 +121,89 @@ impl Ferinth {
     }
 
     /**
+    Get the dependencies of the project of `project_id`
+
+    ## Example
+    ```rust
+    # tokio_test::block_on(async {
+    # let modrinth = ferinth::Ferinth::default();
+    let fabric_api = modrinth.get_project_dependencies("fabric-api").await?;
+    // Fabric API should not have any dependencies
+    assert!(fabric_api.projects.is_empty());
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
+    ```
+    */
+    pub async fn get_project_dependencies(&self, project_id: &str) -> Result<ProjectDependencies> {
+        check_id_slug(&[project_id])?;
+        self.client
+            .get(API_BASE_URL.join_all(vec!["project", project_id, "dependencies"]))
+            .custom_send_json()
+            .await
+    }
+}
+
+impl Ferinth<Authenticated> {
+    /// Delete the project of `project_id`
+    pub async fn delete_project(&self, project_id: &str) -> Result<()> {
+        check_id_slug(&[project_id])?;
+        self.client
+            .delete(API_BASE_URL.join_all(vec!["project", project_id]))
+            .custom_send()
+            .await?;
+        Ok(())
+    }
+
+    /// Bulk edit the projects of `project_ids` with the given `edits`
+    pub async fn edit_multiple_projects(
+        &self,
+        project_ids: &[&str],
+        edits: EditMultipleProjectsBody,
+    ) -> Result<()> {
+        check_id_slug(project_ids)?;
+        self.client
+            .patch(API_BASE_URL.join_all(vec!["projects"]))
+            .json(&edits)
+            .custom_send()
+            .await?;
+        Ok(())
+    }
+
+    /// Change the icon of the project of `project_id` to `image` with file `ext`ension
+    pub async fn change_project_icon(
+        &self,
+        project_id: &str,
+        image: impl Into<Body>,
+        ext: ImageFileExt,
+    ) -> Result<()> {
+        check_id_slug(&[project_id])?;
+        self.client
+            .patch(
+                API_BASE_URL
+                    .join_all(vec!["project", project_id, "icon"])
+                    .with_query("ext", ext),
+            )
+            .body(image)
+            .header(CONTENT_TYPE, format!("image/{}", ext))
+            .custom_send()
+            .await?;
+        Ok(())
+    }
+
+    /// Delete the icon of the project of `project_id`
+    pub async fn delete_project_icon(&self, project_id: &str) -> Result<()> {
+        check_id_slug(&[project_id])?;
+        self.client
+            .delete(API_BASE_URL.join_all(vec!["project", project_id, "icon"]))
+            .custom_send()
+            .await?;
+        Ok(())
+    }
+
+    /**
     Add `image` of file `ext`ention and optional `title` to the gallery of the project of `project_id`.
     State whether the image should be `featured` or not, and optionally provide a `description`.
 
     The image data can have a maximum size of `5 MiB`.
-
-    REQUIRES AUTHENTICATION and appropriate permissions!
     */
     pub async fn add_gallery_image<B: Into<Body>>(
         &self,
@@ -224,11 +237,7 @@ impl Ferinth {
         Ok(())
     }
 
-    /**
-    Modify the gallery image of `url` of the project of `project_id`
-
-    REQUIRES AUTHENTICATION and appropriate permissions!
-    */
+    /// Modify the gallery image of `url` of the project of `project_id`
     pub async fn modify_gallery_image<U: IntoUrl>(
         &self,
         project_id: &str,
@@ -259,8 +268,6 @@ impl Ferinth {
     }
 
     /// Delete the gallery image of `image_url` from the project of `project_id`
-    ///
-    /// REQUIRES AUTHENTICATION and appropriate permissions!
     pub async fn delete_gallery_image<U: IntoUrl>(
         &self,
         project_id: &str,
@@ -278,30 +285,7 @@ impl Ferinth {
         Ok(())
     }
 
-    /**
-    Get the dependencies of the project of `project_id`
-
-    ## Example
-    ```rust
-    # tokio_test::block_on(async {
-    # let modrinth = ferinth::Ferinth::default();
-    let fabric_api = modrinth.get_project_dependencies("fabric-api").await?;
-    // Fabric API should not have any dependencies
-    assert!(fabric_api.projects.is_empty());
-    # Ok::<_, ferinth::Error>(()) }).unwrap()
-    ```
-    */
-    pub async fn get_project_dependencies(&self, project_id: &str) -> Result<ProjectDependencies> {
-        check_id_slug(&[project_id])?;
-        self.client
-            .get(API_BASE_URL.join_all(vec!["project", project_id, "dependencies"]))
-            .custom_send_json()
-            .await
-    }
-
     /// Follow the project of `project_id`
-    ///
-    /// REQUIRES AUTHENTICATION!
     pub async fn follow(&self, project_id: &str) -> Result<()> {
         check_id_slug(&[project_id])?;
         self.client
@@ -312,8 +296,6 @@ impl Ferinth {
     }
 
     /// Unfollow the project of `project_id`
-    ///
-    /// REQUIRES AUTHENTICATION!
     pub async fn unfollow(&self, project_id: &str) -> Result<()> {
         check_id_slug(&[project_id])?;
         self.client
@@ -326,11 +308,14 @@ impl Ferinth {
     /**
     Schedule a change of `status` at `time` to the project of `project_id`
 
-    REQUIRES AUTHENTICATION and appropriate permissions!
-
     ```no_run
     # tokio_test::block_on(async {
-    # let modrinth = ferinth::Ferinth::default();
+    # let modrinth = ferinth::Ferinth::<ferinth::Authenticated>::new(
+    #     env!("CARGO_CRATE_NAME"),
+    #     Some(env!("CARGO_PKG_VERSION")),
+    #     None,
+    #     env!("MODRINTH_TOKEN"),
+    # )?;
     // Release the project of ID `XXXXXXXX` in three hours to the public
     modrinth.schedule_project(
         "XXXXXXXX",
@@ -362,15 +347,15 @@ impl Ferinth {
 
 #[cfg(test)]
 mod tests {
-    use crate::{structures::project, Error, Ferinth, Result};
+    use super::*;
 
     #[tokio::test]
     async fn follow() -> Result<()> {
-        let modrinth = Ferinth::new(
+        let modrinth = Ferinth::<Authenticated>::new(
             env!("CARGO_CRATE_NAME"),
             Some(env!("CARGO_PKG_VERSION")),
             None,
-            Some(env!("MODRINTH_TOKEN")),
+            env!("MODRINTH_TOKEN"),
         )?;
         let project_id = env!("TEST_PROJECT_ID");
         let user_id = modrinth.get_current_user().await?.id;
@@ -402,11 +387,11 @@ mod tests {
 
     #[tokio::test]
     async fn gallery() -> Result<()> {
-        let modrinth = Ferinth::new(
+        let modrinth = Ferinth::<Authenticated>::new(
             env!("CARGO_CRATE_NAME"),
             Some(env!("CARGO_PKG_VERSION")),
             None,
-            Some(env!("MODRINTH_TOKEN")),
+            env!("MODRINTH_TOKEN"),
         )?;
         let project_id = env!("TEST_PROJECT_ID");
 
@@ -456,11 +441,11 @@ mod tests {
 
     #[tokio::test]
     async fn project_icon() -> Result<()> {
-        let modrinth = Ferinth::new(
+        let modrinth = Ferinth::<Authenticated>::new(
             env!("CARGO_CRATE_NAME"),
             Some(env!("CARGO_PKG_VERSION")),
             None,
-            Some(env!("MODRINTH_TOKEN")),
+            env!("MODRINTH_TOKEN"),
         )?;
         let project_id = env!("TEST_PROJECT_ID");
 
@@ -470,7 +455,7 @@ mod tests {
 
         let image = std::fs::read("test_image.png").expect("Cannot read test image");
         modrinth
-            .change_project_icon(project_id, image, &project::ImageFileExt::PNG)
+            .change_project_icon(project_id, image, project::ImageFileExt::PNG)
             .await?;
         let project = modrinth.get_project(project_id).await?;
         assert!(project.icon_url.is_some());

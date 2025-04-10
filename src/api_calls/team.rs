@@ -5,7 +5,7 @@
 use super::*;
 use crate::structures::user::*;
 
-impl Ferinth {
+impl<T> Ferinth<T> {
     /**
     List the members of the team of the project of `project_id`
 
@@ -47,32 +47,6 @@ impl Ferinth {
     }
 
     /**
-    Send an invite to the user of `user_id` to join the team of `team_id`
-
-    REQUIRES AUTHENTICATION and appropriate permissions!
-
-    ```no_run
-    # tokio_test::block_on(async {
-    # let modrinth = ferinth::Ferinth::default();
-    modrinth.add_user("XXXXXXXX", "YYYYYYYY").await?;
-    # Ok::<_, ferinth::Error>(()) }).unwrap()
-    ```
-    */
-    pub async fn add_user(&self, team_id: &str, user_id: &str) -> Result<()> {
-        #[derive(serde::Serialize)]
-        struct Body<'a> {
-            user_id: &'a str,
-        }
-
-        self.client
-            .post(API_BASE_URL.join_all(vec!["team", team_id, "members"]))
-            .json(&Body { user_id })
-            .custom_send()
-            .await?;
-        Ok(())
-    }
-
-    /**
     List the members of the teams of `team_ids`
 
     ## Example
@@ -103,15 +77,49 @@ impl Ferinth {
             .custom_send_json()
             .await
     }
+}
+
+impl Ferinth<Authenticated> {
+    /**
+    Send an invite to the user of `user_id` to join the team of `team_id`
+
+    ```no_run
+    # tokio_test::block_on(async {
+    # let modrinth = ferinth::Ferinth::<ferinth::Authenticated>::new(
+    #     env!("CARGO_CRATE_NAME"),
+    #     Some(env!("CARGO_PKG_VERSION")),
+    #     None,
+    #     env!("MODRINTH_TOKEN"),
+    # )?;
+    modrinth.add_user("XXXXXXXX", "YYYYYYYY").await?;
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
+    ```
+    */
+    pub async fn add_user(&self, team_id: &str, user_id: &str) -> Result<()> {
+        #[derive(serde::Serialize)]
+        struct Body<'a> {
+            user_id: &'a str,
+        }
+
+        self.client
+            .post(API_BASE_URL.join_all(vec!["team", team_id, "members"]))
+            .json(&Body { user_id })
+            .custom_send()
+            .await?;
+        Ok(())
+    }
 
     /**
     Accept an invite to join the team of `team_id`
 
-    REQUIRES AUTHENTICATION!
-
     ```no_run
     # tokio_test::block_on(async {
-    # let modrinth = ferinth::Ferinth::default();
+    # let modrinth = ferinth::Ferinth::<ferinth::Authenticated>::new(
+    #     env!("CARGO_CRATE_NAME"),
+    #     Some(env!("CARGO_PKG_VERSION")),
+    #     None,
+    #     env!("MODRINTH_TOKEN"),
+    # )?;
     modrinth.join_team("XXXXXXXX").await?;
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
@@ -127,11 +135,14 @@ impl Ferinth {
     /**
     Remove the member of `user_id` from the team of `team_id`
 
-    REQUIRES AUTHENTICATION and appropriate permissions!
-
     ```no_run
     # tokio_test::block_on(async {
-    # let modrinth = ferinth::Ferinth::default();
+    # let modrinth = ferinth::Ferinth::<ferinth::Authenticated>::new(
+    #     env!("CARGO_CRATE_NAME"),
+    #     Some(env!("CARGO_PKG_VERSION")),
+    #     None,
+    #     env!("MODRINTH_TOKEN"),
+    # )?;
     modrinth.remove_member("XXXXXXXX", "YYYYYYYY").await?;
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
@@ -147,11 +158,14 @@ impl Ferinth {
     /**
     Transfer ownership of the team of `team_id` to the user of `user_id`
 
-    REQUIRES AUTHENTICATION and appropriate permissions!
-
     ```no_run
     # tokio_test::block_on(async {
-    # let modrinth = ferinth::Ferinth::default();
+    # let modrinth = ferinth::Ferinth::<ferinth::Authenticated>::new(
+    #     env!("CARGO_CRATE_NAME"),
+    #     Some(env!("CARGO_PKG_VERSION")),
+    #     None,
+    #     env!("MODRINTH_TOKEN"),
+    # )?;
     modrinth.transfer_ownership("XXXXXXXX", "YYYYYYYY").await?;
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```

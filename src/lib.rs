@@ -24,8 +24,11 @@ mod url_ext;
 
 pub use api_calls::{check_id_slug, check_sha1_hash};
 
-use reqwest::{header, Client};
-use std::sync::LazyLock;
+use reqwest::{
+    header::{HeaderMap, HeaderValue, InvalidHeaderValue},
+    Client,
+};
+use std::{marker::PhantomData, sync::LazyLock};
 use url::Url;
 
 /// The base URL for the Modrinth API
@@ -52,7 +55,7 @@ pub enum Error {
     ApiDeprecated,
     ReqwestError(#[from] reqwest::Error),
     JSONError(#[from] serde_json::Error),
-    InvalidHeaderValue(#[from] header::InvalidHeaderValue),
+    InvalidHeaderValue(#[from] InvalidHeaderValue),
 }
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -80,11 +83,13 @@ let modrinth = ferinth::Ferinth::new(
 ```
 */
 #[derive(Debug, Clone)]
-pub struct Ferinth {
+pub struct Ferinth<Auth> {
     client: Client,
+    auth: PhantomData<Auth>,
 }
+pub struct Authenticated;
 
-impl Default for Ferinth {
+impl Default for Ferinth<()> {
     fn default() -> Self {
         Self {
             client: Client::builder()
@@ -95,43 +100,70 @@ impl Default for Ferinth {
                 ))
                 .build()
                 .expect("Failed to initialise TLS backend"),
+            auth: PhantomData,
         }
     }
 }
 
-impl Ferinth {
-    /**
-    Instantiate the container with the provided [user agent](https://docs.modrinth.com/api-spec/#section/User-Agents) details,
-    and an optional GitHub token for `authorisation`.
-
-    The program `name` is required, while `version` and `contact` are optional but recommended.
-
-    This function fails if the GitHub `authorisation` token provided is invalid header data.
-    */
-    pub fn new(
+impl<T> Ferinth<T> {
+    fn client_builder(
         name: &str,
         version: Option<&str>,
         contact: Option<&str>,
-        authorisation: Option<&str>,
-    ) -> Result<Self> {
-        use header::{HeaderMap, HeaderValue};
+    ) -> reqwest::ClientBuilder {
+        Client::builder().user_agent(format!(
+            "{}{}{}",
+            name,
+            version.map_or("".into(), |version| format!("/{}", version)),
+            contact.map_or("".into(), |contact| format!(" ({})", contact))
+        ))
+    }
+}
 
+impl Ferinth<()> {
+    /**
+    Instantiate the container with the provided
+    [user agent](https://docs.modrinth.com/api-spec/#section/User-Agents) details.
+
+    The program `name` is required; `version` and `contact` are optional but recommended.
+    */
+    pub fn new(name: &str, version: Option<&str>, contact: Option<&str>) -> Self {
+        Self {
+            auth: PhantomData,
+            client: Self::client_builder(name, version, contact)
+                .build()
+                .expect("Failed to initialise TLS backend"),
+        }
+    }
+}
+
+impl Ferinth<Authenticated> {
+    /*
+    Instantiate the container with the provided
+    [user agent](https://docs.modrinth.com/api-spec/#section/User-Agents) details,
+    and authentication `token`.
+
+    The program `name` is required; `version` and `contact` are optional but recommended.
+
+    Fails if the provided `token` cannot be converted into a `HeaderValue`.
+    */
+    pub fn new<V>(
+        name: &str,
+        version: Option<&str>,
+        contact: Option<&str>,
+        token: V,
+    ) -> Result<Self>
+    where
+        V: TryInto<HeaderValue>,
+        Error: From<V::Error>,
+    {
         Ok(Self {
-            client: Client::builder()
-                .user_agent(format!(
-                    "{}{}{}",
-                    name,
-                    version.map_or("".into(), |version| format!("/{}", version)),
-                    contact.map_or("".into(), |contact| format!(" ({})", contact))
-                ))
-                .default_headers(if let Some(authorisation) = authorisation {
-                    HeaderMap::from_iter(vec![(
-                        header::AUTHORIZATION,
-                        HeaderValue::from_str(authorisation)?,
-                    )])
-                } else {
-                    HeaderMap::new()
-                })
+            auth: PhantomData,
+            client: Self::client_builder(name, version, contact)
+                .default_headers(HeaderMap::from_iter([(
+                    reqwest::header::AUTHORIZATION,
+                    token.try_into()?,
+                )]))
                 .build()
                 .expect("Failed to initialise TLS backend"),
         })

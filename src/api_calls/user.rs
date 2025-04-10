@@ -4,9 +4,8 @@
 
 use super::*;
 use crate::structures::{project::Project, user::*};
-use reqwest::Body;
 
-impl Ferinth {
+impl<T> Ferinth<T> {
     /**
     Get the user of `user_id`
 
@@ -26,54 +25,6 @@ impl Ferinth {
         check_id_slug(&[user_id])?;
         self.client
             .get(API_BASE_URL.join_all(vec!["user", user_id]))
-            .custom_send_json()
-            .await
-    }
-
-    /**
-    Delete the user of `user_id`
-
-    REQUIRES AUTHENTICATION and appropriate permissions!
-
-    ```no_run
-    # tokio_test::block_on(async {
-    # let modrinth = ferinth::Ferinth::default();
-    modrinth.delete_user("XXXXXXXX").await?;
-    # Ok::<_, ferinth::Error>(()) }).unwrap()
-    ```
-    */
-    pub async fn delete_user(&self, user_id: &str) -> Result<()> {
-        check_id_slug(&[user_id])?;
-        self.client
-            .delete(API_BASE_URL.join_all(vec!["user", user_id]))
-            .custom_send()
-            .await?;
-        Ok(())
-    }
-
-    /**
-    Get the user from the current authorisation header
-
-    REQUIRES AUTHENTICATION!
-
-    ## Example
-    ```rust
-    # tokio_test::block_on(async {
-    # let modrinth = ferinth::Ferinth::new(
-    #     env!("CARGO_CRATE_NAME"),
-    #     Some(env!("CARGO_PKG_VERSION")),
-    #     None,
-    #     Some(env!("MODRINTH_TOKEN")),
-    # )?;
-    let current_user = modrinth.get_current_user().await?;
-    // The email should be visible as we are authorised
-    assert!(current_user.email.is_some());
-    # Ok::<_, ferinth::Error>(()) }).unwrap()
-    ```
-    */
-    pub async fn get_current_user(&self) -> Result<User> {
-        self.client
-            .get(API_BASE_URL.join_all(vec!["user"]))
             .custom_send_json()
             .await
     }
@@ -104,24 +55,6 @@ impl Ferinth {
     }
 
     /**
-    Change the avatar of the user of `user_id` to `image`
-
-    REQUIRES AUTHENTICATION!
-
-    The image may be up to `2 Mib` large.
-    By default, the user's GitHub avatar is used.
-    */
-    pub async fn change_avatar<B: Into<Body>>(&self, user_id: &str, image: B) -> Result<()> {
-        check_id_slug(&[user_id])?;
-        self.client
-            .post(API_BASE_URL.join_all(vec!["user", user_id, "icon"]))
-            .body(image)
-            .custom_send()
-            .await?;
-        Ok(())
-    }
-
-    /**
     Get the projects of the user of `user_id`
 
     ## Example
@@ -140,20 +73,20 @@ impl Ferinth {
             .custom_send_json()
             .await
     }
+}
 
+impl Ferinth<Authenticated> {
     /**
     Get the notifications of the user of `user_id`
-
-    REQUIRES AUTHENTICATION!
 
     ## Example
     ```rust
     # tokio_test::block_on(async {
-    # let modrinth = ferinth::Ferinth::new(
+    # let modrinth = ferinth::Ferinth::<ferinth::Authenticated>::new(
     #     env!("CARGO_CRATE_NAME"),
     #     Some(env!("CARGO_PKG_VERSION")),
     #     None,
-    #     Some(env!("MODRINTH_TOKEN")),
+    #     env!("MODRINTH_TOKEN"),
     # )?;
     # let user_id = modrinth.get_current_user().await?.id;
     let notifications = modrinth.get_notifications(&user_id).await?;
@@ -171,16 +104,14 @@ impl Ferinth {
     /**
     Get the projects that the user of `user_id` has followed
 
-    REQUIRES AUTHENTICATION!
-
     ## Example
     ```rust
     # tokio_test::block_on(async {
-    # let modrinth = ferinth::Ferinth::new(
+    # let modrinth = ferinth::Ferinth::<ferinth::Authenticated>::new(
     #     env!("CARGO_CRATE_NAME"),
     #     Some(env!("CARGO_PKG_VERSION")),
     #     None,
-    #     Some(env!("MODRINTH_TOKEN")),
+    #     env!("MODRINTH_TOKEN"),
     # )?;
     # let user_id = modrinth.get_current_user().await?.id;
     let projects = modrinth.followed_projects(&user_id).await?;
@@ -191,6 +122,55 @@ impl Ferinth {
         check_id_slug(&[user_id])?;
         self.client
             .get(API_BASE_URL.join_all(vec!["user", user_id, "follows"]))
+            .custom_send_json()
+            .await
+    }
+
+    /**
+    Delete the user of `user_id`
+
+    ```no_run
+    # tokio_test::block_on(async {
+    # let modrinth = ferinth::Ferinth::<ferinth::Authenticated>::new(
+    #     env!("CARGO_CRATE_NAME"),
+    #     Some(env!("CARGO_PKG_VERSION")),
+    #     None,
+    #     env!("MODRINTH_TOKEN"),
+    # )?;
+    modrinth.delete_user("XXXXXXXX").await?;
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
+    ```
+    */
+    pub async fn delete_user(&self, user_id: &str) -> Result<()> {
+        check_id_slug(&[user_id])?;
+        self.client
+            .delete(API_BASE_URL.join_all(vec!["user", user_id]))
+            .custom_send()
+            .await?;
+        Ok(())
+    }
+
+    /**
+    Get the user from the current authorisation header
+
+    ## Example
+    ```rust
+    # tokio_test::block_on(async {
+    # let modrinth = ferinth::Ferinth::<ferinth::Authenticated>::new(
+    #     env!("CARGO_CRATE_NAME"),
+    #     Some(env!("CARGO_PKG_VERSION")),
+    #     None,
+    #     env!("MODRINTH_TOKEN"),
+    # )?;
+    let current_user = modrinth.get_current_user().await?;
+    // The email should be visible as we are authorised
+    assert!(current_user.email.is_some());
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
+    ```
+    */
+    pub async fn get_current_user(&self) -> Result<User> {
+        self.client
+            .get(API_BASE_URL.join_all(vec!["user"]))
             .custom_send_json()
             .await
     }

@@ -13,7 +13,7 @@ use crate::{
     request::RequestBuilderCustomSend,
     structures,
     url_ext::{UrlJoinAll, UrlWithQuery},
-    Error, Ferinth, Result, API_BASE_URL,
+    Authenticated, Error, Ferinth, Result, API_BASE_URL,
 };
 
 /// Verify that the `inputs` are Modrinth ID or slug compliant

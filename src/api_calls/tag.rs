@@ -5,7 +5,7 @@
 use super::*;
 use crate::structures::tag::*;
 
-impl Ferinth {
+impl<T> Ferinth<T> {
     /**
     List the categories, their icons, and applicable project types
 

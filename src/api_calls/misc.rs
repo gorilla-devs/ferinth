@@ -5,17 +5,20 @@
 use super::*;
 use crate::structures::misc::*;
 
-impl Ferinth {
+impl Ferinth<Authenticated> {
     /**
     Submit a report to the moderators
 
     Valid report types can be found using [`Ferinth::list_report_types`]
 
-    REQUIRES AUTHENTICATION!
-
     ```no_run
     # tokio_test::block_on(async {
-    # let modrinth = ferinth::Ferinth::default();
+    # let modrinth = ferinth::Ferinth::<ferinth::Authenticated>::new(
+    #     env!("CARGO_CRATE_NAME"),
+    #     Some(env!("CARGO_PKG_VERSION")),
+    #     None,
+    #     env!("MODRINTH_TOKEN"),
+    # )?;
     let report = modrinth.submit_report(&ferinth::structures::misc::ReportSubmission {
         report_type: "other".to_string(),
         item_id: "XXXXXXXX".to_string(),
@@ -33,7 +36,9 @@ impl Ferinth {
             .custom_send_json()
             .await
     }
+}
 
+impl<T> Ferinth<T> {
     /**
     Get various statistics about this Modrinth instance
 

@@ -3,7 +3,41 @@ use crate::structures::version::*;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-impl Ferinth {
+impl Ferinth<Authenticated> {
+    /**
+    Delete the version file with the `hash`.
+    Only supports SHA1 hashes for now.
+    Optionally specify the version ID to delete the version file from, if multiple files of the same hash exist.
+
+    ```no_run
+    # tokio_test::block_on(async {
+    # let modrinth = ferinth::Ferinth::<ferinth::Authenticated>::new(
+    #     env!("CARGO_CRATE_NAME"),
+    #     Some(env!("CARGO_PKG_VERSION")),
+    #     None,
+    #     env!("MODRINTH_TOKEN"),
+    # )?;
+    modrinth.delete_version_file_from_hash("795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf", None).await?;
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
+    ```
+    */
+    pub async fn delete_version_file_from_hash(
+        &self,
+        hash: &str,
+        version_id: Option<&str>,
+    ) -> Result<()> {
+        check_sha1_hash(&[hash])?;
+        let mut url = API_BASE_URL.join_all(vec!["version_file", hash]);
+        if let Some(version_id) = version_id {
+            check_id_slug(&[version_id])?;
+            url = url.with_query("version_id", version_id);
+        }
+        self.client.delete(url).custom_send().await?;
+        Ok(())
+    }
+}
+
+impl<T> Ferinth<T> {
     /**
     Get the version of the version file with `hash`.
     Only supports SHA1 hashes for now.
@@ -24,35 +58,6 @@ impl Ferinth {
             .get(API_BASE_URL.join_all(vec!["version_file", hash]))
             .custom_send_json()
             .await
-    }
-
-    /**
-    Delete the version file with the `hash`.
-    Only supports SHA1 hashes for now.
-    Optionally specify the version ID to delete the version file from, if multiple files of the same hash exist.
-
-    REQUIRES AUTHENTICATION and appropriate permissions!
-
-    ```no_run
-    # tokio_test::block_on(async {
-    # let modrinth = ferinth::Ferinth::default();
-    modrinth.delete_version_file_from_hash("795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf", None).await?;
-    # Ok::<_, ferinth::Error>(()) }).unwrap()
-    ```
-    */
-    pub async fn delete_version_file_from_hash(
-        &self,
-        hash: &str,
-        version_id: Option<&str>,
-    ) -> Result<()> {
-        check_sha1_hash(&[hash])?;
-        let mut url = API_BASE_URL.join_all(vec!["version_file", hash]);
-        if let Some(version_id) = version_id {
-            check_id_slug(&[version_id])?;
-            url = url.with_query("version_id", version_id);
-        }
-        self.client.delete(url).custom_send().await?;
-        Ok(())
     }
 
     /**

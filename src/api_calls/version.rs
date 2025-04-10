@@ -5,7 +5,74 @@
 use super::*;
 use crate::structures::{version::*, UtcTime};
 
-impl Ferinth {
+impl Ferinth<Authenticated> {
+    /**
+    Delete the version of `version_id`
+
+    ```no_run
+    # tokio_test::block_on(async {
+    # let modrinth = ferinth::Ferinth::<ferinth::Authenticated>::new(
+    #     env!("CARGO_CRATE_NAME"),
+    #     Some(env!("CARGO_PKG_VERSION")),
+    #     None,
+    #     env!("MODRINTH_TOKEN"),
+    # )?;
+    modrinth.delete_version("XXXXXXXX").await?;
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
+    ```
+    */
+    pub async fn delete_version(&self, version_id: &str) -> Result<()> {
+        check_id_slug(&[version_id])?;
+        self.client
+            .delete(API_BASE_URL.join_all(vec!["version", version_id]))
+            .custom_send()
+            .await?;
+        Ok(())
+    }
+
+    /**
+    Schedule changing the status of version of `version_id` to `requested_status` at `time`
+
+    ```no_run
+    # use ferinth::structures::version::RequestedStatus;
+    # use chrono::{Duration, offset::Utc};
+    # tokio_test::block_on(async {
+    # let modrinth = ferinth::Ferinth::<ferinth::Authenticated>::new(
+    #     env!("CARGO_CRATE_NAME"),
+    #     Some(env!("CARGO_PKG_VERSION")),
+    #     None,
+    #     env!("MODRINTH_TOKEN"),
+    # )?;
+    // Release the version of ID `xuWxRZPd` to the public in three hours
+    modrinth.schedule_version(
+        "xuWxRZPd",
+        &(Utc::now() + Duration::hours(3)),
+        &RequestedStatus::Listed
+    ).await?;
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
+    ```
+    */
+    pub async fn schedule_version(
+        &self,
+        version_id: &str,
+        time: &UtcTime,
+        status: &RequestedStatus,
+    ) -> Result<()> {
+        check_id_slug(&[version_id])?;
+        self.client
+            .post(
+                API_BASE_URL
+                    .join_all(vec!["version", version_id, "schedule"])
+                    .with_query_json("time", time)?
+                    .with_query_json("requested_status", status)?,
+            )
+            .custom_send()
+            .await?;
+        Ok(())
+    }
+}
+
+impl<T> Ferinth<T> {
     /**
     Get the versions of the project of `project_id`
 
@@ -87,27 +154,6 @@ impl Ferinth {
     }
 
     /**
-    Delete the version of `version_id`
-
-    REQUIRES AUTHENTICATION and appropriate permissions!
-
-    ```no_run
-    # tokio_test::block_on(async {
-    # let modrinth = ferinth::Ferinth::default();
-    modrinth.delete_version("XXXXXXXX").await?;
-    # Ok::<_, ferinth::Error>(()) }).unwrap()
-    ```
-    */
-    pub async fn delete_version(&self, version_id: &str) -> Result<()> {
-        check_id_slug(&[version_id])?;
-        self.client
-            .delete(API_BASE_URL.join_all(vec!["version", version_id]))
-            .custom_send()
-            .await?;
-        Ok(())
-    }
-
-    /**
     Get the version of the version `number` from the project of `project_id`
 
     ## Example
@@ -125,44 +171,6 @@ impl Ferinth {
             .get(API_BASE_URL.join_all(vec!["project", project_id, "version", number]))
             .custom_send_json()
             .await
-    }
-
-    /**
-    Schedule changing the status of version of `version_id` to `requested_status` at `time`
-
-    REQUIRES AUTHENTICATION and appropriate permissions!
-
-    ```no_run
-    # use ferinth::structures::version::RequestedStatus;
-    # use chrono::{Duration, offset::Utc};
-    # tokio_test::block_on(async {
-    # let modrinth = ferinth::Ferinth::default();
-    // Release the version of ID `xuWxRZPd` to the public in three hours
-    modrinth.schedule_version(
-        "xuWxRZPd",
-        &(Utc::now() + Duration::hours(3)),
-        &RequestedStatus::Listed
-    ).await?;
-    # Ok::<_, ferinth::Error>(()) }).unwrap()
-    ```
-    */
-    pub async fn schedule_version(
-        &self,
-        version_id: &str,
-        time: &UtcTime,
-        status: &RequestedStatus,
-    ) -> Result<()> {
-        check_id_slug(&[version_id])?;
-        self.client
-            .post(
-                API_BASE_URL
-                    .join_all(vec!["version", version_id, "schedule"])
-                    .with_query_json("time", time)?
-                    .with_query_json("requested_status", status)?,
-            )
-            .custom_send()
-            .await?;
-        Ok(())
     }
 
     /**
