@@ -61,14 +61,14 @@ impl<T> Ferinth<T> {
     # use ferinth::structures::search::{Sort, Facet};
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    // When searching for 'sodium' and filtering by Forge mods
+    // When searching for 'sodium' and filtering by NeoForge mods
     let results = modrinth.search(
         "sodium",
         &Sort::Downloads,
-        vec![vec![ Facet::Categories("forge".into()) ]],
+        vec![vec![ Facet::Categories("neoforge".into()) ]],
     ).await?;
-    // Rubidium should be the result with the most downloads
-    assert_eq!(&results.hits[0].slug, "rubidium");
+    // Sodium should be the result with the most downloads
+    assert_eq!(results.hits[0].slug, Some("sodium".to_owned()));
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
