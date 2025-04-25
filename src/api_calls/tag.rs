@@ -61,19 +61,21 @@ impl<T> Ferinth<T> {
     }
 
     /**
-    List licenses and information about them
+    Get the text and title of a license
 
     ## Example
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let licenses = modrinth.list_licenses().await?;
+    let license = modrinth.license_text_and_title("MIT").await?;
+    assert_eq!(license.title, "MIT License");
+    assert!(license.body.contains("MIT License"));
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn list_licenses(&self) -> Result<Vec<License>> {
+    pub async fn license_text_and_title(&self, id: &str) -> Result<License> {
         self.client
-            .get(API_BASE_URL.join_all(vec!["tag", "license"]))
+            .get(API_BASE_URL.join_all(vec!["tag", "license", id]))
             .custom_send_json()
             .await
     }

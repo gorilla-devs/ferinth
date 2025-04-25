@@ -38,12 +38,10 @@ pub struct GameVersion {
     pub major: bool,
 }
 
-/// The licenses that projects can be searched with
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct License {
-    /// The SPDX license ID of a project
-    pub short: String,
-    pub name: String,
+    pub title: String,
+    pub body: String,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
