@@ -1,7 +1,4 @@
-use super::{
-    project::{MonetizationStatus, ProjectSupportRange, ProjectType},
-    *,
-};
+use super::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Sort {
@@ -83,16 +80,15 @@ pub struct Response {
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct SearchHit {
-    /// The project's slug, used for vanity URLs
-    ///
-    /// This can change at any time, so use the [`Project::id`] for long term storage.
-    pub slug: String,
+    /// The project's slug, used for vanity URLs.
+    /// This can change at any time, so use the [`Self::project_id`] for long term storage.
+    pub slug: Option<String>,
     pub title: String,
     pub description: String,
     pub categories: Vec<String>,
-    pub client_side: ProjectSupportRange,
-    pub server_side: ProjectSupportRange,
-    pub project_type: ProjectType,
+    pub client_side: project::ProjectSupportRange,
+    pub server_side: project::ProjectSupportRange,
+    pub project_type: project::ProjectType,
     pub downloads: Int,
     #[serde(deserialize_with = "deserialise_optional_url")]
     pub icon_url: Option<Url>,
@@ -100,7 +96,7 @@ pub struct SearchHit {
     pub color: Option<Int>,
     /// The ID of the moderation thread associated with this project
     pub thread_id: Option<ID>,
-    pub monetization_status: Option<MonetizationStatus>,
+    pub monetization_status: Option<project::MonetizationStatus>,
     pub project_id: ID,
     /// Username of the project's authour
     pub author: String,

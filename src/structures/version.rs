@@ -3,7 +3,6 @@
 //! [documentation](https://docs.modrinth.com/api-spec/#tag/version_model)
 
 use super::*;
-use std::collections::HashMap;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Version {
@@ -51,7 +50,7 @@ pub struct Hash {
     pub sha1: String,
     /// Other hashes that may have been provided
     #[serde(flatten)]
-    pub others: HashMap<String, String>,
+    pub others: std::collections::HashMap<String, String>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

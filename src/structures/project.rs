@@ -7,7 +7,7 @@ use super::*;
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Project {
     /// The project's slug, used for vanity URLs.
-    /// This can change at any time, so use the [`Project::id`] for long term storage.
+    /// This can change at any time, so use the [`Self::id`] for long term storage.
     pub slug: String,
     pub title: String,
     /// A short description of the project
@@ -42,8 +42,8 @@ pub struct Project {
     /// The RGB color of the project, automatically generated from the project icon
     pub color: Option<Int>,
     /// The ID of the moderation thread associated with this project
-    pub thread_id: Option<ID>,
-    pub monetization_status: Option<MonetizationStatus>,
+    pub thread_id: ID,
+    pub monetization_status: MonetizationStatus,
     pub id: ID,
     /// The ID of the team that has ownership of this project
     pub team: ID,
@@ -51,6 +51,7 @@ pub struct Project {
     pub updated: UtcTime,
     /// The date the project's status was approved
     pub approved: Option<UtcTime>,
+    pub queued: Option<UtcTime>,
     pub followers: Int,
     pub license: License,
     /// A list of the version IDs of the project.
@@ -62,13 +63,8 @@ pub struct Project {
     pub loaders: Vec<String>,
     /// A list of images that have been uploaded to the project's gallery
     pub gallery: Vec<GalleryItem>,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct ModeratorMessage {
-    pub message: String,
-    /// The longer body of the message
-    pub body: Option<String>,
+    // The ID of the organisation that owns this project
+    pub organization: Option<ID>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -94,6 +90,7 @@ pub struct DonationLink {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct GalleryItem {
     pub url: Url,
+    pub raw_url: Url,
     pub featured: bool,
     pub title: Option<String>,
     pub description: Option<String>,
