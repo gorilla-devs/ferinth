@@ -46,11 +46,11 @@ impl<T> Ferinth<T> {
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let statistics = modrinth.get_statistics().await?;
+    let statistics = modrinth.instance_statistics().await?;
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn get_statistics(&self) -> Result<Statistics> {
+    pub async fn instance_statistics(&self) -> Result<Statistics> {
         self.client
             .get(API_BASE_URL.join_all(vec!["statistics"]))
             .custom_send_json()

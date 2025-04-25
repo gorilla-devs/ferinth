@@ -17,11 +17,11 @@ impl Ferinth<Authenticated> {
     #     None,
     #     env!("MODRINTH_TOKEN"),
     # )?;
-    modrinth.delete_version_file_from_hash("795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf", None).await?;
+    modrinth.version_file_delete_from_hash("795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf", None).await?;
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn delete_version_file_from_hash(
+    pub async fn version_file_delete_from_hash(
         &self,
         hash: &str,
         version_id: Option<&str>,
@@ -47,12 +47,12 @@ impl<T> Ferinth<T> {
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     // If a mod file has the hash `795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf`, we can get the version it belongs to
-    let sodium_version = modrinth.get_version_from_hash("795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf").await?;
+    let sodium_version = modrinth.version_get_from_hash("795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf").await?;
     assert_eq!(sodium_version.project_id, "AANobbMI");
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn get_version_from_hash(&self, hash: &str) -> Result<Version> {
+    pub async fn version_get_from_hash(&self, hash: &str) -> Result<Version> {
         check_sha1_hash(&[hash])?;
         self.client
             .get(API_BASE_URL.join_all(vec!["version_file", hash]))
@@ -71,7 +71,7 @@ impl<T> Ferinth<T> {
     # let modrinth = ferinth::Ferinth::default();
     let sodium_hash = "795d4c12bffdb1b21eed5ff87c07ce5ca3c0dcbf";
     let snwylvspls_hash = "994ee99d172a5950a51ec2d08c158d270722d871";
-    let versions = modrinth.get_versions_from_hashes(vec![
+    let versions = modrinth.version_get_from_multiple_hashes(vec![
         sodium_hash.into(),
         snwylvspls_hash.into(),
     ]).await?;
@@ -80,7 +80,7 @@ impl<T> Ferinth<T> {
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn get_versions_from_hashes(
+    pub async fn version_get_from_multiple_hashes(
         &self,
         hashes: Vec<String>,
     ) -> Result<HashMap<String, Version>> {
@@ -103,7 +103,7 @@ impl<T> Ferinth<T> {
 
     /// Get the latest version for the project of the version file with `hash` based on some `filters`.
     /// Only supports SHA1 hashes for now.
-    pub async fn latest_version_from_hash(
+    pub async fn version_get_latest_from_hash(
         &self,
         hash: &str,
         filters: &LatestVersionBody,
@@ -122,7 +122,7 @@ impl<T> Ferinth<T> {
 
     /// Get the latest versions of the projects of the version files with hashes based on some `filters`.
     /// Only supports SHA1 hashes for now.
-    pub async fn latest_versions_from_hashes(
+    pub async fn version_get_latest_from_multiple_hashes(
         &self,
         hashes: Vec<String>,
         filters: LatestVersionBody,

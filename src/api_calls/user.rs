@@ -13,7 +13,7 @@ impl<T> Ferinth<T> {
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let theRookieCoder = modrinth.get_user("7Azq6eD8").await?;
+    let theRookieCoder = modrinth.user_get("7Azq6eD8").await?;
     assert_eq!(
         theRookieCoder.role,
         ferinth::structures::user::UserRole::Developer,
@@ -21,7 +21,7 @@ impl<T> Ferinth<T> {
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn get_user(&self, user_id: &str) -> Result<User> {
+    pub async fn user_get(&self, user_id: &str) -> Result<User> {
         check_id_slug(&[user_id])?;
         self.client
             .get(API_BASE_URL.join_all(vec!["user", user_id]))
@@ -37,12 +37,12 @@ impl<T> Ferinth<T> {
     # use ferinth::structures::user::UserRole;
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let users = modrinth.get_multiple_users(&["TEZXhE2U", "7Azq6eD8"]).await?;
+    let users = modrinth.user_get_multiple(&["TEZXhE2U", "7Azq6eD8"]).await?;
     assert_eq!(users.len(), 2);
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn get_multiple_users(&self, user_ids: &[&str]) -> Result<Vec<User>> {
+    pub async fn user_get_multiple(&self, user_ids: &[&str]) -> Result<Vec<User>> {
         check_id_slug(user_ids)?;
         self.client
             .get(
@@ -61,12 +61,12 @@ impl<T> Ferinth<T> {
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let jellysquid_projects = modrinth.list_projects("TEZXhE2U").await?;
+    let jellysquid_projects = modrinth.user_list_projects("TEZXhE2U").await?;
     assert_eq!(jellysquid_projects.len(), 4);
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn list_projects(&self, user_id: &str) -> Result<Vec<Project>> {
+    pub async fn user_list_projects(&self, user_id: &str) -> Result<Vec<Project>> {
         check_id_slug(&[user_id])?;
         self.client
             .get(API_BASE_URL.join_all(vec!["user", user_id, "projects"]))
@@ -88,12 +88,12 @@ impl Ferinth<Authenticated> {
     #     None,
     #     env!("MODRINTH_TOKEN"),
     # )?;
-    # let user_id = modrinth.get_current_user().await?.id;
-    let notifications = modrinth.get_notifications(&user_id).await?;
+    # let user_id = modrinth.user_get_current().await?.id;
+    let notifications = modrinth.user_get_notifications(&user_id).await?;
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn get_notifications(&self, user_id: &str) -> Result<Vec<Notification>> {
+    pub async fn user_list_notifications(&self, user_id: &str) -> Result<Vec<Notification>> {
         check_id_slug(&[user_id])?;
         self.client
             .get(API_BASE_URL.join_all(vec!["user", user_id, "notifications"]))
@@ -113,12 +113,12 @@ impl Ferinth<Authenticated> {
     #     None,
     #     env!("MODRINTH_TOKEN"),
     # )?;
-    # let user_id = modrinth.get_current_user().await?.id;
-    let projects = modrinth.followed_projects(&user_id).await?;
+    # let user_id = modrinth.user_get_current().await?.id;
+    let projects = modrinth.user_list_followed_projects(&user_id).await?;
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn followed_projects(&self, user_id: &str) -> Result<Vec<Project>> {
+    pub async fn user_list_followed_projects(&self, user_id: &str) -> Result<Vec<Project>> {
         check_id_slug(&[user_id])?;
         self.client
             .get(API_BASE_URL.join_all(vec!["user", user_id, "follows"]))
@@ -137,11 +137,11 @@ impl Ferinth<Authenticated> {
     #     None,
     #     env!("MODRINTH_TOKEN"),
     # )?;
-    modrinth.delete_user("XXXXXXXX").await?;
+    modrinth.user_delete("XXXXXXXX").await?;
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn delete_user(&self, user_id: &str) -> Result<()> {
+    pub async fn user_delete(&self, user_id: &str) -> Result<()> {
         check_id_slug(&[user_id])?;
         self.client
             .delete(API_BASE_URL.join_all(vec!["user", user_id]))
@@ -162,13 +162,13 @@ impl Ferinth<Authenticated> {
     #     None,
     #     env!("MODRINTH_TOKEN"),
     # )?;
-    let current_user = modrinth.get_current_user().await?;
+    let current_user = modrinth.user_get_current().await?;
     // The email should be visible as we are authorised
     assert!(current_user.email.is_some());
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn get_current_user(&self) -> Result<User> {
+    pub async fn user_get_current(&self) -> Result<User> {
         self.client
             .get(API_BASE_URL.join_all(vec!["user"]))
             .custom_send_json()

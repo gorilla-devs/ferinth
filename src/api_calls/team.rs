@@ -13,12 +13,12 @@ impl<T> Ferinth<T> {
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let saj_team = modrinth.list_project_team_members("stairautojump").await?;
+    let saj_team = modrinth.team_list_project_members("stairautojump").await?;
     assert_eq!(saj_team.len(), 2);
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn list_project_team_members(&self, project_id: &str) -> Result<Vec<TeamMember>> {
+    pub async fn team_list_project_members(&self, project_id: &str) -> Result<Vec<TeamMember>> {
         check_id_slug(&[project_id])?;
         self.client
             .get(API_BASE_URL.join_all(vec!["project", project_id, "members"]))
@@ -33,12 +33,12 @@ impl<T> Ferinth<T> {
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let saj_team = modrinth.list_team_members("zftNHDXi").await?;
+    let saj_team = modrinth.team_list_members("zftNHDXi").await?;
     assert_eq!(saj_team.len(), 2);
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn list_team_members(&self, team_id: &str) -> Result<Vec<TeamMember>> {
+    pub async fn team_list_members(&self, team_id: &str) -> Result<Vec<TeamMember>> {
         check_id_slug(&[team_id])?;
         self.client
             .get(API_BASE_URL.join_all(vec!["team", team_id, "members"]))
@@ -53,7 +53,7 @@ impl<T> Ferinth<T> {
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let teams = modrinth.list_multiple_teams_members(&[
+    let teams = modrinth.team_multiple_list_members(&[
         "4reLOAKe",
         "1HMZl6Mn",
         "BZoBsPo6",
@@ -63,7 +63,7 @@ impl<T> Ferinth<T> {
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn list_multiple_teams_members(
+    pub async fn team_multiple_list_members(
         &self,
         team_ids: &[&str],
     ) -> Result<Vec<Vec<TeamMember>>> {
@@ -91,11 +91,11 @@ impl Ferinth<Authenticated> {
     #     None,
     #     env!("MODRINTH_TOKEN"),
     # )?;
-    modrinth.add_user("XXXXXXXX", "YYYYYYYY").await?;
+    modrinth.team_add_user("XXXXXXXX", "YYYYYYYY").await?;
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn add_user(&self, team_id: &str, user_id: &str) -> Result<()> {
+    pub async fn team_add_user(&self, team_id: &str, user_id: &str) -> Result<()> {
         #[derive(serde::Serialize)]
         struct Body<'a> {
             user_id: &'a str,
@@ -120,11 +120,11 @@ impl Ferinth<Authenticated> {
     #     None,
     #     env!("MODRINTH_TOKEN"),
     # )?;
-    modrinth.join_team("XXXXXXXX").await?;
+    modrinth.team_join("XXXXXXXX").await?;
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn join_team(&self, team_id: &str) -> Result<()> {
+    pub async fn team_join(&self, team_id: &str) -> Result<()> {
         self.client
             .post(API_BASE_URL.join_all(vec!["team", team_id, "join"]))
             .custom_send()
@@ -143,11 +143,11 @@ impl Ferinth<Authenticated> {
     #     None,
     #     env!("MODRINTH_TOKEN"),
     # )?;
-    modrinth.remove_member("XXXXXXXX", "YYYYYYYY").await?;
+    modrinth.team_remove_member("XXXXXXXX", "YYYYYYYY").await?;
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn remove_member(&self, team_id: &str, user_id: &str) -> Result<()> {
+    pub async fn team_remove_member(&self, team_id: &str, user_id: &str) -> Result<()> {
         self.client
             .delete(API_BASE_URL.join_all(vec!["team", team_id, "members", user_id]))
             .custom_send()
@@ -166,11 +166,11 @@ impl Ferinth<Authenticated> {
     #     None,
     #     env!("MODRINTH_TOKEN"),
     # )?;
-    modrinth.transfer_ownership("XXXXXXXX", "YYYYYYYY").await?;
+    modrinth.team_transfer_ownership("XXXXXXXX", "YYYYYYYY").await?;
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn transfer_ownership(&self, team_id: &str, user_id: &str) -> Result<()> {
+    pub async fn team_transfer_ownership(&self, team_id: &str, user_id: &str) -> Result<()> {
         #[derive(serde::Serialize)]
         struct Body<'a> {
             user_id: &'a str,

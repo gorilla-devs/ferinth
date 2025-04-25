@@ -18,16 +18,16 @@ impl<T> Ferinth<T> {
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     // Get a mod using its project ID
-    let sodium = modrinth.get_project("AANobbMI").await?;
+    let sodium = modrinth.project_get("AANobbMI").await?;
     assert_eq!(sodium.title, "Sodium");
 
     // You can also use the project's slug, which is case-insensitive
-    let ok_zoomer = modrinth.get_project("ok-zoomer").await?;
+    let ok_zoomer = modrinth.project_get("ok-zoomer").await?;
     assert_eq!(ok_zoomer.title, "Ok Zoomer");
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn get_project(&self, project_id: &str) -> Result<Project> {
+    pub async fn project_get(&self, project_id: &str) -> Result<Project> {
         check_id_slug(&[project_id])?;
         self.client
             .get(API_BASE_URL.join_all(vec!["project", project_id]))
@@ -43,7 +43,7 @@ impl<T> Ferinth<T> {
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
     // You can use both IDs and slugs
-    let projects = modrinth.get_multiple_projects(&[
+    let projects = modrinth.project_get_multiple(&[
         "sodium",
         "P7dR8mSH",
         "iris",
@@ -53,7 +53,7 @@ impl<T> Ferinth<T> {
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn get_multiple_projects(&self, project_ids: &[&str]) -> Result<Vec<Project>> {
+    pub async fn project_get_multiple(&self, project_ids: &[&str]) -> Result<Vec<Project>> {
         check_id_slug(project_ids)?;
         self.client
             .get(
@@ -75,14 +75,14 @@ impl<T> Ferinth<T> {
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let random_projects = modrinth.get_random_projects(5).await?;
+    let random_projects = modrinth.project_get_random(5).await?;
     // The proper check has been disabled due to the reason mentioned above
     // assert_eq!(random_projects.len(), 5);
     assert!(random_projects.len() <= 5);
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn get_random_projects(&self, count: Int) -> Result<Vec<Project>> {
+    pub async fn project_get_random(&self, count: Int) -> Result<Vec<Project>> {
         self.client
             .get(
                 API_BASE_URL
@@ -101,12 +101,12 @@ impl<T> Ferinth<T> {
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let project_id = modrinth.check_validity("sodium").await?;
+    let project_id = modrinth.project_check_validity("sodium").await?;
     assert_eq!(project_id, "AANobbMI");
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn check_validity(&self, project_id: &str) -> Result<String> {
+    pub async fn project_check_validity(&self, project_id: &str) -> Result<String> {
         #[derive(serde::Deserialize)]
         struct Response {
             id: String,
@@ -127,13 +127,13 @@ impl<T> Ferinth<T> {
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let fabric_api = modrinth.get_project_dependencies("fabric-api").await?;
+    let fabric_api = modrinth.project_get_dependencies("fabric-api").await?;
     // Fabric API should not have any dependencies
     assert!(fabric_api.projects.is_empty());
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn get_project_dependencies(&self, project_id: &str) -> Result<ProjectDependencies> {
+    pub async fn project_get_dependencies(&self, project_id: &str) -> Result<ProjectDependencies> {
         check_id_slug(&[project_id])?;
         self.client
             .get(API_BASE_URL.join_all(vec!["project", project_id, "dependencies"]))
@@ -144,7 +144,7 @@ impl<T> Ferinth<T> {
 
 impl Ferinth<Authenticated> {
     /// Delete the project of `project_id`
-    pub async fn delete_project(&self, project_id: &str) -> Result<()> {
+    pub async fn project_delete(&self, project_id: &str) -> Result<()> {
         check_id_slug(&[project_id])?;
         self.client
             .delete(API_BASE_URL.join_all(vec!["project", project_id]))
@@ -154,7 +154,7 @@ impl Ferinth<Authenticated> {
     }
 
     /// Bulk edit the projects of `project_ids` with the given `edits`
-    pub async fn edit_multiple_projects(
+    pub async fn project_edit_multiple(
         &self,
         project_ids: &[&str],
         edits: EditMultipleProjectsBody,
@@ -169,7 +169,7 @@ impl Ferinth<Authenticated> {
     }
 
     /// Change the icon of the project of `project_id` to `image` with file `ext`ension
-    pub async fn change_project_icon(
+    pub async fn project_edit_icon(
         &self,
         project_id: &str,
         image: impl Into<Body>,
@@ -190,7 +190,7 @@ impl Ferinth<Authenticated> {
     }
 
     /// Delete the icon of the project of `project_id`
-    pub async fn delete_project_icon(&self, project_id: &str) -> Result<()> {
+    pub async fn project_delete_icon(&self, project_id: &str) -> Result<()> {
         check_id_slug(&[project_id])?;
         self.client
             .delete(API_BASE_URL.join_all(vec!["project", project_id, "icon"]))
@@ -205,7 +205,7 @@ impl Ferinth<Authenticated> {
 
     The image data can have a maximum size of `5 MiB`.
     */
-    pub async fn add_gallery_image<B: Into<Body>>(
+    pub async fn project_add_gallery_image<B: Into<Body>>(
         &self,
         project_id: &str,
         image: B,
@@ -238,7 +238,7 @@ impl Ferinth<Authenticated> {
     }
 
     /// Modify the gallery image of `url` of the project of `project_id`
-    pub async fn modify_gallery_image<U: IntoUrl>(
+    pub async fn project_edit_gallery_image<U: IntoUrl>(
         &self,
         project_id: &str,
         url: U,
@@ -268,7 +268,7 @@ impl Ferinth<Authenticated> {
     }
 
     /// Delete the gallery image of `image_url` from the project of `project_id`
-    pub async fn delete_gallery_image<U: IntoUrl>(
+    pub async fn project_delete_gallery_image<U: IntoUrl>(
         &self,
         project_id: &str,
         image_url: U,
@@ -286,7 +286,7 @@ impl Ferinth<Authenticated> {
     }
 
     /// Follow the project of `project_id`
-    pub async fn follow(&self, project_id: &str) -> Result<()> {
+    pub async fn project_follow(&self, project_id: &str) -> Result<()> {
         check_id_slug(&[project_id])?;
         self.client
             .post(API_BASE_URL.join_all(vec!["project", project_id, "follow"]))
@@ -296,7 +296,7 @@ impl Ferinth<Authenticated> {
     }
 
     /// Unfollow the project of `project_id`
-    pub async fn unfollow(&self, project_id: &str) -> Result<()> {
+    pub async fn project_unfollow(&self, project_id: &str) -> Result<()> {
         check_id_slug(&[project_id])?;
         self.client
             .delete(API_BASE_URL.join_all(vec!["project", project_id, "follow"]))
@@ -317,7 +317,7 @@ impl Ferinth<Authenticated> {
     #     env!("MODRINTH_TOKEN"),
     # )?;
     // Release the project of ID `XXXXXXXX` in three hours to the public
-    modrinth.schedule_project(
+    modrinth.project_schedule(
         "XXXXXXXX",
         &(chrono::offset::Utc::now() + chrono::Duration::hours(3)),
         &ferinth::structures::project::RequestedStatus::Approved
@@ -325,7 +325,7 @@ impl Ferinth<Authenticated> {
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn schedule_project(
+    pub async fn project_schedule(
         &self,
         project_id: &str,
         time: &UtcTime,
@@ -358,9 +358,9 @@ mod tests {
             env!("MODRINTH_TOKEN"),
         )?;
         let project_id = env!("TEST_PROJECT_ID");
-        let user_id = modrinth.get_current_user().await?.id;
+        let user_id = modrinth.user_get_current().await?.id;
 
-        match modrinth.follow(project_id).await {
+        match modrinth.project_follow(project_id).await {
             Ok(_) => {}
             Err(Error::ReqwestError(e)) => {
                 if !(e.is_status() && e.status().unwrap() == 400) {
@@ -369,14 +369,14 @@ mod tests {
             }
             Err(e) => return Err(e),
         }
-        let followed_projects = modrinth.followed_projects(&user_id).await?;
+        let followed_projects = modrinth.user_list_followed_projects(&user_id).await?;
         assert!(followed_projects
             .iter()
             .map(|p| &p.id)
             .any(|id| id == project_id));
 
-        modrinth.unfollow(project_id).await?;
-        let followed_projects = modrinth.followed_projects(&user_id).await?;
+        modrinth.project_unfollow(project_id).await?;
+        let followed_projects = modrinth.user_list_followed_projects(&user_id).await?;
         assert!(followed_projects
             .iter()
             .map(|p| &p.id)
@@ -395,11 +395,11 @@ mod tests {
         )?;
         let project_id = env!("TEST_PROJECT_ID");
 
-        let project = modrinth.get_project(project_id).await?;
+        let project = modrinth.project_get(project_id).await?;
         if !project.gallery.is_empty() {
             assert_ne!(project.gallery[0].title, Some("Modified test image".into()));
             modrinth
-                .modify_gallery_image(
+                .project_edit_gallery_image(
                     project_id,
                     project.gallery[0].url.clone(),
                     Some(false),
@@ -408,20 +408,20 @@ mod tests {
                     None,
                 )
                 .await?;
-            let project = modrinth.get_project(project_id).await?;
+            let project = modrinth.project_get(project_id).await?;
             assert_eq!(project.gallery[0].title, Some("Modified test image".into()));
             assert!(!project.gallery[0].featured);
 
             modrinth
-                .delete_gallery_image(project_id, project.gallery[0].url.clone())
+                .project_delete_gallery_image(project_id, project.gallery[0].url.clone())
                 .await?;
-            let project = modrinth.get_project(project_id).await?;
+            let project = modrinth.project_get(project_id).await?;
             assert!(project.gallery.is_empty());
         }
 
         let image_data = std::fs::read("test_image.png").expect("Failed to read test image");
         modrinth
-            .add_gallery_image(
+            .project_add_gallery_image(
                 project_id,
                 image_data,
                 &project::ImageFileExt::PNG,
@@ -430,7 +430,7 @@ mod tests {
                 Some(chrono::offset::Local::now().to_string()),
             )
             .await?;
-        let project = modrinth.get_project(project_id).await?;
+        let project = modrinth.project_get(project_id).await?;
         assert_eq!(
             project.gallery[0].title,
             Some("Test image, do not delete".into())
@@ -449,15 +449,15 @@ mod tests {
         )?;
         let project_id = env!("TEST_PROJECT_ID");
 
-        modrinth.delete_project_icon(project_id).await?;
-        let project = modrinth.get_project(project_id).await?;
+        modrinth.project_delete_icon(project_id).await?;
+        let project = modrinth.project_get(project_id).await?;
         assert!(project.icon_url.is_none());
 
         let image = std::fs::read("test_image.png").expect("Cannot read test image");
         modrinth
-            .change_project_icon(project_id, image, project::ImageFileExt::PNG)
+            .project_edit_icon(project_id, image, project::ImageFileExt::PNG)
             .await?;
-        let project = modrinth.get_project(project_id).await?;
+        let project = modrinth.project_get(project_id).await?;
         assert!(project.icon_url.is_some());
 
         Ok(())

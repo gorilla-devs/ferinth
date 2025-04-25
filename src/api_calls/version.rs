@@ -17,11 +17,11 @@ impl Ferinth<Authenticated> {
     #     None,
     #     env!("MODRINTH_TOKEN"),
     # )?;
-    modrinth.delete_version("XXXXXXXX").await?;
+    modrinth.version_delete("XXXXXXXX").await?;
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn delete_version(&self, version_id: &str) -> Result<()> {
+    pub async fn version_delete(&self, version_id: &str) -> Result<()> {
         check_id_slug(&[version_id])?;
         self.client
             .delete(API_BASE_URL.join_all(vec!["version", version_id]))
@@ -44,7 +44,7 @@ impl Ferinth<Authenticated> {
     #     env!("MODRINTH_TOKEN"),
     # )?;
     // Release the version of ID `xuWxRZPd` to the public in three hours
-    modrinth.schedule_version(
+    modrinth.version_schedule(
         "xuWxRZPd",
         &(Utc::now() + Duration::hours(3)),
         &RequestedStatus::Listed
@@ -52,7 +52,7 @@ impl Ferinth<Authenticated> {
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn schedule_version(
+    pub async fn version_schedule(
         &self,
         version_id: &str,
         time: &UtcTime,
@@ -80,12 +80,12 @@ impl<T> Ferinth<T> {
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let sodium_versions = modrinth.list_versions("AANobbMI").await?;
+    let sodium_versions = modrinth.version_list("AANobbMI").await?;
     sodium_versions.iter().for_each(|v| assert_eq!(v.project_id, "AANobbMI"));
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn list_versions(&self, project_id: &str) -> Result<Vec<Version>> {
+    pub async fn version_list(&self, project_id: &str) -> Result<Vec<Version>> {
         check_id_slug(&[project_id])?;
         self.client
             .get(API_BASE_URL.join_all(vec!["project", project_id, "version"]))
@@ -101,7 +101,7 @@ impl<T> Ferinth<T> {
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let sodium_forge_versions = modrinth.list_versions_filtered(
+    let sodium_forge_versions = modrinth.version_list_filtered(
         "AANobbMI",
         Some(&["forge"]),
         None,
@@ -112,7 +112,7 @@ impl<T> Ferinth<T> {
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn list_versions_filtered(
+    pub async fn version_list_filtered(
         &self,
         project_id: &str,
         loaders: Option<&[&str]>,
@@ -140,12 +140,12 @@ impl<T> Ferinth<T> {
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let sodium_version = modrinth.get_version("xuWxRZPd").await?;
+    let sodium_version = modrinth.version_get("xuWxRZPd").await?;
     assert_eq!(sodium_version.project_id, "AANobbMI");
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn get_version(&self, version_id: &str) -> Result<Version> {
+    pub async fn version_get(&self, version_id: &str) -> Result<Version> {
         check_id_slug(&[version_id])?;
         self.client
             .get(API_BASE_URL.join_all(vec!["version", version_id]))
@@ -160,12 +160,12 @@ impl<T> Ferinth<T> {
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let version = modrinth.get_version_from_number("sodium", "mc1.17.1-0.3.2").await?;
+    let version = modrinth.version_get_from_number("sodium", "mc1.17.1-0.3.2").await?;
     assert_eq!(version.id, "xuWxRZPd");
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn get_version_from_number(&self, project_id: &str, number: &str) -> Result<Version> {
+    pub async fn version_get_from_number(&self, project_id: &str, number: &str) -> Result<Version> {
         check_id_slug(&[project_id])?;
         self.client
             .get(API_BASE_URL.join_all(vec!["project", project_id, "version", number]))
@@ -180,7 +180,7 @@ impl<T> Ferinth<T> {
     ```rust
     # tokio_test::block_on(async {
     # let modrinth = ferinth::Ferinth::default();
-    let versions = modrinth.get_multiple_versions(&[
+    let versions = modrinth.version_get_multiple(&[
         "sxWTUZpD",
         "mgPpe4NY",
     ]).await?;
@@ -188,7 +188,7 @@ impl<T> Ferinth<T> {
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
-    pub async fn get_multiple_versions(&self, version_ids: &[&str]) -> Result<Vec<Version>> {
+    pub async fn version_get_multiple(&self, version_ids: &[&str]) -> Result<Vec<Version>> {
         check_id_slug(version_ids)?;
         self.client
             .get(
