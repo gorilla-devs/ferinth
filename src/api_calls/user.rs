@@ -89,7 +89,7 @@ impl Ferinth<Authenticated> {
     #     env!("MODRINTH_TOKEN"),
     # )?;
     # let user_id = modrinth.user_get_current().await?.id;
-    let notifications = modrinth.user_get_notifications(&user_id).await?;
+    let notifications = modrinth.user_list_notifications(&user_id).await?;
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
