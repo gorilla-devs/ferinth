@@ -1,5 +1,18 @@
 # Changelog
 
+## `2.12.0`
+### 26.04.2025
+
+- Update and improve README
+- Remove the `payout_history()` call
+- Add error handling for the HTTP 410 GONE status code
+- Better error messages for decoding JSON responses
+- Fix [#11](https://github.com/gorilla-devs/ferinth/issues/11); a bug with the search route's `Facet::ProjectType` not formatting correctly in the request URL
+- Tweaks to struct definitions to fix bugs
+- Make the authentication state of `Ferinth` be a compile type generic parameter
+- Use `tokio_test::block_on` and `.unwrap()` for tests
+- Rename API calls to be more descriptive, prefexing them with their category to avoid ambiguity
+
 ## `2.11.1`
 ### 29.09.2024
 
