@@ -124,5 +124,7 @@ pub enum RequestedStatus {
 pub enum AdditionalFileType {
     RequiredResourcePack,
     OptionalResourcePack,
-    SourcesJar
+    SourcesJar,
+    #[serde(other)]
+    Unknown
 }
