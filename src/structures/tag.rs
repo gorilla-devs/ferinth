@@ -32,15 +32,16 @@ pub struct GameVersion {
     /// When the game version released
     pub date: UtcTime,
     /// Whether this game version was considered a major version
-    ///
-    /// This is set to true if this version introduced many breaking changes to internal APIs
-    /// that causes most mods made for previous versions of the game to break on this version.
+    /// 
+    /// This is used for featured versions.
     pub major: bool,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct License {
+    /// The full display name of the license
     pub title: String,
+    /// The full body text of the license
     pub body: String,
 }
 
@@ -48,6 +49,7 @@ pub struct License {
 pub struct DonationPlatform {
     /// A short identifier for the donation platform
     pub short: String,
+    /// The display name of the platform
     pub name: String,
 }
 

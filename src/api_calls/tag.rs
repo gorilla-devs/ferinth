@@ -115,4 +115,40 @@ impl<T> Ferinth<T> {
             .custom_send_json()
             .await
     }
+
+    /**
+    List valid project types
+
+    ## Example
+    ```rust
+    # tokio_test::block_on(async {
+    # let modrinth = ferinth::Ferinth::default();
+    let report_types = modrinth.tag_list_project_types().await?;
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
+    ```
+    */
+    pub async fn tag_list_project_types(&self) -> Result<Vec<String>> {
+        self.client
+            .get(API_BASE_URL.join_all(vec!["tag", "project_type"]))
+            .custom_send_json()
+            .await
+    }
+
+    /**
+    List valid side types
+
+    ## Example
+    ```rust
+    # tokio_test::block_on(async {
+    # let modrinth = ferinth::Ferinth::default();
+    let report_types = modrinth.tag_list_side_types().await?;
+    # Ok::<_, ferinth::Error>(()) }).unwrap()
+    ```
+    */
+    pub async fn tag_list_side_types(&self) -> Result<Vec<String>> {
+        self.client
+            .get(API_BASE_URL.join_all(vec!["tag", "side_type"]))
+            .custom_send_json()
+            .await
+    }
 }
