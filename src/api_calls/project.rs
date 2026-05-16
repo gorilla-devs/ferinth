@@ -22,8 +22,8 @@ impl<T> Ferinth<T> {
     assert_eq!(sodium.title, "Sodium");
 
     // You can also use the project's slug, which is case-insensitive
-    let ok_zoomer = modrinth.project_get("ok-zoomer").await?;
-    assert_eq!(ok_zoomer.title, "Ok Zoomer");
+    let ok_zoomer = modrinth.project_get("fAbRiC-aPi").await?;
+    assert_eq!(ok_zoomer.title, "Fabric API");
     # Ok::<_, ferinth::Error>(()) }).unwrap()
     ```
     */
