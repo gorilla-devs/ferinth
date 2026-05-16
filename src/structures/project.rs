@@ -13,8 +13,8 @@ pub struct Project {
     /// A short description of the project
     pub description: String,
     pub categories: Vec<String>,
-    pub client_side: ProjectSupportRange,
-    pub server_side: ProjectSupportRange,
+    pub client_side: SideType,
+    pub server_side: SideType,
     /// A long form description of the project
     pub body: String,
     pub status: ProjectStatus,
@@ -154,6 +154,7 @@ pub enum ProjectStatus {
     /// Check the project's `requested_status` for more information.
     Scheduled,
     Private,
+    #[serde(other)]
     Unknown,
 }
 
@@ -165,6 +166,8 @@ pub enum RequestedStatus {
     Unlisted,
     Private,
     Draft,
+    #[serde(other)]
+    Other,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, Copy, PartialEq, Eq)]
@@ -173,11 +176,13 @@ pub enum MonetizationStatus {
     Monetized,
     Demonetized,
     ForceDemonetized,
+    #[serde(other)]
+    Other,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
-pub enum ProjectSupportRange {
+pub enum SideType {
     /// The mod is required on this side to function
     Required,
     /// The mod is not required on this side to function.
@@ -190,18 +195,17 @@ pub enum ProjectSupportRange {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, Copy, PartialEq, Eq)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
 pub enum ProjectType {
-    /// WARNING: Can be a mod, plugin, or data pack
-    ///
-    /// You will have to read the loaders to get more specific information.
-    Project,
     Mod,
+    Modpack,
+    Resourcepack,
     Shader,
     Plugin,
-    Modpack,
     Datapack,
-    ResourcePack,
+    MinecraftJavaServer,
+    #[serde(other)]
+    Other,
 }
 
 /// File extensions for images

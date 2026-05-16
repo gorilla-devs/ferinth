@@ -131,6 +131,8 @@ pub enum UserRole {
     Developer,
     Moderator,
     Admin,
+    #[serde(other)]
+    Other,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, Copy, PartialEq, Eq)]
@@ -143,4 +145,6 @@ pub enum AuthProvider {
     Google,
     Steam,
     PayPal,
+    #[serde(other)]
+    Other,
 }

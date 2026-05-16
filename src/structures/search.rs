@@ -86,8 +86,8 @@ pub struct SearchHit {
     pub title: String,
     pub description: String,
     pub categories: Vec<String>,
-    pub client_side: project::ProjectSupportRange,
-    pub server_side: project::ProjectSupportRange,
+    pub client_side: project::SideType,
+    pub server_side: project::SideType,
     pub project_type: project::ProjectType,
     pub downloads: Int,
     #[serde(deserialize_with = "deserialise_optional_url")]

@@ -80,6 +80,8 @@ pub struct Dependency {
 pub enum HashAlgorithm {
     SHA512,
     SHA1,
+    #[serde(other)]
+    Other,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -97,6 +99,8 @@ pub enum DependencyType {
     Optional,
     Incompatible,
     Embedded,
+    #[serde(other)]
+    Other,
 }
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
@@ -107,6 +111,7 @@ pub enum Status {
     Draft,
     Unlisted,
     Scheduled,
+    #[serde(other)]
     Unknown,
 }
 
@@ -117,6 +122,8 @@ pub enum RequestedStatus {
     Archived,
     Draft,
     Unlisted,
+    #[serde(other)]
+    Other,
 }
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
@@ -125,6 +132,9 @@ pub enum AdditionalFileType {
     RequiredResourcePack,
     OptionalResourcePack,
     SourcesJar,
+    DevJar,
+    JavadocJar,
+    Signature,
     #[serde(other)]
     Unknown
 }

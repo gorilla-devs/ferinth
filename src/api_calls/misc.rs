@@ -56,22 +56,4 @@ impl<T> Ferinth<T> {
             .custom_send_json()
             .await
     }
-
-    /**
-    Get the Modrinth API welcome page.
-
-    ## Example
-    ```rust
-    # tokio_test::block_on(async {
-    # let modrinth = ferinth::Ferinth::default();
-    modrinth.welcome().await?;
-    # Ok::<_, ferinth::Error>(()) }).unwrap()
-    ```
-    */
-    pub async fn welcome(&self) -> Result<Welcome> {
-        self.client
-            .get(crate::BASE_URL.as_ref())
-            .custom_send_json()
-            .await
-    }
 }
