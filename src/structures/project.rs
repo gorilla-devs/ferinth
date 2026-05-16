@@ -180,6 +180,7 @@ pub enum MonetizationStatus {
     Other,
 }
 
+pub type ProjectSupportRange = SideType;
 #[derive(Deserialize, Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum SideType {
